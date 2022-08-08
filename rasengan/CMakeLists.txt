@@ -11,10 +11,9 @@ INCLUDE_DIRECTORIES(
         "ThirdParty/glfw/include"
         $ENV{VK_SDK_PATH}/include
 )
-
 # 拷贝 glfw3.lib 到 输出目录 中
 #第一次编译需要把 glfw3.lib复制到exe目录 不然跑不起来
-execute_process(COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/glfw.lib3" "${PROJECT_BINARY_DIR}")
+EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/glfw3.lib" "${PROJECT_BINARY_DIR}")
 
 
 
