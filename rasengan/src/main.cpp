@@ -36,6 +36,7 @@ private:
 	void MainLoop()
 	{
         while (!glfwWindowShouldClose(window)) {
+            glfwSwapBuffers(window);
             glfwPollEvents();
         }
 	}
