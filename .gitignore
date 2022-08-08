@@ -31,3 +31,9 @@
 *.out
 *.app
 .idea/
+rasengan/.vs/
+*.user
+rasengan/obj/
+rasengan/bin/
+*.sln
+*.vcxproj
