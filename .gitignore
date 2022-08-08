@@ -24,7 +24,6 @@
 *.lai
 *.la
 *.a
-*.lib
 
 # Executables
 *.exe
@@ -37,3 +36,4 @@ rasengan/obj/
 rasengan/bin/
 *.sln
 *.vcxproj
+rasengan/cmake-build-debug/
