@@ -1,12 +1,14 @@
 #pragma once
 #include "VulkanApp.h"
+#include "vector"
+#include "VulkanValidation.h"
 
 void VulkanApp::CreateInstance() {
     VkApplicationInfo appInfo{};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     appInfo.pApplicationName = "Hello Triangle";
     appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.pEngineName = "Bubble Engine";
+    appInfo.pEngineName = "Rasengan Engine";
     appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
 
     VkInstanceCreateInfo createInfo{};
@@ -22,9 +24,40 @@ void VulkanApp::CreateInstance() {
     createInfo.ppEnabledExtensionNames = glfwExtensions;
     createInfo.enabledLayerCount = 0;
 
+    auto extensions = getRequiredExtensions();
+    createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+    createInfo.ppEnabledExtensionNames = extensions.data();
+
+    createInfo.enabledLayerCount = 0;
+    VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+    if (mValidation.enableValidationLayers) {
+        createInfo.enabledLayerCount = static_cast<uint32_t>(mValidation.validationLayers.size());
+        createInfo.ppEnabledLayerNames = mValidation.validationLayers.data();
+
+        mValidation.PopulateDebugMessengerCreateInfo(debugCreateInfo);
+        createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
+    }
+
+
     VkResult result = vkCreateInstance(&createInfo, nullptr, &instance);
     if(vkCreateInstance(&createInfo,nullptr,&instance)!=VK_SUCCESS)
     {
         throw std::runtime_error("failed to create vkInstance");
     }
+    mValidation.setupDebugMessenger(instance);
+}
+
+void VulkanApp::Cleanup() {
+    mValidation.Cleanup(instance);
+    vkDestroyInstance(instance, nullptr);
+}
+
+std::vector<const char *> VulkanApp::getRequiredExtensions() {
+    uint32_t glfwExtensionCount = 0;
+    const char** glfwExtensions;
+    glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+    std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+    mValidation.CheckAddValidationLayer(extensions);
+
+    return extensions;
 }

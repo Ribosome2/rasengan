@@ -7,6 +7,9 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include "VulkanCore/VulkanApp.h"
+#include <cassert>
+// Use (void) to silence unused warnings.
+#define assertm(exp, msg) assert(((void)msg, exp))
 class RasenganApp
 {
 public:
@@ -33,7 +36,7 @@ private:
         if (!window)
         {
             glfwTerminate();
-            exit(EXIT_FAILURE);
+            throw std::runtime_error("failed to create vkInstance");
         }
 
         mVulkanApp.CreateInstance();
@@ -47,6 +50,7 @@ private:
 	}
 	void Cleanup()
 	{
+        mVulkanApp.Cleanup();
         glfwDestroyWindow(window);
 
         glfwTerminate();

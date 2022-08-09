@@ -6,7 +6,7 @@ PROJECT(Rasengan)
 ADD_EXECUTABLE(${PROJECT_NAME} "src/main.cpp"
         src/VulkanCore/VulkanApp.h
         src/VulkanCore/VulkanApp.cpp
-        )
+        src/VulkanCore/VulkanValidation.h)
 
 FIND_PACKAGE(Vulkan REQUIRED)
 
