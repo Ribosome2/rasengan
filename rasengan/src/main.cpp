@@ -6,13 +6,14 @@
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
-
+#include "VulkanCore/VulkanApp.h"
 class RasenganApp
 {
 public:
 	void Run()
 	{
         std::cout << "Rasengan start " << std::endl;
+        Init();
         MainLoop();
         Cleanup();
 	}
@@ -21,8 +22,10 @@ private:
     const uint32_t WIDTH = 800;
     const uint32_t HEIGHT = 600;
     GLFWwindow* window;
+    VulkanApp mVulkanApp;
 	void Init()
 	{
+        glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
         window = glfwCreateWindow(WIDTH, HEIGHT, "VulkanRasengan", nullptr, nullptr);
@@ -32,6 +35,8 @@ private:
             glfwTerminate();
             exit(EXIT_FAILURE);
         }
+
+        mVulkanApp.CreateInstance();
 	}
 	void MainLoop()
 	{

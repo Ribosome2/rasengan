@@ -3,7 +3,10 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.22)
 SET(CMAKE_CXX_STANDARD 17)
 PROJECT(Rasengan)
 
-ADD_EXECUTABLE(${PROJECT_NAME} "src/main.cpp")
+ADD_EXECUTABLE(${PROJECT_NAME} "src/main.cpp"
+        src/VulkanCore/VulkanApp.h
+        src/VulkanCore/VulkanApp.cpp
+        )
 
 FIND_PACKAGE(Vulkan REQUIRED)
 
