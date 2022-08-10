@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <GLFW/glfw3.h>
 #include "VulkanValidation.h"
+#include "VulkanDevice.h"
 class VulkanApp{
     VkInstance instance;
 public:
@@ -12,5 +13,6 @@ public:
 
 private:
     VulkanValidation mValidation;
+    VulkanDevice mVulkanDevice;
     std::vector<const char*> getRequiredExtensions();
 };

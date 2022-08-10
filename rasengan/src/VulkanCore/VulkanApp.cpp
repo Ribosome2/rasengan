@@ -44,12 +44,18 @@ void VulkanApp::CreateInstance() {
     {
         throw std::runtime_error("failed to create vkInstance");
     }
+
     mValidation.setupDebugMessenger(instance);
+    mVulkanDevice.PickPhysicalDevice(instance);
+    mVulkanDevice.CreateLogicDevice(mValidation);
 }
 
 void VulkanApp::Cleanup() {
     mValidation.Cleanup(instance);
+
+    vkDestroyDevice(mVulkanDevice.device, nullptr);
     vkDestroyInstance(instance, nullptr);
+
 }
 
 std::vector<const char *> VulkanApp::getRequiredExtensions() {

@@ -97,7 +97,7 @@ public:
         if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
             throw std::runtime_error("failed to set up debug messenger!");
         } else {
-            printf("DebugMessenger is setup !");
+            printf("DebugMessenger is setup !\n");
         }
     }
 private:
