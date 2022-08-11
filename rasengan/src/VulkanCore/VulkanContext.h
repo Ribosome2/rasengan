@@ -6,7 +6,7 @@ class VulkanContext{
 private:
     static VulkanContext* mContextInstance;
 public:
-    static VulkanContext &  GetInstance(){
+    static VulkanContext &  GetContext(){
         return *mContextInstance;
     }
 
@@ -17,6 +17,19 @@ public:
     void Init(){
         SwapChain = std::make_shared<VulkanSwapChain>();
     }
+
+    static VkInstance &  GetVulkanInstance(){
+        return  s_VulkanInstance;
+    }
+
+    static void   SetVulkanInstance(VkInstance & instance ){
+         s_VulkanInstance=instance;
+    }
+
     std::shared_ptr<VulkanSwapChain> SwapChain;
+    GLFWwindow* window;
+private:
+    // Vulkan instance
+    inline static VkInstance s_VulkanInstance;
 
 };

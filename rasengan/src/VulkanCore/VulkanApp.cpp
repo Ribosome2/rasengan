@@ -2,7 +2,7 @@
 #include "VulkanApp.h"
 #include "vector"
 #include "VulkanValidation.h"
-
+#include "VulkanContext.h"
 void VulkanApp::CreateInstance() {
     VkApplicationInfo appInfo{};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -45,7 +45,12 @@ void VulkanApp::CreateInstance() {
         throw std::runtime_error("failed to create vkInstance");
     }
 
+    auto vkContext = VulkanContext::GetContext();
+    vkContext.SetVulkanInstance(instance);
+    vkContext.SwapChain->InitSurface(vkContext.window);
+
     mValidation.setupDebugMessenger(instance);
+
     mVulkanDevice.PickPhysicalDevice(instance);
     mVulkanDevice.CreateLogicDevice(mValidation);
 }
@@ -53,9 +58,9 @@ void VulkanApp::CreateInstance() {
 void VulkanApp::Cleanup() {
     mValidation.Cleanup(instance);
 
+    vkDestroySurfaceKHR(instance, VulkanContext::GetContext().SwapChain->surface, nullptr);
     vkDestroyDevice(mVulkanDevice.device, nullptr);
     vkDestroyInstance(instance, nullptr);
-
 }
 
 std::vector<const char *> VulkanApp::getRequiredExtensions() {

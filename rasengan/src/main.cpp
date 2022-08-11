@@ -44,7 +44,8 @@ private:
             throw std::runtime_error("failed to create vkInstance");
         }
         VulkanContext::SetInstance(m_VulkanContext);
-        VulkanContext::GetInstance().Init();
+        m_VulkanContext.Init();
+        m_VulkanContext.window=mVulkanWindows.window;
         mVulkanApp.CreateInstance();
 	}
 	void MainLoop()
