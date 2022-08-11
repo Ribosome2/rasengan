@@ -2,7 +2,8 @@
 #include <vector>
 #include <stdexcept>
 #include <iostream>
-
+#include "VulkanContext.h"
+#include "assert.h"
 bool VulkanDevice::isDeviceSuitable(VkPhysicalDevice device) {
     VkPhysicalDeviceProperties deviceProperties;
     vkGetPhysicalDeviceProperties(device, &deviceProperties);
@@ -54,13 +55,21 @@ QueueFamilyIndices VulkanDevice::findQueueFamilies(VkPhysicalDevice device) {
         if(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
         {
             indices.graphicsFamily = i;
+            VkBool32 presentSupport = false;
+            auto   vkContext = VulkanContext::GetInstance();
+//            assert(vkContext.SwapChain->surface!=VK_NULL_HANDLE); //need to make sure the surface is created first
+//            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, vkContext.SwapChain->surface, &presentSupport);
+            if(presentSupport)
+            {
+                indices.presentFamily = i;
+            }
         }
         i++;
     }
     return indices;
 }
 
-void VulkanDevice::CreateLogicDevice(VulkanValidation & vulkanValidation) {
+void VulkanDevice::CreateLogicDevice(VulkanValidation & vulkanValidation  ) {
     QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 
     VkDeviceQueueCreateInfo queueCreateInfo{};

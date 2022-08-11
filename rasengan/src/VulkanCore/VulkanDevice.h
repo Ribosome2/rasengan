@@ -6,9 +6,10 @@
 
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;
-
-    bool isComplete() {
-        return graphicsFamily.has_value();
+    std::optional<uint32_t> presentFamily;
+    bool isComplete() const {
+        //todo: check presentSupport
+        return graphicsFamily.has_value() ;
     }
 };
 
@@ -17,15 +18,18 @@ public:
     void PickPhysicalDevice(VkInstance instance);
 
     void CreateLogicDevice(VulkanValidation &vulkanValidation);
+
 public:
     VkDevice device = VK_NULL_HANDLE;
 
 private:
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+
     bool isDeviceSuitable(VkPhysicalDevice device);
 
 private:
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 
     VkQueue graphicsQueue = VK_NULL_HANDLE;
+    VkQueue presentQueue = VK_NULL_HANDLE;
 };
