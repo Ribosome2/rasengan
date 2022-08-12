@@ -9,8 +9,8 @@
 #include "VulkanCore/VulkanApp.h"
 #include "VulkanCore/VulkanContext.h"
 #include <cassert>
-// Use (void) to silence unused warnings.
-#define assertm(exp, msg) assert(((void)msg, exp))
+#include "VulkanCore/VulkanShader.h"
+
 
 VulkanContext* VulkanContext::mContextInstance;
 
@@ -47,6 +47,8 @@ private:
         m_VulkanContext.Init();
         m_VulkanContext.window=mVulkanWindows.window;
         mVulkanApp.CreateInstance();
+
+        VulkanShader testShader("shaders/simpleColor.vert","shaders/simpleColor.frag");
 	}
 	void MainLoop()
 	{

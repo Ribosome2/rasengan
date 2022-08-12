@@ -15,6 +15,8 @@ struct QueueFamilyIndices {
 
 class VulkanDevice {
 public:
+    virtual ~VulkanDevice();
+
     void PickPhysicalDevice(VkInstance instance);
 
     void CreateLogicDevice(VulkanValidation &vulkanValidation);

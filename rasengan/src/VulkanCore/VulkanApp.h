@@ -14,7 +14,6 @@ public:
 private:
     VulkanValidation mValidation;
     VulkanDevice mVulkanDevice;
-
     std::vector<const char*> getRequiredExtensions();
 
 };

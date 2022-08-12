@@ -2,10 +2,14 @@
 #include "memory"
 #include "VulkanSwapChain.h"
 #include "vulkan/vulkan.h"
+#include "VulkanDevice.h"
 class VulkanContext{
 private:
     static VulkanContext* mContextInstance;
 public:
+    //todo : switch to shared_ptr?
+    // "auto vkContext =VulkanContext::GetContext();" may cause problem
+    //  but  "auto & vkContext =VulkanContext::GetContext();" is ok
     static VulkanContext &  GetContext(){
         return *mContextInstance;
     }
@@ -27,6 +31,7 @@ public:
     }
 
     std::shared_ptr<VulkanSwapChain> SwapChain;
+    VulkanDevice* VulkanDevice;
     GLFWwindow* window;
 private:
     // Vulkan instance
