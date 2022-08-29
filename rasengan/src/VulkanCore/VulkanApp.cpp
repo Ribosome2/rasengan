@@ -46,13 +46,13 @@ void VulkanApp::CreateInstance() {
         throw std::runtime_error("failed to create vkInstance");
     }
 
-    auto & vkContext = VulkanContext::GetContext();
+    auto  vkContext = VulkanContext::Get();
     VulkanContext::SetVulkanInstance(instance);
-    vkContext.SwapChain->InitSurface(vkContext.window);
+    vkContext->SwapChain->InitSurface(vkContext->window);
 
     mValidation.setupDebugMessenger(instance);
 
-    vkContext.VulkanDevice = &mVulkanDevice;
+    vkContext->VulkanDevice = &mVulkanDevice;
     mVulkanDevice.PickPhysicalDevice(instance);
     mVulkanDevice.CreateLogicDevice(mValidation);
 }
@@ -60,7 +60,7 @@ void VulkanApp::CreateInstance() {
 void VulkanApp::Cleanup() {
     mValidation.Cleanup(instance);
 
-    vkDestroySurfaceKHR(instance, VulkanContext::GetContext().SwapChain->surface, nullptr);
+    vkDestroySurfaceKHR(instance, VulkanContext::Get()->SwapChain->surface, nullptr);
     vkDestroyDevice(mVulkanDevice.device, nullptr);
     vkDestroyInstance(instance, nullptr);
 }

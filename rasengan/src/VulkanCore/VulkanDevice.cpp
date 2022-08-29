@@ -56,9 +56,9 @@ QueueFamilyIndices VulkanDevice::findQueueFamilies(VkPhysicalDevice device) {
         {
             indices.graphicsFamily = i;
             VkBool32 presentSupport = false;
-            auto   vkContext = VulkanContext::GetContext();
-            assert(vkContext.SwapChain->surface!=VK_NULL_HANDLE); //need to make sure the surface is created first
-            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, vkContext.SwapChain->surface, &presentSupport);
+            auto   vkContext = VulkanContext::Get();
+            assert(vkContext->SwapChain->surface!=VK_NULL_HANDLE); //need to make sure the surface is created first
+            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, vkContext->SwapChain->surface, &presentSupport);
             if(presentSupport)
             {
                 indices.presentFamily = i;

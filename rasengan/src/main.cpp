@@ -12,7 +12,7 @@
 #include "VulkanCore/VulkanShader.h"
 
 
-VulkanContext* VulkanContext::mContextInstance;
+std::shared_ptr<VulkanContext> VulkanContext::mContextInstance;
 
 class RasenganApp
 {
@@ -30,7 +30,7 @@ private:
     const uint32_t HEIGHT = 600;
     VulkanApp mVulkanApp;
     VulkanWindow  mVulkanWindows;
-    VulkanContext m_VulkanContext;
+    std::shared_ptr<VulkanContext> m_VulkanContext;
 	void Init()
 	{
         glfwInit();
@@ -43,9 +43,10 @@ private:
             glfwTerminate();
             throw std::runtime_error("failed to create vkInstance");
         }
+        m_VulkanContext=std::make_shared<VulkanContext>();
         VulkanContext::SetInstance(m_VulkanContext);
-        m_VulkanContext.Init();
-        m_VulkanContext.window=mVulkanWindows.window;
+        m_VulkanContext->Init();
+        m_VulkanContext->window=mVulkanWindows.window;
         mVulkanApp.CreateInstance();
 
         VulkanShader testShader("shaders/simpleColor.vert","shaders/simpleColor.frag");

@@ -8,9 +8,9 @@ public:
     VulkanShader(std::string vertexPath,std::string fragPath);
 
     ~VulkanShader(){
-        auto & vkContext =VulkanContext::GetContext();
-        vkDestroyShaderModule(vkContext.VulkanDevice->device, fragShaderModule, nullptr);
-        vkDestroyShaderModule(vkContext.VulkanDevice->device, vertShaderModule, nullptr);
+        auto & vulkanDevice = VulkanContext::Get()->VulkanDevice;
+        vkDestroyShaderModule(vulkanDevice->device, fragShaderModule, nullptr);
+        vkDestroyShaderModule(vulkanDevice->device, vertShaderModule, nullptr);
     }
 private:
     VkShaderModule vertShaderModule;
