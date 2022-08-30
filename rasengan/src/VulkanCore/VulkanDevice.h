@@ -20,17 +20,16 @@ public:
     void PickPhysicalDevice(VkInstance instance);
 
     void CreateLogicDevice(VulkanValidation &vulkanValidation);
+    QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
 
 public:
     VkDevice device = VK_NULL_HANDLE;
+    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+
 
 private:
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
     bool isDeviceSuitable(VkPhysicalDevice device);
-
-private:
-    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 
     VkQueue graphicsQueue = VK_NULL_HANDLE;
     VkQueue presentQueue = VK_NULL_HANDLE;

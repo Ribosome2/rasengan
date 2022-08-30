@@ -50,11 +50,14 @@ void VulkanApp::CreateInstance() {
     VulkanContext::SetVulkanInstance(instance);
     vkContext->SwapChain->InitSurface(vkContext->window);
 
+
     mValidation.setupDebugMessenger(instance);
 
     vkContext->VulkanDevice = &mVulkanDevice;
     mVulkanDevice.PickPhysicalDevice(instance);
     mVulkanDevice.CreateLogicDevice(mValidation);
+    vkContext->SwapChain->CreateSwapchain();
+    vkContext->SwapChain->CreateImageViews();
 }
 
 void VulkanApp::Cleanup() {

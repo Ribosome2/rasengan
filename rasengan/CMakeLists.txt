@@ -13,7 +13,7 @@ ADD_EXECUTABLE(${PROJECT_NAME} "src/main.cpp"
         src/VulkanCore/VulkanWindow.h
         src/VulkanCore/VulkanContext.h
         src/VulkanCore/VulkanSwapChain.cpp
-        src/VulkanCore/VulkanSwapChain.h src/VulkanCore/VulkanShader.cpp src/VulkanCore/VulkanShader.h src/VulkanCore/ShaderUtil.h)
+        src/VulkanCore/VulkanSwapChain.h src/VulkanCore/VulkanShader.cpp src/VulkanCore/VulkanShader.h src/VulkanCore/ShaderUtil.h src/VulkanCore/VulkanPipeline.cpp src/VulkanCore/VulkanPipeline.h)
 
 FIND_PACKAGE(Vulkan REQUIRED)
 

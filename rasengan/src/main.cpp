@@ -10,6 +10,7 @@
 #include "VulkanCore/VulkanContext.h"
 #include <cassert>
 #include "VulkanCore/VulkanShader.h"
+#include "VulkanCore/VulkanPipeline.h"
 
 
 std::shared_ptr<VulkanContext> VulkanContext::mContextInstance;
@@ -50,6 +51,7 @@ private:
         mVulkanApp.CreateInstance();
 
         VulkanShader testShader("shaders/simpleColor.vert","shaders/simpleColor.frag");
+        VulkanPipeline pipeline(testShader);
 	}
 	void MainLoop()
 	{

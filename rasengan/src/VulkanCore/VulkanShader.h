@@ -12,7 +12,6 @@ public:
         vkDestroyShaderModule(vulkanDevice->device, fragShaderModule, nullptr);
         vkDestroyShaderModule(vulkanDevice->device, vertShaderModule, nullptr);
     }
-private:
     VkShaderModule vertShaderModule;
     VkShaderModule fragShaderModule;
     VkPipelineShaderStageCreateInfo vertShaderStageInfo;
