@@ -98,8 +98,8 @@ VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
         std::cout << "created vulkan pipeline layout " << std::endl;
     }
 
-
-    VkPipelineShaderStageCreateInfo shaderStages[] = {shader.fragShaderStageInfo, shader.fragShaderStageInfo};
+    createRenderPass();
+    VkPipelineShaderStageCreateInfo shaderStages[] = {shader.vertShaderStageInfo, shader.fragShaderStageInfo};
     VkGraphicsPipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pipelineInfo.stageCount = 2;
