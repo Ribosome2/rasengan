@@ -62,8 +62,7 @@ void VulkanApp::CreateInstance() {
 
 void VulkanApp::Cleanup() {
     mValidation.Cleanup(instance);
-
-    vkDestroySurfaceKHR(instance, VulkanContext::Get()->SwapChain->surface, nullptr);
+	VulkanContext::Get()->SwapChain.reset() ;
     vkDestroyDevice(mVulkanDevice.device, nullptr);
     vkDestroyInstance(instance, nullptr);
 }

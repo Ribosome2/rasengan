@@ -169,3 +169,13 @@ VkSurfaceFormatKHR VulkanSwapChain::chooseSwapSurfaceFormat(const std::vector<Vk
     }
     return availableFormats[0];
 }
+
+VulkanSwapChain::~VulkanSwapChain() {
+	auto & device = VulkanContext::Get()->VulkanDevice->device;
+
+	for (auto &  imageView : swapChainImageViews) {
+		vkDestroyImageView(device,imageView, nullptr);
+	}
+	vkDestroySwapchainKHR(VulkanContext::Get()->VulkanDevice->device,swapChain, nullptr);
+	vkDestroySurfaceKHR(VulkanContext::Get()->GetVulkanInstance(),surface, nullptr);
+}

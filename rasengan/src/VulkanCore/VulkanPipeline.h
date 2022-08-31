@@ -5,6 +5,9 @@
 class VulkanPipeline {
 public:
     VulkanPipeline(VulkanShader & shader);
+
+	~VulkanPipeline();
+
 private:
 public:
     VkPipelineLayout pipelineLayout;

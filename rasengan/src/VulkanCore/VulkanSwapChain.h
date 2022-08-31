@@ -12,7 +12,9 @@ struct SwapChainSupportDetails
 
 class VulkanSwapChain {
 public:
-    void InitSurface(GLFWwindow* windowHandle);
+	virtual ~VulkanSwapChain();
+
+	void InitSurface(GLFWwindow* windowHandle);
     void CreateSwapchain();
     void CreateImageViews();
     VkSurfaceKHR surface;
