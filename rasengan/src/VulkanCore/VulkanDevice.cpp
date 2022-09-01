@@ -108,8 +108,15 @@ void VulkanDevice::CreateLogicDevice(VulkanValidation & vulkanValidation  ) {
     }
 
     vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
+    vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
+
+
 }
 
 VulkanDevice::~VulkanDevice() {
     std::cout<<"Vulkan Device dispose "<<std::endl;
+}
+
+
+void VulkanDevice::Dispose() {
 }

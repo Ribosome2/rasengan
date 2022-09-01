@@ -4,6 +4,7 @@
 #include "VulkanSwapChain.h"
 #include "vulkan/vulkan.h"
 #include "VulkanDevice.h"
+#include "VulkanCommandBuffer.h"
 
 class VulkanContext {
 private:
@@ -30,9 +31,11 @@ public:
     }
 
     std::shared_ptr<VulkanSwapChain> SwapChain;
+    VulkanCommandBuffer CommandBuffer;
     VkRenderPass renderPass;
     VulkanDevice *VulkanDevice;
     GLFWwindow *window;
+
 private:
     // Vulkan instance
     inline static VkInstance s_VulkanInstance;

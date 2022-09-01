@@ -16,7 +16,7 @@ struct QueueFamilyIndices {
 class VulkanDevice {
 public:
     virtual ~VulkanDevice();
-
+    void Dispose();
     void PickPhysicalDevice(VkInstance instance);
 
     void CreateLogicDevice(VulkanValidation &vulkanValidation);
@@ -36,4 +36,5 @@ private:
     const std::vector<const char*> deviceExtensions = {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
     };
+
 };

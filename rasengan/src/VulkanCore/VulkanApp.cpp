@@ -57,11 +57,15 @@ void VulkanApp::CreateInstance() {
     mVulkanDevice.PickPhysicalDevice(instance);
     mVulkanDevice.CreateLogicDevice(mValidation);
     vkContext->SwapChain->CreateSwapchain();
+    vkContext->CommandBuffer.Init();
+
 }
 
 void VulkanApp::Cleanup() {
     mValidation.Cleanup(instance);
 	VulkanContext::Get()->SwapChain.reset() ;
+	VulkanContext::Get()->CommandBuffer.Dispose() ;
+    mVulkanDevice.Dispose();
     vkDestroyDevice(mVulkanDevice.device, nullptr);
     vkDestroyInstance(instance, nullptr);
 }
