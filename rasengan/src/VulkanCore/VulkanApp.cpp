@@ -57,7 +57,6 @@ void VulkanApp::CreateInstance() {
     mVulkanDevice.PickPhysicalDevice(instance);
     mVulkanDevice.CreateLogicDevice(mValidation);
     vkContext->SwapChain->CreateSwapchain();
-    vkContext->SwapChain->CreateImageViews();
 }
 
 void VulkanApp::Cleanup() {

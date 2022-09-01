@@ -30,6 +30,7 @@ public:
     }
 
     std::shared_ptr<VulkanSwapChain> SwapChain;
+    VkRenderPass renderPass;
     VulkanDevice *VulkanDevice;
     GLFWwindow *window;
 private:

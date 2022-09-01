@@ -12,7 +12,5 @@ private:
 public:
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
-    VkRenderPass renderPass;
 private:
-    void createRenderPass();
 };

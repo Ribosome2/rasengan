@@ -98,7 +98,6 @@ VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
 		std::cout << "created vulkan pipeline layout " << std::endl;
 	}
 
-	createRenderPass();
 	VkPipelineShaderStageCreateInfo shaderStages[] = {shader.vertShaderStageInfo, shader.fragShaderStageInfo};
 	VkGraphicsPipelineCreateInfo pipelineInfo{};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -113,7 +112,7 @@ VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
 	pipelineInfo.pColorBlendState = &colorBlending;
 	pipelineInfo.pDynamicState = nullptr;//optional
 	pipelineInfo.layout = pipelineLayout;
-	pipelineInfo.renderPass = renderPass;
+	pipelineInfo.renderPass = vkContext->renderPass;
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 	pipelineInfo.basePipelineIndex = -1;//optional
@@ -128,42 +127,9 @@ VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
 
 }
 
-void VulkanPipeline::createRenderPass() {
-	auto vkContext = VulkanContext::Get();
-	VkAttachmentDescription colorAttachment{};
-	colorAttachment.format = vkContext->SwapChain->swapChainImageFormat;
-	colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-	colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-	colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-	VkAttachmentReference colorAttachmentRef{};
-	colorAttachmentRef.attachment = 0;
-	colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-	VkSubpassDescription subpass{};
-	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-	subpass.colorAttachmentCount = 1;
-	subpass.pColorAttachments = &colorAttachmentRef;
-
-	VkRenderPassCreateInfo renderPassInfo{};
-	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	renderPassInfo.attachmentCount = 1;
-	renderPassInfo.pAttachments = &colorAttachment;
-	renderPassInfo.subpassCount = 1;
-	renderPassInfo.pSubpasses = &subpass;
-
-	if (vkCreateRenderPass(vkContext->VulkanDevice->device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
-		throw std::runtime_error("failed to create render pass!");
-	}
-}
-
 VulkanPipeline::~VulkanPipeline() {
 	auto &device = VulkanContext::Get()->VulkanDevice->device;
 	vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
 	vkDestroyPipeline(device, graphicsPipeline, nullptr);
-	vkDestroyRenderPass(device,renderPass, nullptr);
+	vkDestroyRenderPass(device,VulkanContext::Get()->renderPass, nullptr);
 }
