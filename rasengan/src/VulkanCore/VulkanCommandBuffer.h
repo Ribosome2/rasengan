@@ -7,7 +7,8 @@ class VulkanCommandBuffer {
 public:
     void Dispose();
     void Init();
-    virtual ~VulkanCommandBuffer();
+     ~VulkanCommandBuffer();
+
 
 private:
     void createCommandPool();
