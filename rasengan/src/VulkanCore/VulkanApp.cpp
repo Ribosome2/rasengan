@@ -80,4 +80,8 @@ std::vector<const char *> VulkanApp::getRequiredExtensions() {
     return extensions;
 }
 
+void VulkanApp::DrawFrame() {
+
+}
+
 

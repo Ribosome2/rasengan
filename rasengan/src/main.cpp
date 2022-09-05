@@ -50,14 +50,19 @@ private:
         m_VulkanContext->window=mVulkanWindows.window;
         mVulkanApp.CreateInstance();
 
-        VulkanShader testShader("shaders/simpleColor.vert","shaders/simpleColor.frag");
-        VulkanPipeline pipeline(testShader);
+
 	}
 	void MainLoop()
 	{
+        VulkanRenderer vulkanRenderer;
+        VulkanShader testShader("shaders/simpleColor.vert","shaders/simpleColor.frag");
+        VulkanPipeline pipeline(testShader);
         while (!glfwWindowShouldClose(mVulkanWindows.window)) {
-            glfwSwapBuffers(mVulkanWindows.window);
             glfwPollEvents();
+            vulkanRenderer.BeginRenderPass();
+            vulkanRenderer.DrawFrame();
+            vulkanRenderer.EndRenderPass();
+            glfwSwapBuffers(mVulkanWindows.window);
         }
 	}
 	void Cleanup()

@@ -8,7 +8,7 @@ public:
     void Dispose();
     void Init();
      ~VulkanCommandBuffer();
-
+    VkCommandBuffer & GetCurCommandBuffer(){ return commandBuffer;};
 
 private:
     void createCommandPool();

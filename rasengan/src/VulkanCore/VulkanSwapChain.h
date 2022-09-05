@@ -17,6 +17,8 @@ public:
 	void InitSurface(GLFWwindow* windowHandle);
     void CreateSwapchain();
     void CreateImageViews();
+    uint32_t GetCurrentBufferIndex(){ return currentBufferIndex;};
+    VkFramebuffer GetCurrentFrameBuffer(){ return swapChainFramebuffers[currentBufferIndex];};
 private:
     void createFramebuffers();
     void createRenderPass();
@@ -29,6 +31,7 @@ public:
     std::vector<VkImageView> swapChainImageViews;
     std::vector<VkImage> swapChainImages;
     std::vector<VkFramebuffer> swapChainFramebuffers;
+    uint32_t currentBufferIndex=0;
 private:
     SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
     VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
