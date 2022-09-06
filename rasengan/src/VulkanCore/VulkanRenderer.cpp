@@ -3,7 +3,9 @@
 #include <stdexcept>
 #include "VulkanRenderer.h"
 #include "VulkanContext.h"
-void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer & commandBuffer, uint32_t imageIndex) {
+#include "VulkanDebugUtil.h"
+
+void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_t imageIndex) {
 
     auto vkContext = VulkanContext::Get();
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *vkContext->graphicsPipeline);
@@ -12,13 +14,13 @@ void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer & commandBuffer, uint32
 }
 
 void VulkanRenderer::BeginRenderPass() {
-    auto vkContext= VulkanContext::Get();
+    auto vkContext = VulkanContext::Get();
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = 0; // Optional
     beginInfo.pInheritanceInfo = nullptr; // Optional
-    auto & commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
-    vkResetCommandBuffer(commandBuffer, 0);
+    auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
+
 
     if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
         throw std::runtime_error("failed to begin recording command buffer!");
@@ -26,7 +28,7 @@ void VulkanRenderer::BeginRenderPass() {
 
 
     VkRenderPassBeginInfo renderPassInfo{};
-    auto swapchain= vkContext->SwapChain;
+    auto swapchain = vkContext->SwapChain;
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassInfo.renderPass = vkContext->renderPass;
     renderPassInfo.framebuffer = swapchain->GetCurrentFrameBuffer();
@@ -38,11 +40,10 @@ void VulkanRenderer::BeginRenderPass() {
     renderPassInfo.pClearValues = &clearColor;
 
 
-
     vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 
-    auto & swapChainExtent= vkContext->SwapChain->swapChainExtent;
+    auto &swapChainExtent = vkContext->SwapChain->swapChainExtent;
     VkViewport viewport{};
     viewport.x = 0.0f;
     viewport.y = 0.0f;
@@ -67,11 +68,12 @@ Submit the recorded command buffer
 Present the swap chain image
  */
 void VulkanRenderer::DrawFrame() {
-    auto vkContext= VulkanContext::Get();
-    auto & device = vkContext->VulkanDevice->device;
-    auto & inFlightFence = vkContext->SwapChain->inFlightFence;
-    auto & swapChain = vkContext->SwapChain->swapChain;
-    auto & imageAvailableSemaphore = vkContext->SwapChain->imageAvailableSemaphore;
+    auto vkContext = VulkanContext::Get();
+    auto &device = vkContext->VulkanDevice->device;
+    auto &inFlightFence = vkContext->SwapChain->inFlightFence;
+    auto &swapChain = vkContext->SwapChain->swapChain;
+    auto &imageAvailableSemaphore = vkContext->SwapChain->imageAvailableSemaphore;
+    auto &renderFinishSemaphore = vkContext->SwapChain->renderFinishedSemaphore;
 
     //wait
     vkWaitForFences(device, 1, &inFlightFence, VK_TRUE, UINT64_MAX);
@@ -81,10 +83,11 @@ void VulkanRenderer::DrawFrame() {
     uint32_t imageIndex;
     vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
 
-    auto & commandBuffer=vkContext->CommandBuffer.GetCurCommandBuffer();
-
+    auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
+    vkResetCommandBuffer(commandBuffer, 0);
+    BeginRenderPass();
     //record
-    RecordCommandBuffer(commandBuffer,imageIndex);
+    RecordCommandBuffer(commandBuffer, imageIndex);
 
     EndRenderPass();
 
@@ -101,14 +104,13 @@ void VulkanRenderer::DrawFrame() {
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer;
 
-    VkSemaphore signalSemaphores[] = {vkContext->SwapChain->renderFinishedSemaphore};
+    VkSemaphore signalSemaphores[] = {renderFinishSemaphore};
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
-    auto & graphicsQueue = vkContext->VulkanDevice->graphicsQueue;
-    if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFence) != VK_SUCCESS) {
-        throw std::runtime_error("failed to submit draw command buffer!");
-    }
+    auto &graphicsQueue = vkContext->VulkanDevice->graphicsQueue;
+    VK_CHECK_RESULT(vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFence));
+
 
     //present
 
@@ -123,13 +125,13 @@ void VulkanRenderer::DrawFrame() {
     presentInfo.pSwapchains = swapChains;
     presentInfo.pImageIndices = &imageIndex;
     presentInfo.pResults = nullptr; // Optional
-    auto & presentQueue = vkContext->VulkanDevice->presentQueue;
-    vkQueuePresentKHR(presentQueue, &presentInfo);
+    auto &presentQueue = vkContext->VulkanDevice->presentQueue;
+//    VK_CHECK_RESULT(vkQueuePresentKHR(presentQueue, &presentInfo));
 }
 
 void VulkanRenderer::EndRenderPass() {
-    auto vkContext= VulkanContext::Get();
-    auto & commandBuffer= vkContext->CommandBuffer.GetCurCommandBuffer();
+    auto vkContext = VulkanContext::Get();
+    auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
     vkCmdEndRenderPass(commandBuffer);
     if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
         throw std::runtime_error("failed to record command buffer!");

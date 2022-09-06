@@ -60,7 +60,6 @@ private:
         m_VulkanContext->graphicsPipeline=&pipeline.graphicsPipeline;
         while (!glfwWindowShouldClose(mVulkanWindows.window)) {
             glfwPollEvents();
-            vulkanRenderer.BeginRenderPass();
             vulkanRenderer.DrawFrame();
             glfwSwapBuffers(mVulkanWindows.window);
         }

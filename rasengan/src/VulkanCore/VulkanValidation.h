@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <stdexcept>
 #include "iostream"
+#define STOP_ON_VALIDATION_ERROR 1
 
 class VulkanValidation {
 public:
@@ -106,11 +107,18 @@ private:
                                                         const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
                                                         void *pUserData) {
         if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
+        {
             std::cerr << "validation layer error: " << pCallbackData->pMessage << std::endl;
+# ifdef STOP_ON_VALIDATION_ERROR
+            printf("exiting on first validation error:  in %s:%d\n",  __FILE__, __LINE__);
+            exit(1);
+#endif
+        }
 
         if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+        {
             std::cout << "validation layer warning : " << pCallbackData->pMessage << std::endl;
-
+        }
         return VK_FALSE;
     }
 
