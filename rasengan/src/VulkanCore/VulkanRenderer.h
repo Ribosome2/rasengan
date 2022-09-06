@@ -8,6 +8,6 @@ public:
     void BeginRenderPass();
     void EndRenderPass();
     void DrawFrame();
-    void RecordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
-
+    void RecordCommandBuffer(VkCommandBuffer &  commandBuffer, uint32_t imageIndex);
+private:
 };

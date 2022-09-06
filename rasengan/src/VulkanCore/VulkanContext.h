@@ -5,6 +5,7 @@
 #include "vulkan/vulkan.h"
 #include "VulkanDevice.h"
 #include "VulkanCommandBuffer.h"
+//#include "VulkanPipeline.h"
 
 class VulkanContext {
 private:
@@ -35,7 +36,7 @@ public:
     VkRenderPass renderPass;
     VulkanDevice *VulkanDevice;
     GLFWwindow *window;
-
+    VkPipeline *graphicsPipeline;
 private:
     // Vulkan instance
     inline static VkInstance s_VulkanInstance;

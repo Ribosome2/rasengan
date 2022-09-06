@@ -105,6 +105,7 @@ void VulkanSwapChain::CreateSwapchain() {
     CreateImageViews();
     createRenderPass();
     createFramebuffers();
+    createSyncObjects();
 
 }
 
@@ -187,6 +188,10 @@ VulkanSwapChain::~VulkanSwapChain() {
     }
 	vkDestroySwapchainKHR(VulkanContext::Get()->VulkanDevice->device,swapChain, nullptr);
 	vkDestroySurfaceKHR(VulkanContext::Get()->GetVulkanInstance(),surface, nullptr);
+
+    vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
+    vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
+    vkDestroyFence(device, inFlightFence, nullptr);
 }
 
 void VulkanSwapChain::createFramebuffers() {
@@ -239,7 +244,34 @@ void VulkanSwapChain::createRenderPass() {
     renderPassInfo.subpassCount = 1;
     renderPassInfo.pSubpasses = &subpass;
 
+    VkSubpassDependency dependency{};
+    dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+    dependency.dstSubpass = 0;
+    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.srcAccessMask = 0;
+    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    renderPassInfo.dependencyCount = 1;
+    renderPassInfo.pDependencies = &dependency;
+
+
     if (vkCreateRenderPass(vkContext->VulkanDevice->device, &renderPassInfo, nullptr, &VulkanContext::Get()->renderPass) != VK_SUCCESS) {
         throw std::runtime_error("failed to create render pass!");
+    }
+}
+
+void VulkanSwapChain::createSyncObjects() {
+    VkSemaphoreCreateInfo semaphoreInfo{};
+    semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+    VkFenceCreateInfo fenceInfo{};
+    fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT; //for first time
+    auto vkContext = VulkanContext::Get();
+    auto & device = vkContext->VulkanDevice->device;
+    if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS ||
+        vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS ||
+        vkCreateFence(device, &fenceInfo, nullptr, &inFlightFence) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create semaphores!");
     }
 }

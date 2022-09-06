@@ -18,10 +18,11 @@ public:
     void CreateSwapchain();
     void CreateImageViews();
     uint32_t GetCurrentBufferIndex(){ return currentBufferIndex;};
-    VkFramebuffer GetCurrentFrameBuffer(){ return swapChainFramebuffers[currentBufferIndex];};
+    VkFramebuffer &  GetCurrentFrameBuffer(){ return swapChainFramebuffers[currentBufferIndex];};
 private:
     void createFramebuffers();
     void createRenderPass();
+    void createSyncObjects();
 public:
 
     VkSurfaceKHR surface;
@@ -32,6 +33,9 @@ public:
     std::vector<VkImage> swapChainImages;
     std::vector<VkFramebuffer> swapChainFramebuffers;
     uint32_t currentBufferIndex=0;
+    VkSemaphore imageAvailableSemaphore;
+    VkSemaphore renderFinishedSemaphore;
+    VkFence inFlightFence;
 private:
     SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
     VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);

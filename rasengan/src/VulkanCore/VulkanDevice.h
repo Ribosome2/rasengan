@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <optional>
 #include "VulkanValidation.h"
+#include "VulkanRenderer.h"
 
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;
@@ -36,5 +37,5 @@ private:
     const std::vector<const char*> deviceExtensions = {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
     };
-
+    friend VulkanRenderer;
 };

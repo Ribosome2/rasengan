@@ -57,11 +57,11 @@ private:
         VulkanRenderer vulkanRenderer;
         VulkanShader testShader("shaders/simpleColor.vert","shaders/simpleColor.frag");
         VulkanPipeline pipeline(testShader);
+        m_VulkanContext->graphicsPipeline=&pipeline.graphicsPipeline;
         while (!glfwWindowShouldClose(mVulkanWindows.window)) {
             glfwPollEvents();
             vulkanRenderer.BeginRenderPass();
             vulkanRenderer.DrawFrame();
-            vulkanRenderer.EndRenderPass();
             glfwSwapBuffers(mVulkanWindows.window);
         }
 	}
