@@ -41,3 +41,4 @@ rasengan/Rasengan.vcxproj.filters
 build/.cmake/
 build/
 .vscode
+rasengan/spv_files/*.spv
