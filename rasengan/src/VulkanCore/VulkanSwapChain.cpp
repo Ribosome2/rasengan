@@ -35,6 +35,8 @@ void VulkanSwapChain::CreateImageViews() {
         if(vkCreateImageView(VulkanContext::Get()->VulkanDevice->device,&createInfo,nullptr,&swapChainImageViews[i])!=VK_SUCCESS)
         {
             throw std::runtime_error("failed to create image views");
+        }else{
+            std::cout<<"Swapchain ImageView Create"<<std::endl;
         }
     }
 }

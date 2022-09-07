@@ -5,7 +5,7 @@
 
 class VulkanRenderer {
 public:
-    void BeginRenderPass();
+    void BeginRenderPass(uint32_t imageIndex);
     void EndRenderPass();
     void DrawFrame();
     void RecordCommandBuffer(VkCommandBuffer &  commandBuffer, uint32_t imageIndex);

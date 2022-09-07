@@ -17,8 +17,7 @@ public:
 	void InitSurface(GLFWwindow* windowHandle);
     void CreateSwapchain();
     void CreateImageViews();
-    uint32_t GetCurrentBufferIndex(){ return currentBufferIndex;};
-    VkFramebuffer &  GetCurrentFrameBuffer(){ return swapChainFramebuffers[currentBufferIndex];};
+    VkFramebuffer &  GetCurrentFrameBuffer(uint32_t imageIndex ){ return swapChainFramebuffers[imageIndex];};
 private:
     void createFramebuffers();
     void createRenderPass();
@@ -32,7 +31,6 @@ public:
     std::vector<VkImageView> swapChainImageViews;
     std::vector<VkImage> swapChainImages;
     std::vector<VkFramebuffer> swapChainFramebuffers;
-    uint32_t currentBufferIndex=0;
     VkSemaphore imageAvailableSemaphore;
     VkSemaphore renderFinishedSemaphore;
     VkFence inFlightFence;

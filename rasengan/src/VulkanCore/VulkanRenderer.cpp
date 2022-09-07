@@ -13,7 +13,7 @@ void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_
 
 }
 
-void VulkanRenderer::BeginRenderPass() {
+void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
     auto vkContext = VulkanContext::Get();
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -31,7 +31,7 @@ void VulkanRenderer::BeginRenderPass() {
     auto swapchain = vkContext->SwapChain;
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassInfo.renderPass = vkContext->renderPass;
-    renderPassInfo.framebuffer = swapchain->GetCurrentFrameBuffer();
+    renderPassInfo.framebuffer = swapchain->GetCurrentFrameBuffer(imageIndex);
     renderPassInfo.renderArea.offset = {0, 0};
     renderPassInfo.renderArea.extent = swapchain->swapChainExtent;
 
@@ -82,10 +82,9 @@ void VulkanRenderer::DrawFrame() {
     //acquireImage
     uint32_t imageIndex;
     vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
-
     auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
     vkResetCommandBuffer(commandBuffer, 0);
-    BeginRenderPass();
+    BeginRenderPass(imageIndex);
     //record
     RecordCommandBuffer(commandBuffer, imageIndex);
 
@@ -126,16 +125,14 @@ void VulkanRenderer::DrawFrame() {
     presentInfo.pImageIndices = &imageIndex;
     presentInfo.pResults = nullptr; // Optional
     auto &presentQueue = vkContext->VulkanDevice->presentQueue;
-//    VK_CHECK_RESULT(vkQueuePresentKHR(presentQueue, &presentInfo));
+    VK_CHECK_RESULT(vkQueuePresentKHR(presentQueue, &presentInfo));
 }
 
 void VulkanRenderer::EndRenderPass() {
     auto vkContext = VulkanContext::Get();
     auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
     vkCmdEndRenderPass(commandBuffer);
-    if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-        throw std::runtime_error("failed to record command buffer!");
-    }
+    VK_CHECK_RESULT(vkEndCommandBuffer(commandBuffer));
 }
 
 
