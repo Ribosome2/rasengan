@@ -63,6 +63,7 @@ private:
             vulkanRenderer.DrawFrame();
             glfwSwapBuffers(mVulkanWindows.window);
         }
+        vkDeviceWaitIdle(m_VulkanContext->VulkanDevice->device);
 	}
 	void Cleanup()
 	{
