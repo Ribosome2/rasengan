@@ -69,6 +69,19 @@ Present the swap chain image
  */
 void VulkanRenderer::DrawFrame() {
     auto vkContext = VulkanContext::Get();
+    auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
+    RecordCommandBuffer(commandBuffer,imageIndex);
+}
+
+void VulkanRenderer::EndRenderPass() {
+    auto vkContext = VulkanContext::Get();
+    auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
+    vkCmdEndRenderPass(commandBuffer);
+    VK_CHECK_RESULT(vkEndCommandBuffer(commandBuffer));
+}
+
+void VulkanRenderer::BeginFrame() {
+    auto vkContext = VulkanContext::Get();
     auto &device = vkContext->VulkanDevice->device;
     auto &inFlightFence = vkContext->SwapChain->inFlightFence;
     auto &swapChain = vkContext->SwapChain->swapChain;
@@ -80,16 +93,21 @@ void VulkanRenderer::DrawFrame() {
     vkResetFences(device, 1, &inFlightFence);
 
     //acquireImage
-    uint32_t imageIndex;
     vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
     auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
     vkResetCommandBuffer(commandBuffer, 0);
     BeginRenderPass(imageIndex);
-    //record
-    RecordCommandBuffer(commandBuffer, imageIndex);
+}
 
+void VulkanRenderer::EndFrame() {
     EndRenderPass();
-
+    auto vkContext = VulkanContext::Get();
+    auto &device = vkContext->VulkanDevice->device;
+    auto &inFlightFence = vkContext->SwapChain->inFlightFence;
+    auto &swapChain = vkContext->SwapChain->swapChain;
+    auto &imageAvailableSemaphore = vkContext->SwapChain->imageAvailableSemaphore;
+    auto &renderFinishSemaphore = vkContext->SwapChain->renderFinishedSemaphore;
+    auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
     //submit
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -126,13 +144,6 @@ void VulkanRenderer::DrawFrame() {
     presentInfo.pResults = nullptr; // Optional
     auto &presentQueue = vkContext->VulkanDevice->presentQueue;
     VK_CHECK_RESULT(vkQueuePresentKHR(presentQueue, &presentInfo));
-}
-
-void VulkanRenderer::EndRenderPass() {
-    auto vkContext = VulkanContext::Get();
-    auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
-    vkCmdEndRenderPass(commandBuffer);
-    VK_CHECK_RESULT(vkEndCommandBuffer(commandBuffer));
 }
 
 

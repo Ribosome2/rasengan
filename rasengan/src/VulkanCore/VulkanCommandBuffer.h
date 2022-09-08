@@ -5,6 +5,8 @@
 
 class VulkanCommandBuffer {
 public:
+    static VkCommandBuffer BeginSingleTimeCommands() ;
+    static void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
     void Dispose();
     void Init();
      ~VulkanCommandBuffer();

@@ -42,3 +42,4 @@ build/.cmake/
 build/
 .vscode
 rasengan/spv_files/*.spv
+*/imgui.ini

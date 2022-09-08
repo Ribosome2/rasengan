@@ -11,7 +11,7 @@
 #include <cassert>
 #include "VulkanCore/VulkanShader.h"
 #include "VulkanCore/VulkanPipeline.h"
-
+#include "VulkanImguiLayer.hpp"
 
 std::shared_ptr<VulkanContext> VulkanContext::mContextInstance;
 
@@ -54,13 +54,24 @@ private:
 	}
 	void MainLoop()
 	{
+        auto vkContext = VulkanContext::Get();
+        VkSampleCountFlagBits           MSAASamples =VK_SAMPLE_COUNT_1_BIT;//todo: use value match our rendering
+        uint32_t  imageCount = 2;
+        VulkanImguiLayer imguiLayer{vkContext->window, vkContext->renderPass,imageCount,MSAASamples};
         VulkanRenderer vulkanRenderer;
         VulkanShader testShader("shaders/simpleColor.vert","shaders/simpleColor.frag");
         VulkanPipeline pipeline(testShader);
         m_VulkanContext->graphicsPipeline=&pipeline.graphicsPipeline;
         while (!glfwWindowShouldClose(mVulkanWindows.window)) {
             glfwPollEvents();
-            vulkanRenderer.DrawFrame();
+            imguiLayer.NewFrame();
+            vulkanRenderer.BeginFrame();
+            {
+                vulkanRenderer.DrawFrame();
+                imguiLayer.OnGui();
+                imguiLayer.Render(vkContext->CommandBuffer.GetCurCommandBuffer());
+            }
+            vulkanRenderer.EndFrame();
             glfwSwapBuffers(mVulkanWindows.window);
         }
         vkDeviceWaitIdle(m_VulkanContext->VulkanDevice->device);

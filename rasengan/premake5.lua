@@ -13,6 +13,11 @@ project "Rasengan"
 	"src/**.h", 
 	"src/**.cpp", 
 	"src/**.hpp" ,
+	"src/IMGUI/**.hpp" ,
+	"src/IMGUI/**.h" ,
+	"src/IMGUI/**.cpp" ,
+   "ThirdParty/imgui/*.h",
+   "ThirdParty/imgui/*.cpp",
    "ThirdParty/glfw/*.h"
 	}
 
@@ -20,6 +25,9 @@ project "Rasengan"
    includedirs{
       "ThirdParty/glfw/include",
       "ThirdParty/include",
+      "src",
+      "src/IMGUI",
+      "ThirdParty/imgui",
       os.getenv("VK_SDK_PATH").."/include",--get environment variable in LUA
    }
    libdirs{
