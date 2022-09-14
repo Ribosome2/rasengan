@@ -4,6 +4,7 @@
 #include "VulkanRenderer.h"
 #include "VulkanContext.h"
 #include "VulkanDebugUtil.h"
+#include "imgui.h"
 
 void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_t imageIndex) {
 
@@ -47,7 +48,11 @@ void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
     VkViewport viewport{};
     viewport.x = 0.0f;
     viewport.y = 0.0f;
-    viewport.width = static_cast<float>(swapChainExtent.width);
+    static float testWidth = 555;
+    ImGui::SliderFloat("--testViewPortWidth ", &testWidth,10,700);
+    std::cout << "viewPortWith " << testWidth << std::endl;
+    viewport.width = testWidth;
+
     viewport.height = static_cast<float>(swapChainExtent.height);
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
@@ -70,7 +75,7 @@ Present the swap chain image
 void VulkanRenderer::DrawFrame() {
     auto vkContext = VulkanContext::Get();
     auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
-    RecordCommandBuffer(commandBuffer,imageIndex);
+    RecordCommandBuffer(commandBuffer, imageIndex);
 }
 
 void VulkanRenderer::EndRenderPass() {
