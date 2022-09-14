@@ -46,7 +46,8 @@ VulkanImguiLayer::VulkanImguiLayer(
   (void)io;
   // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
   // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
+ io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+ io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
   // Setup Dear ImGui style
   	ImGui::StyleColorsDark();
   // ImGui::StyleColorsClassic();
@@ -105,6 +106,12 @@ void VulkanImguiLayer::Render(VkCommandBuffer commandBuffer) {
   ImGui::Render();
   ImDrawData *drawdata = ImGui::GetDrawData();
   ImGui_ImplVulkan_RenderDrawData(drawdata, commandBuffer);
+	// Update and Render additional Platform Windows
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+	}
 }
 
 void VulkanImguiLayer::OnGui() {
