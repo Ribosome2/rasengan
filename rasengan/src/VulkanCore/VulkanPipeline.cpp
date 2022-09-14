@@ -19,7 +19,7 @@ VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
 	VkViewport viewport{};
 	viewport.x = 0.0f;
 	viewport.y = 0.0f;
-	viewport.width = (float) swapChainExtent.width;
+	viewport.width = (float) 400;
 	viewport.height = (float) swapChainExtent.height;
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
