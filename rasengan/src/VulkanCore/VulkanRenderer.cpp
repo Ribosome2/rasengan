@@ -4,6 +4,7 @@
 #include "VulkanRenderer.h"
 #include "VulkanContext.h"
 #include "VulkanDebugUtil.h"
+#include "imgui.h"
 
 void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_t imageIndex) {
 
@@ -47,17 +48,26 @@ void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
     VkViewport viewport{};
     viewport.x = 0.0f;
     viewport.y = 0.0f;
-    viewport.width = static_cast<float>(swapChainExtent.width);
-    viewport.height = static_cast<float>(swapChainExtent.height);
+	static VkExtent2D  viewPortExtent { 800,600};
+	ImGui::SliderInt("viewPortExtentWidth ", (int*)&viewPortExtent.width,1,800);
+	ImGui::SliderInt("viewPortExtentHeight ", (int*)&viewPortExtent.height,1,600);
+    viewport.width = (float)viewPortExtent.width;
+
+    viewport.height = (float)viewPortExtent.height;
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
 
+
     vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
+	static VkExtent2D  scissorExtent { 800,600};
+	ImGui::SliderInt("scissorExtentWidth ", (int*)&scissorExtent.width,1,800);
+	ImGui::SliderInt("scissorExtentHeight ", (int*)&scissorExtent.height,1,600);
     VkRect2D scissor{};
     scissor.offset = {0, 0};
-    scissor.extent = swapChainExtent;
+    scissor.extent = scissorExtent;
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+	static  float lineWidth = 1.0;
 }
 
 /*
@@ -70,7 +80,7 @@ Present the swap chain image
 void VulkanRenderer::DrawFrame() {
     auto vkContext = VulkanContext::Get();
     auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
-    RecordCommandBuffer(commandBuffer,imageIndex);
+    RecordCommandBuffer(commandBuffer, imageIndex);
 }
 
 void VulkanRenderer::EndRenderPass() {

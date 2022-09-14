@@ -98,6 +98,18 @@ VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
 		std::cout << "created vulkan pipeline layout " << std::endl;
 	}
 
+    //Vulkan need to know what with change dynamically when creating  pipeline, or it won't respond to runtime change
+    // for example ,if we don't tell vulkan VK_DYNAMIC_STATE_VIEWPORT ,vkCmdSetViewport won't have any effect on this pipeline
+    std::vector<VkDynamicState> dynamicStateEnables = {
+            VK_DYNAMIC_STATE_VIEWPORT,
+			VK_DYNAMIC_STATE_SCISSOR,
+    };
+    VkPipelineDynamicStateCreateInfo pipelineDynamicStateCreateInfo{};
+    pipelineDynamicStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+    pipelineDynamicStateCreateInfo.pDynamicStates = dynamicStateEnables.data();
+    pipelineDynamicStateCreateInfo.dynamicStateCount = static_cast<uint32_t>(dynamicStateEnables.size());
+    pipelineDynamicStateCreateInfo.flags = 0;
+
 	VkPipelineShaderStageCreateInfo shaderStages[] = {shader.vertShaderStageInfo, shader.fragShaderStageInfo};
 	VkGraphicsPipelineCreateInfo pipelineInfo{};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -110,7 +122,7 @@ VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
 	pipelineInfo.pMultisampleState = &multisampling;
 	pipelineInfo.pDepthStencilState = nullptr; //optional
 	pipelineInfo.pColorBlendState = &colorBlending;
-	pipelineInfo.pDynamicState = nullptr;//optional
+	pipelineInfo.pDynamicState = &pipelineDynamicStateCreateInfo;
 	pipelineInfo.layout = pipelineLayout;
 	pipelineInfo.renderPass = vkContext->renderPass;
 	pipelineInfo.subpass = 0;
