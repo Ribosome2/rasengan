@@ -102,6 +102,7 @@ VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
     // for example ,if we don't tell vulkan VK_DYNAMIC_STATE_VIEWPORT ,vkCmdSetViewport won't have any effect on this pipeline
     std::vector<VkDynamicState> dynamicStateEnables = {
             VK_DYNAMIC_STATE_VIEWPORT,
+			VK_DYNAMIC_STATE_SCISSOR,
     };
     VkPipelineDynamicStateCreateInfo pipelineDynamicStateCreateInfo{};
     pipelineDynamicStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;

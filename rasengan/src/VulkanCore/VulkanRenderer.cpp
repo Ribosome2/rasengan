@@ -48,23 +48,26 @@ void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
     VkViewport viewport{};
     viewport.x = 0.0f;
     viewport.y = 0.0f;
-    static float testWidth = 800;
-    static float testHeight = 600;
-    ImGui::SliderFloat("--testViewPortWidth ", &testWidth,10,700);
-    ImGui::SliderFloat("--testViewPortHeight ", &testHeight,10,700);
-    viewport.width = testWidth;
+	static VkExtent2D  viewPortExtent { 800,600};
+	ImGui::SliderInt("viewPortExtentWidth ", (int*)&viewPortExtent.width,1,800);
+	ImGui::SliderInt("viewPortExtentHeight ", (int*)&viewPortExtent.height,1,600);
+    viewport.width = (float)viewPortExtent.width;
 
-    viewport.height = testHeight;
+    viewport.height = (float)viewPortExtent.height;
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
 
 
     vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
+	static VkExtent2D  scissorExtent { 800,600};
+	ImGui::SliderInt("scissorExtentWidth ", (int*)&scissorExtent.width,1,800);
+	ImGui::SliderInt("scissorExtentHeight ", (int*)&scissorExtent.height,1,600);
     VkRect2D scissor{};
     scissor.offset = {0, 0};
-    scissor.extent = swapChainExtent;
+    scissor.extent = scissorExtent;
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+	static  float lineWidth = 1.0;
 }
 
 /*

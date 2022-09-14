@@ -68,7 +68,7 @@ private:
             vulkanRenderer.BeginFrame();
             {
                 vulkanRenderer.DrawFrame();
-                imguiLayer.OnGui();
+//                imguiLayer.OnGui();
                 imguiLayer.Render(vkContext->CommandBuffer.GetCurCommandBuffer());
             }
             vulkanRenderer.EndFrame();
