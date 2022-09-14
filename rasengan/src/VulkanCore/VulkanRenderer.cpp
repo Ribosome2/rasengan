@@ -48,14 +48,16 @@ void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
     VkViewport viewport{};
     viewport.x = 0.0f;
     viewport.y = 0.0f;
-    static float testWidth = 555;
+    static float testWidth = 800;
+    static float testHeight = 600;
     ImGui::SliderFloat("--testViewPortWidth ", &testWidth,10,700);
-    std::cout << "viewPortWith " << testWidth << std::endl;
+    ImGui::SliderFloat("--testViewPortHeight ", &testHeight,10,700);
     viewport.width = testWidth;
 
-    viewport.height = static_cast<float>(swapChainExtent.height);
+    viewport.height = testHeight;
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
+
 
     vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
