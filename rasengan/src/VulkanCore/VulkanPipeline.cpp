@@ -1,8 +1,17 @@
 #include "VulkanPipeline.h"
 #include "VulkanInitializer.h"
+#include "VulkanVertex.h"
 VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
 	auto vkContext = VulkanContext::Get();
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo = VulkanInitializer::GetVertexInputStateCreateInfo();
+    auto bindingDescription = VulkanVertex::GetBindingDescription();
+    auto attributeDescriptions = VulkanVertex::GetAttributeDescriptions();
+
+    vertexInputInfo.vertexBindingDescriptionCount = 1;
+//    vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+    vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+//    vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+
 	VkPipelineInputAssemblyStateCreateInfo inputAssembly = VulkanInitializer::GetInputAssembleStateCreateInfo();
 
 	//viewports and scissors
