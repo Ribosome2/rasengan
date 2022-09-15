@@ -38,3 +38,5 @@ rasengan/bin/
 *.vcxproj
 rasengan/cmake-build-debug/
 rasengan/Rasengan.vcxproj.filters
+.vscode/
+build/

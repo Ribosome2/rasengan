@@ -4,9 +4,9 @@
 void VulkanApp::CreateInstance() {
     VkApplicationInfo appInfo{};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-    appInfo.pApplicationName = "Hello Triangle";
+    appInfo.pApplicationName = "Hello Rasengan";
     appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.pEngineName = "Bubble Engine";
+    appInfo.pEngineName = "Rasengan Engine";
     appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
 
     VkInstanceCreateInfo createInfo{};
@@ -22,7 +22,6 @@ void VulkanApp::CreateInstance() {
     createInfo.ppEnabledExtensionNames = glfwExtensions;
     createInfo.enabledLayerCount = 0;
 
-    VkResult result = vkCreateInstance(&createInfo, nullptr, &instance);
     if(vkCreateInstance(&createInfo,nullptr,&instance)!=VK_SUCCESS)
     {
         throw std::runtime_error("failed to create vkInstance");
