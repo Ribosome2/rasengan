@@ -5,7 +5,7 @@
 #include "VulkanContext.h"
 #include "VulkanDebugUtil.h"
 #include "imgui.h"
-
+#include "VulkanInitializer.h"
 void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_t imageIndex) {
 
     auto vkContext = VulkanContext::Get();
@@ -16,10 +16,7 @@ void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_
 
 void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
     auto vkContext = VulkanContext::Get();
-    VkCommandBufferBeginInfo beginInfo{};
-    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    beginInfo.flags = 0; // Optional
-    beginInfo.pInheritanceInfo = nullptr; // Optional
+    VkCommandBufferBeginInfo beginInfo =VulkanInitializer::GetCommandBufferBeginInfo();
     auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
 
 
@@ -28,11 +25,8 @@ void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
     }
 
 
-    VkRenderPassBeginInfo renderPassInfo{};
-    auto swapchain = vkContext->SwapChain;
-    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassInfo.renderPass = vkContext->renderPass;
-    renderPassInfo.framebuffer = swapchain->GetCurrentFrameBuffer(imageIndex);
+	auto swapchain = vkContext->SwapChain;
+	VkRenderPassBeginInfo renderPassInfo =VulkanInitializer::GetRenderPassBeginInfo(vkContext->renderPass,swapchain->GetCurrentFrameBuffer(imageIndex));
     renderPassInfo.renderArea.offset = {0, 0};
     renderPassInfo.renderArea.extent = swapchain->swapChainExtent;
 
@@ -45,19 +39,10 @@ void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
 
 
     auto &swapChainExtent = vkContext->SwapChain->swapChainExtent;
-    VkViewport viewport{};
-    viewport.x = 0.0f;
-    viewport.y = 0.0f;
 	static VkExtent2D  viewPortExtent { 800,600};
 	ImGui::SliderInt("viewPortExtentWidth ", (int*)&viewPortExtent.width,1,800);
 	ImGui::SliderInt("viewPortExtentHeight ", (int*)&viewPortExtent.height,1,600);
-    viewport.width = (float)viewPortExtent.width;
-
-    viewport.height = (float)viewPortExtent.height;
-    viewport.minDepth = 0.0f;
-    viewport.maxDepth = 1.0f;
-
-
+	VkViewport viewport =VulkanInitializer::GetViewPort((float)viewPortExtent.width,(float)viewPortExtent.height);
     vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
 	static VkExtent2D  scissorExtent { 800,600};

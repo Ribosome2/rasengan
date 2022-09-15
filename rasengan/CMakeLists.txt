@@ -19,7 +19,7 @@ ADD_EXECUTABLE(${PROJECT_NAME} "src/main.cpp"
         src/IMGUI/VulkanImguiLayer.hpp
         src/IMGUI/imgui_impl_glfw.cpp
         src/IMGUI/imgui_impl_vulkan.cpp
-        src/VulkanCore/VulkanSwapChain.h src/VulkanCore/VulkanShader.cpp src/VulkanCore/VulkanShader.h src/VulkanCore/ShaderUtil.h src/VulkanCore/VulkanPipeline.cpp src/VulkanCore/VulkanPipeline.h src/VulkanCore/VulkanCommandBuffer.cpp src/VulkanCore/VulkanCommandBuffer.h src/VulkanCore/VulkanRenderer.cpp src/VulkanCore/VulkanRenderer.h src/VulkanCore/VulkanDebugUtil.h)
+        src/VulkanCore/VulkanSwapChain.h src/VulkanCore/VulkanShader.cpp src/VulkanCore/VulkanShader.h src/VulkanCore/ShaderUtil.h src/VulkanCore/VulkanPipeline.cpp src/VulkanCore/VulkanPipeline.h src/VulkanCore/VulkanCommandBuffer.cpp src/VulkanCore/VulkanCommandBuffer.h src/VulkanCore/VulkanRenderer.cpp src/VulkanCore/VulkanRenderer.h src/VulkanCore/VulkanDebugUtil.h src/VulkanCore/VulkanInitializer.h)
 
 FIND_PACKAGE(Vulkan REQUIRED)
 INCLUDE_DIRECTORIES(

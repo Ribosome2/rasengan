@@ -8,6 +8,4 @@ public:
     GLFWwindow* window;
 private:
     VkSurfaceKHR surface;
-    void CreateSurface(VkInstance instance);
-
 };
