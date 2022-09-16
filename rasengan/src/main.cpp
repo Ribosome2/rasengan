@@ -63,13 +63,14 @@ private:
         VulkanShader testShader("shaders/vertexBuffer.vert", "shaders/simpleColor.frag");
         VulkanPipeline pipeline(testShader);
         m_VulkanContext->graphicsPipeline = &pipeline.graphicsPipeline;
-        const std::vector<VulkanVertex> vertices = {
+        std::vector<VulkanVertex> vertices = {
                 {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
                 {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
                 {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
         };
         auto vertexBufferSize = sizeof(vertices[0])*vertices.size();
-        VulkanVertexBuffer vertexBuffer{(void *)vertices.data(),static_cast<uint32_t>(vertexBufferSize)};
+        VulkanVertexBuffer vertexBuffer(vertices,static_cast<uint32_t>(vertexBufferSize));
+
 
         while (!glfwWindowShouldClose(mVulkanWindows.window)) {
             glfwPollEvents();
@@ -78,6 +79,7 @@ private:
             {
                 vulkanRenderer.DrawFrame(vertexBuffer);
 //                imguiLayer.OnGui();
+                ImGui::DragFloat("___ ",&vertices[0].pos.x); //changing original data won't affect memory already mapped to gpu
                 imguiLayer.Render(vkContext->CommandBuffer.GetCurCommandBuffer());
             }
             vulkanRenderer.EndFrame();

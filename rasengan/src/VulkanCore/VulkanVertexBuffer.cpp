@@ -1,7 +1,7 @@
 #include "VulkanVertexBuffer.h"
 #include <vulkan/vulkan.h>
 #include "VulkanContext.h"
-VulkanVertexBuffer::VulkanVertexBuffer(void *data, uint32_t size) {
+VulkanVertexBuffer::VulkanVertexBuffer(std::vector<VulkanVertex> & vertices, uint32_t size) {
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufferInfo.size = size;
@@ -27,11 +27,12 @@ VulkanVertexBuffer::VulkanVertexBuffer(void *data, uint32_t size) {
     if (vkAllocateMemory(device, &allocInfo, nullptr, &vertexBufferMemory) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate vertex buffer memory!");
     }
+    vkBindBufferMemory(device,vertexBuffer,vertexBufferMemory,0);
 
-    vkBindBufferMemory(device, vertexBuffer, vertexBufferMemory, 0);
-
-    vkMapMemory(device, vertexBufferMemory, 0, bufferInfo.size, 0, &data);
-    vkUnmapMemory(device, vertexBufferMemory);
+    void* data;
+    vkMapMemory(device,vertexBufferMemory,0,bufferInfo.size,0,&data);
+    memcpy(data,vertices.data(),(size_t)bufferInfo.size);
+    vkUnmapMemory(device,vertexBufferMemory);
 }
 
 VulkanVertexBuffer::~VulkanVertexBuffer() {
