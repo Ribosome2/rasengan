@@ -33,7 +33,7 @@ ADD_EXECUTABLE(${PROJECT_NAME} "src/main.cpp"
         src/VulkanCore/VulkanInitializer.h
         src/VulkanCore/VulkanVertex.cpp
         src/VulkanCore/VulkanVertex.h
-        )
+        src/VulkanCore/VulkanVertexBuffer.cpp src/VulkanCore/VulkanVertexBuffer.h)
 
 FIND_PACKAGE(Vulkan REQUIRED)
 INCLUDE_DIRECTORIES(

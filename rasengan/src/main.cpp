@@ -14,6 +14,7 @@
 #include "VulkanCore/VulkanPipeline.h"
 #include "VulkanImguiLayer.hpp"
 #include "VulkanCore/VulkanVertex.h"
+#include "VulkanCore/VulkanVertexBuffer.h"
 
 std::shared_ptr<VulkanContext> VulkanContext::mContextInstance;
 
@@ -49,10 +50,7 @@ private:
         m_VulkanContext->window = mVulkanWindows.window;
         mVulkanApp.CreateInstance();
 
-        VulkanVertex vertex{{0.0, 1.5},
-                            {1.1, 2.1, 2}};
-        std::cout << "vertex x " << vertex.pos.x << std::endl;
-        std::cout << "vertex y " << vertex.pos.y << std::endl;
+
 
     }
 
@@ -62,15 +60,23 @@ private:
         uint32_t imageCount = 2;
         VulkanImguiLayer imguiLayer{vkContext->window, vkContext->renderPass, imageCount, MSAASamples};
         VulkanRenderer vulkanRenderer;
-        VulkanShader testShader("shaders/simpleColor.vert", "shaders/simpleColor.frag");
+        VulkanShader testShader("shaders/vertexBuffer.vert", "shaders/simpleColor.frag");
         VulkanPipeline pipeline(testShader);
         m_VulkanContext->graphicsPipeline = &pipeline.graphicsPipeline;
+        const std::vector<VulkanVertex> vertices = {
+                {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+                {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+                {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+        };
+        auto vertexBufferSize = sizeof(vertices[0])*vertices.size();
+        VulkanVertexBuffer vertexBuffer{(void *)vertices.data(),static_cast<uint32_t>(vertexBufferSize)};
+
         while (!glfwWindowShouldClose(mVulkanWindows.window)) {
             glfwPollEvents();
             imguiLayer.NewFrame();
             vulkanRenderer.BeginFrame();
             {
-                vulkanRenderer.DrawFrame();
+                vulkanRenderer.DrawFrame(vertexBuffer);
 //                imguiLayer.OnGui();
                 imguiLayer.Render(vkContext->CommandBuffer.GetCurCommandBuffer());
             }

@@ -22,7 +22,7 @@ public:
 
     void CreateLogicDevice(VulkanValidation &vulkanValidation);
     QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
-
+    uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 public:
     VkDevice device = VK_NULL_HANDLE;
     VkQueue graphicsQueue = VK_NULL_HANDLE;
@@ -37,4 +37,6 @@ private:
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
     };
     friend VulkanRenderer;
+
+
 };

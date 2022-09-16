@@ -52,7 +52,6 @@ void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
     scissor.offset = {0, 0};
     scissor.extent = scissorExtent;
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
-	static  float lineWidth = 1.0;
 }
 
 /*
@@ -62,9 +61,12 @@ Record a command buffer which draws the scene onto that image
 Submit the recorded command buffer
 Present the swap chain image
  */
-void VulkanRenderer::DrawFrame() {
+void VulkanRenderer::DrawFrame(VulkanVertexBuffer & vulkanVertexBuffer) {
     auto vkContext = VulkanContext::Get();
     auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
+    VkBuffer vertexBuffers[] = {vulkanVertexBuffer.GetVulkanBuffer()};
+    VkDeviceSize offsets[] = {0};
+    vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
     RecordCommandBuffer(commandBuffer, imageIndex);
 }
 
