@@ -1,8 +1,10 @@
 #include "VulkanVertexBuffer.h"
 #include <vulkan/vulkan.h>
 #include "VulkanContext.h"
-VulkanVertexBuffer::VulkanVertexBuffer(std::vector<VulkanVertex> & vertices, uint32_t size) {
-    VkBufferCreateInfo bufferInfo{};
+VulkanVertexBuffer::VulkanVertexBuffer(void* vertices, uint32_t size) {
+    this->vertices = vertices;
+	this->size= size;
+	VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufferInfo.size = size;
     bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
@@ -29,10 +31,7 @@ VulkanVertexBuffer::VulkanVertexBuffer(std::vector<VulkanVertex> & vertices, uin
     }
     vkBindBufferMemory(device,vertexBuffer,vertexBufferMemory,0);
 
-    void* data;
-    vkMapMemory(device,vertexBufferMemory,0,bufferInfo.size,0,&data);
-    memcpy(data,vertices.data(),(size_t)bufferInfo.size);
-    vkUnmapMemory(device,vertexBufferMemory);
+	UpdateMemory();
 }
 
 VulkanVertexBuffer::~VulkanVertexBuffer() {
@@ -42,5 +41,14 @@ VulkanVertexBuffer::~VulkanVertexBuffer() {
     vkDestroyBuffer(device, vertexBuffer, nullptr);
     vkFreeMemory(device, vertexBufferMemory, nullptr);
 
+}
+
+void VulkanVertexBuffer::UpdateMemory() {
+	auto  vulkanDevice = VulkanContext::Get()->VulkanDevice;
+	auto device = vulkanDevice->device;
+	void* data;
+	vkMapMemory(device,vertexBufferMemory,0,this->size,0,&data);
+	memcpy(data,vertices,(size_t)this->size);
+	vkUnmapMemory(device,vertexBufferMemory);
 }
 

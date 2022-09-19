@@ -53,6 +53,16 @@ private:
 
 
     }
+	void EditVertexData(std::vector<VulkanVertex> & vertices){
+		for (int i = 0; i < vertices.size(); ++i) {
+			auto & vertex  = vertices[i];
+			ImGui::PushID(i);
+			ImGui::SliderFloat2(("Position "),(float*)&vertex.pos,-1.5,2.5);
+			ImGui::SliderFloat3("Color ",(float*)&vertex.color,-2,2);
+			ImGui::PopID();
+		}
+
+	}
 
     void MainLoop() {
         auto vkContext = VulkanContext::Get();
@@ -69,7 +79,7 @@ private:
                 {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
         };
         auto vertexBufferSize = sizeof(vertices[0])*vertices.size();
-        VulkanVertexBuffer vertexBuffer(vertices,static_cast<uint32_t>(vertexBufferSize));
+        VulkanVertexBuffer vertexBuffer(vertices.data(),static_cast<uint32_t>(vertexBufferSize));
 
 
         while (!glfwWindowShouldClose(mVulkanWindows.window)) {
@@ -79,7 +89,8 @@ private:
             {
                 vulkanRenderer.DrawFrame(vertexBuffer);
 //                imguiLayer.OnGui();
-                ImGui::DragFloat("___ ",&vertices[0].pos.x); //changing original data won't affect memory already mapped to gpu
+				EditVertexData(vertices);
+				vertexBuffer.UpdateMemory();
                 imguiLayer.Render(vkContext->CommandBuffer.GetCurCommandBuffer());
             }
             vulkanRenderer.EndFrame();
