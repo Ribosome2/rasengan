@@ -9,7 +9,7 @@ class VulkanVertexBuffer {
 public:
     virtual ~VulkanVertexBuffer();
 
-    VulkanVertexBuffer(void* vertices, uint32_t size);
+    VulkanVertexBuffer(void* vertices, uint32_t bufferSize);
     VkBuffer  GetVulkanBuffer() const { return vertexBuffer; }
 	void UpdateMemory();
 private:
