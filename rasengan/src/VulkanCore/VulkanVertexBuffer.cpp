@@ -3,7 +3,7 @@
 #include "VulkanContext.h"
 #include "VulkanBufferHelper.h"
 #define  USE_STAGING_BUFFER   //toggle between staging and not staging
-VulkanVertexBuffer::VulkanVertexBuffer(void* vertices, uint32_t bufferSize) {
+VulkanVertexBuffer::VulkanVertexBuffer( void* vertices, uint32_t bufferSize) {
     this->vertices = vertices;
 	this->size= bufferSize;
 #ifdef USE_STAGING_BUFFER

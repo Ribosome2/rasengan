@@ -10,7 +10,9 @@ void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_
 
     auto vkContext = VulkanContext::Get();
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *vkContext->graphicsPipeline);
-    vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+	auto indicesCount = RenderContext.indexBuffer->GetCount();
+	vkCmdDrawIndexed(commandBuffer, indicesCount, 1, 0, 0, 0);
+//    vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 
 }
 
@@ -39,18 +41,12 @@ void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
 
 
     auto &swapChainExtent = vkContext->SwapChain->swapChainExtent;
-	static VkExtent2D  viewPortExtent { 800,600};
-	ImGui::SliderInt("viewPortExtentWidth ", (int*)&viewPortExtent.width,1,800);
-	ImGui::SliderInt("viewPortExtentHeight ", (int*)&viewPortExtent.height,1,600);
-	VkViewport viewport =VulkanInitializer::GetViewPort((float)viewPortExtent.width,(float)viewPortExtent.height);
+	VkViewport viewport =VulkanInitializer::GetViewPort((float)swapChainExtent.width,(float)swapChainExtent.height);
     vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
-	static VkExtent2D  scissorExtent { 800,600};
-	ImGui::SliderInt("scissorExtentWidth ", (int*)&scissorExtent.width,1,800);
-	ImGui::SliderInt("scissorExtentHeight ", (int*)&scissorExtent.height,1,600);
     VkRect2D scissor{};
     scissor.offset = {0, 0};
-    scissor.extent = scissorExtent;
+    scissor.extent = swapChainExtent;
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 }
 
@@ -61,12 +57,15 @@ Record a command buffer which draws the scene onto that image
 Submit the recorded command buffer
 Present the swap chain image
  */
-void VulkanRenderer::DrawFrame(VulkanVertexBuffer & vulkanVertexBuffer) {
+void VulkanRenderer::DrawFrame() {
     auto vkContext = VulkanContext::Get();
     auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
-    VkBuffer vertexBuffers[] = {vulkanVertexBuffer.GetVulkanBuffer()};
+    VkBuffer vertexBuffers[] = {RenderContext.vertexBuffer->GetVulkanBuffer()};
     VkDeviceSize offsets[] = {0};
+	VkBuffer indexBuffer = {RenderContext.indexBuffer->GetIndexBuffer()};
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+	vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+
     RecordCommandBuffer(commandBuffer, imageIndex);
 }
 

@@ -15,6 +15,7 @@
 #include "VulkanImguiLayer.hpp"
 #include "VulkanCore/VulkanVertex.h"
 #include "VulkanCore/VulkanVertexBuffer.h"
+#include "VulkanCore/VulkanIndexBuffer.h"
 
 std::shared_ptr<VulkanContext> VulkanContext::mContextInstance;
 
@@ -53,7 +54,7 @@ private:
 
 
     }
-	void EditVertexData(std::vector<VulkanVertex> & vertices){
+	void EditVertexData( std::vector<VulkanVertex> & vertices){
 		for (int i = 0; i < vertices.size(); ++i) {
 			auto & vertex  = vertices[i];
 			ImGui::PushID(i);
@@ -73,21 +74,29 @@ private:
         VulkanShader testShader("shaders/vertexBuffer.vert", "shaders/simpleColor.frag");
         VulkanPipeline pipeline(testShader);
         m_VulkanContext->graphicsPipeline = &pipeline.graphicsPipeline;
-        std::vector<VulkanVertex> vertices = {
-                {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-                {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-                {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
-        };
+		 std::vector<VulkanVertex> vertices = {
+				 {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+				 {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+				 {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
+				 {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+		};
+		 std::vector<uint16_t> indices = {
+				0, 1, 2, 2, 3, 0
+		};
         auto vertexBufferSize = sizeof(vertices[0])*vertices.size();
         VulkanVertexBuffer vertexBuffer(vertices.data(),static_cast<uint32_t>(vertexBufferSize));
 
+		auto indexBufferSize = sizeof(indices[0])*indices.size();
+		VulkanIndexBuffer indexBuffer(indices.data(),indices.size(),static_cast<uint32_t>(indexBufferSize));
+		vulkanRenderer.RenderContext.vertexBuffer = &vertexBuffer;
+		vulkanRenderer.RenderContext.indexBuffer = &indexBuffer;
 
         while (!glfwWindowShouldClose(mVulkanWindows.window)) {
             glfwPollEvents();
             imguiLayer.NewFrame();
             vulkanRenderer.BeginFrame();
             {
-                vulkanRenderer.DrawFrame(vertexBuffer);
+                vulkanRenderer.DrawFrame();
 //                imguiLayer.OnGui();
 				EditVertexData(vertices);
 				vertexBuffer.UpdateMemory();
