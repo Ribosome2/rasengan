@@ -12,6 +12,7 @@ bool VulkanDevice::isDeviceSuitable(VkPhysicalDevice device) {
 
     QueueFamilyIndices indices = FindQueueFamilies(device);
     return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
+			deviceFeatures.fillModeNonSolid &&
            deviceFeatures.geometryShader && indices.isComplete();
 }
 
@@ -81,6 +82,7 @@ void VulkanDevice::CreateLogicDevice(VulkanValidation & vulkanValidation  ) {
     queueCreateInfo.pQueuePriorities = &queuePriority;
 
     VkPhysicalDeviceFeatures deviceFeatures{};
+	deviceFeatures.fillModeNonSolid=true;
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     createInfo.pQueueCreateInfos = &queueCreateInfo;

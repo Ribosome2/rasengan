@@ -12,5 +12,6 @@ private:
 public:
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
+    VkPipeline wireFramePipeline;
 private:
 };

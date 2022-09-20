@@ -24,6 +24,7 @@ VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
 
 	VkPipelineViewportStateCreateInfo viewportState = VulkanInitializer::ViewportStateCreateInfo(viewport, scissor);
 	VkPipelineRasterizationStateCreateInfo rasterizer =VulkanInitializer::GetRasterizerCreateInfo();
+
 	VkPipelineMultisampleStateCreateInfo multisampling= VulkanInitializer::GetMultisampleStateCreateInfo();
 	VkPipelineColorBlendAttachmentState colorBlendAttachment = VulkanInitializer::GetColorBlendAttachmentState();
 	VkPipelineColorBlendStateCreateInfo colorBlending = VulkanInitializer::GetColorBlendStateCreateInfo(colorBlendAttachment);
@@ -35,7 +36,6 @@ VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
 	} else {
 		std::cout << "created vulkan pipeline layout " << std::endl;
 	}
-
     //Vulkan need to know what with change dynamically when creating  pipeline, or it won't respond to runtime change
     // for example ,if we don't tell vulkan VK_DYNAMIC_STATE_VIEWPORT ,vkCmdSetViewport won't have any effect on this pipeline
     std::vector<VkDynamicState> dynamicStateEnables = {
@@ -70,6 +70,14 @@ VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
 	} else {
 		std::cout << "created vkPipeline" << std::endl;
 	}
+	rasterizer.polygonMode = VK_POLYGON_MODE_LINE;
+
+	if (vkCreateGraphicsPipelines(vkContext->VulkanDevice->device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr,
+								  &wireFramePipeline) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create graphics pipeline!");
+	} else {
+		std::cout << "created vkPipeline" << std::endl;
+	}
 
 
 }
@@ -78,5 +86,6 @@ VulkanPipeline::~VulkanPipeline() {
 	auto &device = VulkanContext::Get()->VulkanDevice->device;
 	vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
 	vkDestroyPipeline(device, graphicsPipeline, nullptr);
+	vkDestroyPipeline(device, wireFramePipeline, nullptr);
 	vkDestroyRenderPass(device,VulkanContext::Get()->renderPass, nullptr);
 }

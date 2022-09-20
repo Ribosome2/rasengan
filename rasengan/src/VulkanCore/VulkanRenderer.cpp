@@ -9,7 +9,14 @@
 void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_t imageIndex) {
 
     auto vkContext = VulkanContext::Get();
-    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *vkContext->graphicsPipeline);
+	static  bool  useWireFramePipeline = false;
+	ImGui::Checkbox("useWireFramePipeline",&useWireFramePipeline);
+	if(useWireFramePipeline)
+	{
+		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *vkContext->wireframePipeline);
+	}else{
+		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *vkContext->graphicsPipeline);
+	}
 	auto indicesCount = RenderContext.indexBuffer->GetCount();
 	vkCmdDrawIndexed(commandBuffer, indicesCount, 1, 0, 0, 0);
 //    vkCmdDraw(commandBuffer, 3, 1, 0, 0);

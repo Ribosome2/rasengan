@@ -74,6 +74,7 @@ private:
         VulkanShader testShader("shaders/vertexBuffer.vert", "shaders/simpleColor.frag");
         VulkanPipeline pipeline(testShader);
         m_VulkanContext->graphicsPipeline = &pipeline.graphicsPipeline;
+        m_VulkanContext->wireframePipeline = &pipeline.wireFramePipeline;
 		 std::vector<VulkanVertex> vertices = {
 				 {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
 				 {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
