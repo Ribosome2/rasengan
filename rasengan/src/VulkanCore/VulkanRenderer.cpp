@@ -6,26 +6,35 @@
 #include "VulkanDebugUtil.h"
 #include "imgui.h"
 #include "VulkanInitializer.h"
+#include "VulkanBufferHelper.h"
+#include "Renderring/RenderringDataDefine.h"
+
+#define GLM_FORCE_RADIANS
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <chrono>
+
 void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_t imageIndex) {
 
     auto vkContext = VulkanContext::Get();
-	static  bool  useWireFramePipeline = false;
-	ImGui::Checkbox("useWireFramePipeline",&useWireFramePipeline);
-	if(useWireFramePipeline)
-	{
-		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *vkContext->wireframePipeline);
-	}else{
-		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *vkContext->graphicsPipeline);
-	}
-	auto indicesCount = RenderContext.indexBuffer->GetCount();
-	vkCmdDrawIndexed(commandBuffer, indicesCount, 1, 0, 0, 0);
+    static bool useWireFramePipeline = false;
+    ImGui::Checkbox("useWireFramePipeline", &useWireFramePipeline);
+    if (useWireFramePipeline) {
+        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *vkContext->wireframePipeline);
+    } else {
+        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *vkContext->graphicsPipeline);
+    }
+    auto indicesCount = RenderContext.indexBuffer->GetCount();
+    vkCmdDrawIndexed(commandBuffer, indicesCount, 1, 0, 0, 0);
 //    vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 
 }
 
 void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
     auto vkContext = VulkanContext::Get();
-    VkCommandBufferBeginInfo beginInfo =VulkanInitializer::GetCommandBufferBeginInfo();
+    VkCommandBufferBeginInfo beginInfo = VulkanInitializer::GetCommandBufferBeginInfo();
     auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
 
 
@@ -34,8 +43,10 @@ void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
     }
 
 
-	auto swapchain = vkContext->SwapChain;
-	VkRenderPassBeginInfo renderPassInfo =VulkanInitializer::GetRenderPassBeginInfo(vkContext->renderPass,swapchain->GetCurrentFrameBuffer(imageIndex));
+    auto swapchain = vkContext->SwapChain;
+    VkRenderPassBeginInfo renderPassInfo = VulkanInitializer::GetRenderPassBeginInfo(vkContext->renderPass,
+                                                                                     swapchain->GetCurrentFrameBuffer(
+                                                                                             imageIndex));
     renderPassInfo.renderArea.offset = {0, 0};
     renderPassInfo.renderArea.extent = swapchain->swapChainExtent;
 
@@ -48,7 +59,7 @@ void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
 
 
     auto &swapChainExtent = vkContext->SwapChain->swapChainExtent;
-	VkViewport viewport =VulkanInitializer::GetViewPort((float)swapChainExtent.width,(float)swapChainExtent.height);
+    VkViewport viewport = VulkanInitializer::GetViewPort((float) swapChainExtent.width, (float) swapChainExtent.height);
     vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
     VkRect2D scissor{};
@@ -69,9 +80,9 @@ void VulkanRenderer::DrawFrame() {
     auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
     VkBuffer vertexBuffers[] = {RenderContext.vertexBuffer->GetVulkanBuffer()};
     VkDeviceSize offsets[] = {0};
-	VkBuffer indexBuffer = {RenderContext.indexBuffer->GetIndexBuffer()};
+    VkBuffer indexBuffer = {RenderContext.indexBuffer->GetIndexBuffer()};
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-	vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+    vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
     RecordCommandBuffer(commandBuffer, imageIndex);
 }
@@ -147,6 +158,49 @@ void VulkanRenderer::EndFrame() {
     presentInfo.pResults = nullptr; // Optional
     auto &presentQueue = vkContext->VulkanDevice->presentQueue;
     VK_CHECK_RESULT(vkQueuePresentKHR(presentQueue, &presentInfo));
+}
+
+void VulkanRenderer::Init() {
+    VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+    VulkanBufferHelper::CreateBuffer(bufferSize,
+                                     VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                                     RenderContext.uniformBuffer, RenderContext.uniformBufferMemory);
+}
+
+void VulkanRenderer::UpdateUniformBuffer() {
+    static auto startTime = std::chrono::high_resolution_clock::now();
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    float deltaTime = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+    auto vkContext = VulkanContext::Get();
+    auto &swapChainExtent = vkContext->SwapChain->swapChainExtent;
+    auto &device = vkContext->VulkanDevice->device;
+
+    UniformBufferObject ubo{};
+    ubo.model = glm::rotate(glm::mat4(1.0f), deltaTime * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float) swapChainExtent.height, 0.1f,
+                                10.0f);
+    ubo.proj[1][1] *= -1;
+
+    void *data;
+    vkMapMemory(device, RenderContext.uniformBufferMemory, 0, sizeof(ubo), 0, &data);
+    memcpy(data, &ubo, sizeof(ubo));
+    vkUnmapMemory(device, RenderContext.uniformBufferMemory);
+}
+
+VulkanRenderer::~VulkanRenderer() {
+    std::cout << "VulkanRenderer Deconstruction " << std::endl;
+    auto device = VulkanContext::Get()->VulkanDevice->device;
+
+    vkDestroyBuffer(device, RenderContext.uniformBuffer, nullptr);
+    vkFreeMemory(device, RenderContext.uniformBufferMemory, nullptr);
+}
+
+VulkanRenderer::VulkanRenderer() {
+    std::cout << "VulkanRenderer constructor " << std::endl;
 }
 
 

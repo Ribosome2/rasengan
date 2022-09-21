@@ -70,7 +70,8 @@ private:
         VkSampleCountFlagBits MSAASamples = VK_SAMPLE_COUNT_1_BIT;//todo: use value match our rendering
         uint32_t imageCount = 2;
         VulkanImguiLayer imguiLayer{vkContext->window, vkContext->renderPass, imageCount, MSAASamples};
-        VulkanRenderer vulkanRenderer;
+        VulkanRenderer vulkanRenderer{};
+        vulkanRenderer.Init();
         VulkanShader testShader("shaders/vertexBuffer.vert", "shaders/simpleColor.frag");
         VulkanPipeline pipeline(testShader);
         m_VulkanContext->graphicsPipeline = &pipeline.graphicsPipeline;
@@ -95,6 +96,7 @@ private:
         while (!glfwWindowShouldClose(mVulkanWindows.window)) {
             glfwPollEvents();
             imguiLayer.NewFrame();
+            vulkanRenderer.UpdateUniformBuffer();
             vulkanRenderer.BeginFrame();
             {
                 vulkanRenderer.DrawFrame();

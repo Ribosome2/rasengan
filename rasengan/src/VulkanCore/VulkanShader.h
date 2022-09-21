@@ -7,13 +7,14 @@ class VulkanShader {
 public:
     VulkanShader(std::string vertexPath,std::string fragPath);
 
-    ~VulkanShader(){
-        auto & vulkanDevice = VulkanContext::Get()->VulkanDevice;
-        vkDestroyShaderModule(vulkanDevice->device, fragShaderModule, nullptr);
-        vkDestroyShaderModule(vulkanDevice->device, vertShaderModule, nullptr);
-    }
+    ~VulkanShader();
+private:
+    void createDescriptorSetLayout();
+public:
     VkShaderModule vertShaderModule;
     VkShaderModule fragShaderModule;
     VkPipelineShaderStageCreateInfo vertShaderStageInfo;
     VkPipelineShaderStageCreateInfo fragShaderStageInfo;
+    VkDescriptorSetLayout descriptorSetLayout;
+    VkPipelineLayout pipelineLayout;
 };

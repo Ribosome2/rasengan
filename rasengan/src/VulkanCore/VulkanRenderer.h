@@ -2,16 +2,29 @@
 
 
 #include <vulkan/vulkan.h>
+#include <iostream>
 #include "VulkanVertexBuffer.h"
 #include "VulkanIndexBuffer.h"
 
-struct RenderContext{
+class RenderContext{
+public:
 	VulkanVertexBuffer * vertexBuffer;
 	VulkanIndexBuffer * indexBuffer;
+    VkBuffer uniformBuffer;
+    VkDeviceMemory uniformBufferMemory;
+    ~RenderContext(){
+        std::cout<<"dddddddddddddddddd "<<std::endl;
+    }
 };
 
 class VulkanRenderer {
 public:
+    VulkanRenderer();
+
+    ~VulkanRenderer();
+
+    void Init();
+    void UpdateUniformBuffer();
     void BeginRenderPass(uint32_t imageIndex);
     void EndRenderPass();
     void BeginFrame();

@@ -29,6 +29,8 @@ VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
 	VkPipelineColorBlendAttachmentState colorBlendAttachment = VulkanInitializer::GetColorBlendAttachmentState();
 	VkPipelineColorBlendStateCreateInfo colorBlending = VulkanInitializer::GetColorBlendStateCreateInfo(colorBlendAttachment);
 	VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = VulkanInitializer::GetPipelineLayoutCreateInfo();
+    pipelineLayoutCreateInfo.setLayoutCount = 1;
+    pipelineLayoutCreateInfo.pSetLayouts = &shader.descriptorSetLayout;
 
 	if (vkCreatePipelineLayout(vkContext->VulkanDevice->device, &pipelineLayoutCreateInfo, nullptr, &pipelineLayout) !=
 		VK_SUCCESS) {
