@@ -12,9 +12,6 @@ public:
 	VulkanIndexBuffer * indexBuffer;
     VkBuffer uniformBuffer;
     VkDeviceMemory uniformBufferMemory;
-    ~RenderContext(){
-        std::cout<<"dddddddddddddddddd "<<std::endl;
-    }
 };
 
 class VulkanRenderer {
