@@ -16,5 +16,4 @@ public:
     VkPipelineShaderStageCreateInfo vertShaderStageInfo;
     VkPipelineShaderStageCreateInfo fragShaderStageInfo;
     VkDescriptorSetLayout descriptorSetLayout;
-    VkPipelineLayout pipelineLayout;
 };

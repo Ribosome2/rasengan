@@ -72,7 +72,7 @@ private:
         VulkanImguiLayer imguiLayer{vkContext->window, vkContext->renderPass, imageCount, MSAASamples};
         VulkanRenderer vulkanRenderer{};
         vulkanRenderer.Init();
-        VulkanShader testShader("shaders/vertexBuffer.vert", "shaders/simpleColor.frag");
+        VulkanShader testShader("shaders/vertexWithUniformBuffer.vert", "shaders/simpleColor.frag");
         VulkanPipeline pipeline(testShader);
         m_VulkanContext->graphicsPipeline = &pipeline.graphicsPipeline;
         m_VulkanContext->wireframePipeline = &pipeline.wireFramePipeline;
@@ -92,6 +92,8 @@ private:
 		VulkanIndexBuffer indexBuffer(indices.data(),indices.size(),static_cast<uint32_t>(indexBufferSize));
 		vulkanRenderer.RenderContext.vertexBuffer = &vertexBuffer;
 		vulkanRenderer.RenderContext.indexBuffer = &indexBuffer;
+		vulkanRenderer.RenderContext.pipelineLayout = &pipeline.pipelineLayout;
+        vulkanRenderer.CreateDescriptorSets(testShader.descriptorSetLayout);
 
         while (!glfwWindowShouldClose(mVulkanWindows.window)) {
             glfwPollEvents();

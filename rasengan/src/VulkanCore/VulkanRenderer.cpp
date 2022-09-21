@@ -26,6 +26,7 @@ void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_
     } else {
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *vkContext->graphicsPipeline);
     }
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *RenderContext.pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
     auto indicesCount = RenderContext.indexBuffer->GetCount();
     vkCmdDrawIndexed(commandBuffer, indicesCount, 1, 0, 0, 0);
 //    vkCmdDraw(commandBuffer, 3, 1, 0, 0);
@@ -166,6 +167,8 @@ void VulkanRenderer::Init() {
                                      VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                                      RenderContext.uniformBuffer, RenderContext.uniformBufferMemory);
+
+    createDescriptorPool();
 }
 
 void VulkanRenderer::UpdateUniformBuffer() {
@@ -197,10 +200,67 @@ VulkanRenderer::~VulkanRenderer() {
 
     vkDestroyBuffer(device, RenderContext.uniformBuffer, nullptr);
     vkFreeMemory(device, RenderContext.uniformBufferMemory, nullptr);
+    vkDestroyDescriptorPool(device, descriptorPool, nullptr);
+
 }
 
 VulkanRenderer::VulkanRenderer() {
     std::cout << "VulkanRenderer constructor " << std::endl;
+}
+
+void VulkanRenderer::createDescriptorPool() {
+    VkDescriptorPoolSize poolSize{};
+    poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSize.descriptorCount = 1; //todo: for now we only have one
+
+    VkDescriptorPoolCreateInfo poolInfo{};
+    poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    poolInfo.poolSizeCount = 1;
+    poolInfo.pPoolSizes = &poolSize;
+
+    poolInfo.maxSets = poolSize.descriptorCount;
+
+    auto device = VulkanContext::Get()->VulkanDevice->device;
+    if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create descriptor pool!");
+    }
+}
+
+void VulkanRenderer::CreateDescriptorSets(VkDescriptorSetLayout & descriptorSetLayout ) {
+    std::vector<VkDescriptorSetLayout> layouts(1, descriptorSetLayout);
+    VkDescriptorSetAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    allocInfo.descriptorPool = descriptorPool;
+    allocInfo.descriptorSetCount = 1 ;//todo
+    allocInfo.pSetLayouts = layouts.data();
+
+    auto device = VulkanContext::Get()->VulkanDevice->device;
+
+    if (vkAllocateDescriptorSets(device, &allocInfo, &descriptorSet) != VK_SUCCESS) {
+        throw std::runtime_error("failed to allocate descriptor sets!");
+    }
+
+    VkDescriptorBufferInfo bufferInfo{};
+    bufferInfo.buffer = RenderContext.uniformBuffer;
+    bufferInfo.offset = 0;
+    bufferInfo.range = sizeof(UniformBufferObject);
+
+    VkWriteDescriptorSet descriptorWrite{};
+    descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWrite.dstSet = descriptorSet;
+    descriptorWrite.dstBinding = 0;
+    descriptorWrite.dstArrayElement = 0;
+
+    descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    descriptorWrite.descriptorCount = 1;
+
+    descriptorWrite.pBufferInfo = &bufferInfo;
+    descriptorWrite.pImageInfo = nullptr; // Optional
+    descriptorWrite.pTexelBufferView = nullptr; // Optional
+
+    vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
+
+
 }
 
 
