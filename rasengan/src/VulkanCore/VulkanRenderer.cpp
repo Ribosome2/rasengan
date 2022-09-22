@@ -181,9 +181,18 @@ void VulkanRenderer::UpdateUniformBuffer() {
     auto &device = vkContext->VulkanDevice->device;
 
     UniformBufferObject ubo{};
-    ubo.model = glm::rotate(glm::mat4(1.0f), Time::realtimeSinceStartup * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    auto modelMatrix = glm::mat4(1.0f);
+    static auto modelWorldPosition  = glm::vec3{0.0,0,0};
+    ImGui::SliderFloat3("ModelPosition",(float*)&modelWorldPosition,-10,10);
+    modelMatrix = glm::translate(modelMatrix,modelWorldPosition);
+    modelMatrix= glm::rotate(modelMatrix, Time::realtimeSinceStartup * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.model = modelMatrix;
 
-    ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    static auto eyePos = glm::vec3(0.0f, 2.0f, 2.0f);
+    ImGui::SliderFloat3("eyePos ",(float*)&eyePos,-10,10);
+    static auto lookAtCenter = glm::vec3(0.0f, 0.0f, 0.0f);
+    ImGui::SliderFloat3("lookAtCenter ",(float*)&lookAtCenter,-10,10);
+    ubo.view = glm::lookAt(eyePos, lookAtCenter, glm::vec3(0.0f, 1.0f, 0.0f));
     ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float) swapChainExtent.height, 0.1f,
                                 10.0f);
     ubo.proj[1][1] *= -1;
