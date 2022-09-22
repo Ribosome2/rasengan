@@ -16,6 +16,7 @@
 #include "VulkanCore/VulkanVertex.h"
 #include "VulkanCore/VulkanVertexBuffer.h"
 #include "VulkanCore/VulkanIndexBuffer.h"
+#include "EngineCore/Time.h"
 
 std::shared_ptr<VulkanContext> VulkanContext::mContextInstance;
 
@@ -97,6 +98,7 @@ private:
 
         while (!glfwWindowShouldClose(mVulkanWindows.window)) {
             glfwPollEvents();
+            Time::Update();
             imguiLayer.NewFrame();
             vulkanRenderer.UpdateUniformBuffer();
             vulkanRenderer.BeginFrame();

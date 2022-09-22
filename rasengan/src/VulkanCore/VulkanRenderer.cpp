@@ -15,7 +15,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <chrono>
-
+#include "EngineCore/Time.h"
+#include "string"
 void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_t imageIndex) {
 
     auto vkContext = VulkanContext::Get();
@@ -172,16 +173,15 @@ void VulkanRenderer::Init() {
 }
 
 void VulkanRenderer::UpdateUniformBuffer() {
-    static auto startTime = std::chrono::high_resolution_clock::now();
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    float deltaTime = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
     auto vkContext = VulkanContext::Get();
+    float fps = 1/Time::deltaTime;
+    ImGui::Text("FPS: %.f",fps);
     auto &swapChainExtent = vkContext->SwapChain->swapChainExtent;
     auto &device = vkContext->VulkanDevice->device;
 
     UniformBufferObject ubo{};
-    ubo.model = glm::rotate(glm::mat4(1.0f), deltaTime * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.model = glm::rotate(glm::mat4(1.0f), Time::realtimeSinceStartup * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
     ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float) swapChainExtent.height, 0.1f,
