@@ -18,6 +18,7 @@
 #include "VulkanCore/VulkanIndexBuffer.h"
 #include "EngineCore/Time.h"
 #include "EngineCore/GameObject.h"
+#include "EngineCore/MeshRenderer.h"
 
 std::shared_ptr<VulkanContext> VulkanContext::mContextInstance;
 
@@ -56,16 +57,6 @@ private:
 
 	}
 
-	void EditVertexData(std::vector<VulkanVertex> &vertices) {
-		for (int i = 0; i < vertices.size(); ++i) {
-			auto &vertex = vertices[i];
-			ImGui::PushID(i);
-			ImGui::SliderFloat2(("Position "), (float *) &vertex.pos, -1.5, 2.5);
-			ImGui::SliderFloat3("Color ", (float *) &vertex.color, -2, 2);
-			ImGui::PopID();
-		}
-
-	}
 
 	void MainLoop() {
 		auto vkContext = VulkanContext::Get();
@@ -78,22 +69,9 @@ private:
 		VulkanPipeline pipeline(testShader);
 		m_VulkanContext->graphicsPipeline = &pipeline.graphicsPipeline;
 		m_VulkanContext->wireframePipeline = &pipeline.wireFramePipeline;
-		std::vector<VulkanVertex> vertices = {
-				{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-				{{0.5f,  -0.5f}, {0.0f, 1.0f, 0.0f}},
-				{{0.5f,  0.5f},  {0.0f, 0.0f, 1.0f}},
-				{{-0.5f, 0.5f},  {1.0f, 1.0f, 1.0f}}
-		};
-		std::vector<uint16_t> indices = {
-				0, 1, 2, 2, 3, 0
-		};
-		auto vertexBufferSize = sizeof(vertices[0]) * vertices.size();
-		VulkanVertexBuffer vertexBuffer(vertices.data(), static_cast<uint32_t>(vertexBufferSize));
+        MeshRenderer meshRenderer;
 
-		auto indexBufferSize = sizeof(indices[0]) * indices.size();
-		VulkanIndexBuffer indexBuffer(indices.data(), indices.size(), static_cast<uint32_t>(indexBufferSize));
-		vulkanRenderer.RenderContext.vertexBuffer = &vertexBuffer;
-		vulkanRenderer.RenderContext.indexBuffer = &indexBuffer;
+		vulkanRenderer.RenderContext.meshRenderer = &meshRenderer;
 		vulkanRenderer.RenderContext.pipelineLayout = &pipeline.pipelineLayout;
 		vulkanRenderer.CreateDescriptorSets(testShader.descriptorSetLayout);
 		GameObject quadGo;
@@ -106,8 +84,7 @@ private:
 			{
 				vulkanRenderer.DrawFrame();
 //                imguiLayer.OnGui();
-				EditVertexData(vertices);
-				vertexBuffer.UpdateMemory();
+                meshRenderer.Update();
 				imguiLayer.Render(vkContext->CommandBuffer.GetCurCommandBuffer());
 			}
 			vulkanRenderer.EndFrame();

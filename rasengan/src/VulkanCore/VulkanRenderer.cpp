@@ -28,8 +28,7 @@ void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *vkContext->graphicsPipeline);
 	}
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *RenderContext.pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
-	auto indicesCount = RenderContext.indexBuffer->GetCount();
-	vkCmdDrawIndexed(commandBuffer, indicesCount, 1, 0, 0, 0);
+    RenderContext.meshRenderer->Render();
 //    vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 
 }
@@ -79,13 +78,8 @@ Present the swap chain image
  */
 void VulkanRenderer::DrawFrame() {
 	auto vkContext = VulkanContext::Get();
-	auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
-	VkBuffer vertexBuffers[] = {RenderContext.vertexBuffer->GetVulkanBuffer()};
-	VkDeviceSize offsets[] = {0};
-	VkBuffer indexBuffer = {RenderContext.indexBuffer->GetIndexBuffer()};
-	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-	vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
-
+	RenderContext.meshRenderer->BindRenderData();
+    auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
 	RecordCommandBuffer(commandBuffer, imageIndex);
 }
 

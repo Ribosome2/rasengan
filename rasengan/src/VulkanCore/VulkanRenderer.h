@@ -6,11 +6,11 @@
 #include "VulkanVertexBuffer.h"
 #include "VulkanIndexBuffer.h"
 #include "EngineCore/GameObject.h"
+#include "EngineCore/MeshRenderer.h"
 
 class RenderContext {
 public:
-	VulkanVertexBuffer *vertexBuffer;
-	VulkanIndexBuffer *indexBuffer;
+    MeshRenderer * meshRenderer;
 	VkPipelineLayout *pipelineLayout;
 	VkBuffer uniformBuffer;
 	VkDeviceMemory uniformBufferMemory;
