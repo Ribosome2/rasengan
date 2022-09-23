@@ -34,7 +34,11 @@ ADD_EXECUTABLE(${PROJECT_NAME} "src/main.cpp"
         src/VulkanCore/VulkanVertex.cpp
         src/VulkanCore/VulkanVertex.h
         src/VulkanCore/VulkanVertexBuffer.cpp src/VulkanCore/VulkanVertexBuffer.h src/VulkanCore/VulkanBufferHelper.h src/VulkanCore/VulkanIndexBuffer.cpp src/VulkanCore/VulkanIndexBuffer.h src/Renderring/RenderringDataDefine.h
-        src/EngineCore/Time.cpp src/EngineCore/Time.h)
+        src/EngineCore/Time.cpp src/EngineCore/Time.h
+        src/EngineCore/GameObject.cpp
+        src/EngineCore/GameObject.h
+        src/EngineCore/Transform.cpp
+        src/EngineCore/Transform.h)
 
 FIND_PACKAGE(Vulkan REQUIRED)
 INCLUDE_DIRECTORIES(
