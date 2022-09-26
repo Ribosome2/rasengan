@@ -37,8 +37,6 @@ public:
     VkRenderPass renderPass;
     VulkanDevice *VulkanDevice;
     GLFWwindow *window;
-    VkPipeline *graphicsPipeline;
-    VkPipeline *wireframePipeline;
 private:
     // Vulkan instance
     inline static VkInstance s_VulkanInstance;

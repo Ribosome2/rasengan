@@ -1,5 +1,6 @@
 #include "VulkanShader.h"
 #include "ShaderUtil.h"
+#include "VulkanContext.h"
 
 VulkanShader::VulkanShader(std::string vertexPath, std::string fragPath) {
     auto vertShaderCode = ShaderUtil::ReadFile(vertexPath);

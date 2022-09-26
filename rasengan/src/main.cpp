@@ -13,8 +13,6 @@
 #include "VulkanCore/VulkanShader.h"
 #include "VulkanCore/VulkanPipeline.h"
 #include "VulkanImguiLayer.hpp"
-#include "VulkanCore/VulkanVertex.h"
-#include "VulkanCore/VulkanVertexBuffer.h"
 #include "VulkanCore/VulkanIndexBuffer.h"
 #include "EngineCore/Time.h"
 #include "EngineCore/GameObject.h"
@@ -68,15 +66,13 @@ private:
 		vulkanRenderer.Init();
 		VulkanShader testShader("shaders/vertexWithUniformBuffer.vert", "shaders/simpleColor.frag");
 		VulkanPipeline pipeline(testShader);
-		m_VulkanContext->graphicsPipeline = &pipeline.graphicsPipeline;
-		m_VulkanContext->wireframePipeline = &pipeline.wireFramePipeline;
         MeshRenderer meshRenderer;
         Material testMaterial;
         testMaterial.shader = &testShader;
-        testMaterial.graphicsPipeline = &pipeline;
+        testMaterial.pipeline = &pipeline;
 
 		vulkanRenderer.RenderContext.meshRenderer = &meshRenderer;
-		vulkanRenderer.RenderContext.pipelineLayout = &pipeline.pipelineLayout;
+		vulkanRenderer.RenderContext.material = &testMaterial;
 		vulkanRenderer.CreateDescriptorSets(testShader.descriptorSetLayout);
 		GameObject quadGo;
 		while (!glfwWindowShouldClose(mVulkanWindows.window)) {

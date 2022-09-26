@@ -1,6 +1,8 @@
 #include "VulkanPipeline.h"
 #include "VulkanInitializer.h"
 #include "VulkanVertex.h"
+#include "VulkanContext.h"
+
 VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
 	auto vkContext = VulkanContext::Get();
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo = VulkanInitializer::GetVertexInputStateCreateInfo();

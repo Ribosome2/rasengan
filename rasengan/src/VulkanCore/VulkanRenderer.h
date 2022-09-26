@@ -7,13 +7,14 @@
 #include "VulkanIndexBuffer.h"
 #include "EngineCore/GameObject.h"
 #include "EngineCore/MeshRenderer.h"
+#include "EngineCore/Material.h"
 
 class RenderContext {
 public:
     MeshRenderer * meshRenderer;
-	VkPipelineLayout *pipelineLayout;
 	VkBuffer uniformBuffer;
 	VkDeviceMemory uniformBufferMemory;
+    Material * material;
 };
 
 class VulkanRenderer {

@@ -8,5 +8,5 @@ public:
     Material();
 
     VulkanShader*  shader;
-    VulkanPipeline *  graphicsPipeline;
+    VulkanPipeline *  pipeline;
 };

@@ -22,12 +22,14 @@ void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_
 	auto vkContext = VulkanContext::Get();
 	static bool useWireFramePipeline = false;
 	ImGui::Checkbox("useWireFramePipeline", &useWireFramePipeline);
+    auto & material =RenderContext.material;
+    auto & pipeline = material->pipeline;
 	if (useWireFramePipeline) {
-		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *vkContext->wireframePipeline);
+		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->wireFramePipeline);
 	} else {
-		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *vkContext->graphicsPipeline);
+		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->graphicsPipeline);
 	}
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *RenderContext.pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material->pipeline->pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
     RenderContext.meshRenderer->Render();
 //    vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 
