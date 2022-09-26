@@ -5,6 +5,7 @@
 #include "vulkan/vulkan.h"
 #include "VulkanDevice.h"
 #include "VulkanCommandBuffer.h"
+#include "EngineCore/Material.h"
 //#include "VulkanPipeline.h"
 
 class VulkanContext {
