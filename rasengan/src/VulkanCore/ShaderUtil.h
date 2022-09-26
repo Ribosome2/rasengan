@@ -8,7 +8,7 @@ class ShaderUtil{
 public:
     static void CompileShader(std::string  shaderPath , std::string  outputPath){
         char command[1024];
-        sprintf(command,"glslc.exe %s -o %s",shaderPath.c_str(),outputPath.c_str());
+        sprintf_s(command,"glslc.exe %s -o %s",shaderPath.c_str(),outputPath.c_str());
         auto result = system(command);
         if(result!=0)
         {

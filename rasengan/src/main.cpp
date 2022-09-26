@@ -19,6 +19,7 @@
 #include "EngineCore/Time.h"
 #include "EngineCore/GameObject.h"
 #include "EngineCore/MeshRenderer.h"
+#include "EngineCore/Material.h"
 
 std::shared_ptr<VulkanContext> VulkanContext::mContextInstance;
 
@@ -70,6 +71,9 @@ private:
 		m_VulkanContext->graphicsPipeline = &pipeline.graphicsPipeline;
 		m_VulkanContext->wireframePipeline = &pipeline.wireFramePipeline;
         MeshRenderer meshRenderer;
+        Material testMaterial;
+        testMaterial.shader = &testShader;
+        testMaterial.graphicsPipeline = &pipeline;
 
 		vulkanRenderer.RenderContext.meshRenderer = &meshRenderer;
 		vulkanRenderer.RenderContext.pipelineLayout = &pipeline.pipelineLayout;
