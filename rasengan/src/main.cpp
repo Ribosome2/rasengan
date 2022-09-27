@@ -63,6 +63,7 @@ private:
 		uint32_t imageCount = 2;
 		VulkanImguiLayer imguiLayer{vkContext->window, vkContext->renderPass, imageCount, MSAASamples};
 		VulkanRenderer vulkanRenderer{};
+        vkContext->VulkanRenderer= &vulkanRenderer;
 		vulkanRenderer.Init();
 		VulkanShader testShader("shaders/vertexWithUniformBuffer.vert", "shaders/simpleColor.frag");
 		VulkanPipeline pipeline(testShader);
@@ -70,21 +71,22 @@ private:
         Material testMaterial;
         testMaterial.shader = &testShader;
         testMaterial.pipeline = &pipeline;
+        testMaterial.CreateDescriptorSets(testShader.descriptorSetLayout);
 
 		vulkanRenderer.RenderContext.meshRenderer = &meshRenderer;
 		vulkanRenderer.RenderContext.material = &testMaterial;
-		vulkanRenderer.CreateDescriptorSets(testShader.descriptorSetLayout);
 		GameObject quadGo;
+        meshRenderer.transform = &quadGo.transform;
 		while (!glfwWindowShouldClose(mVulkanWindows.window)) {
 			glfwPollEvents();
 			Time::Update();
 			imguiLayer.NewFrame();
-			vulkanRenderer.UpdateUniformBuffer(quadGo);
 			vulkanRenderer.BeginFrame();
 			{
+                meshRenderer.Update();
 				vulkanRenderer.DrawFrame();
 //                imguiLayer.OnGui();
-                meshRenderer.Update();
+
 				imguiLayer.Render(vkContext->CommandBuffer.GetCurCommandBuffer());
 			}
 			vulkanRenderer.EndFrame();

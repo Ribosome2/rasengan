@@ -3,6 +3,7 @@
 #include "VulkanCore/VulkanVertex.h"
 #include "memory"
 #include "Mesh.h"
+#include "Material.h"
 
 class MeshRenderer {
 public:
@@ -10,5 +11,7 @@ public:
     void Update();
     void Render();
 public:
+    Transform * transform;
     Mesh mesh;
+    Material material;
 };

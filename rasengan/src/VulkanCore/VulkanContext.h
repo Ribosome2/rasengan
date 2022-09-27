@@ -36,6 +36,7 @@ public:
     VulkanCommandBuffer CommandBuffer;
     VkRenderPass renderPass;
     VulkanDevice *VulkanDevice;
+    VulkanRenderer * VulkanRenderer;
     GLFWwindow *window;
 private:
     // Vulkan instance
