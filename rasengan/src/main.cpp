@@ -72,8 +72,9 @@ private:
         testMaterial.shader = &testShader;
         testMaterial.pipeline = &pipeline;
         testMaterial.CreateDescriptorSets(testShader.descriptorSetLayout);
+        meshRenderer.material =testMaterial;
 
-		vulkanRenderer.RenderContext.meshRenderer = &meshRenderer;
+        vulkanRenderer.RenderContext.meshRenderer = &meshRenderer;
 		vulkanRenderer.RenderContext.material = &testMaterial;
 		GameObject quadGo;
         meshRenderer.transform = &quadGo.transform;
