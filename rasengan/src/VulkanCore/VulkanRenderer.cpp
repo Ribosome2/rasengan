@@ -80,7 +80,6 @@ Present the swap chain image
  */
 void VulkanRenderer::DrawFrame() {
 	auto vkContext = VulkanContext::Get();
-	RenderContext.meshRenderer->BindRenderData();
     auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
 	RecordCommandBuffer(commandBuffer, imageIndex);
 }
