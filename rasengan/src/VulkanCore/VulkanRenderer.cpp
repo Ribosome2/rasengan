@@ -179,8 +179,11 @@ VulkanRenderer::VulkanRenderer() {
 
 void VulkanRenderer::createDescriptorPool() {
 	VkDescriptorPoolSize poolSize{};
+
 	poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	poolSize.descriptorCount = 1; //todo: for now we only have one
+    //Max descriptors of VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER to allocate ,if vkAllocateDescriptorSets more than this number
+    //you'll get error : failed to allocate descriptor sets!
+	poolSize.descriptorCount = 10;
 
 	VkDescriptorPoolCreateInfo poolInfo{};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;

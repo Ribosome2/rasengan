@@ -68,17 +68,19 @@ private:
 		VulkanShader testShader("shaders/vertexWithUniformBuffer.vert", "shaders/simpleColor.frag");
 		VulkanPipeline pipeline(testShader);
         std::vector<std::shared_ptr<GameObject>> gameObjects ;
-        for (int i = 0; i < 1; ++i) {
+        for (int i = 0; i < 3; ++i) {
             auto  meshRenderer = std::make_shared<MeshRenderer>() ;
             std::shared_ptr<Material>  testMaterial  = std::make_shared<Material>();
+            meshRenderer->material = testMaterial;
             testMaterial->name = "TestMaterial";
             testMaterial->shader = &testShader;
             testMaterial->pipeline = &pipeline;
             testMaterial->CreateDescriptorSets(testShader.descriptorSetLayout);
             auto quadGo = std::make_shared<GameObject>();
+            quadGo->transform.scale = glm::vec3{0.2};
+            quadGo->transform.position = glm::vec3{0.2,0.3*i,0.0};
             quadGo->meshRenderer = meshRenderer;
             meshRenderer->transform = &quadGo->transform;
-            meshRenderer->material = testMaterial;
             gameObjects.push_back(quadGo);
         }
 

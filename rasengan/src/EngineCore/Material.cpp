@@ -59,6 +59,8 @@ void Material::CreateDescriptorSets(VkDescriptorSetLayout &descriptorSetLayout) 
 
     if (vkAllocateDescriptorSets(device, &allocInfo, &descriptorSet) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate descriptor sets!");
+    }else{
+        std::cout<<"CreateDescriptorSets Success "<<std::endl;
     }
 
     VkDescriptorBufferInfo bufferInfo{};
