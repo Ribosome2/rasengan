@@ -16,8 +16,7 @@ Material::Material() {
 
 void Material::UpdateUniformBuffer(Transform &transform) {
     auto vkContext = VulkanContext::Get();
-    float fps = 1 / Time::deltaTime;
-    ImGui::Text("FPS: %.f", fps);
+
     auto &swapChainExtent = vkContext->SwapChain->swapChainExtent;
     auto &device = vkContext->VulkanDevice->device;
 

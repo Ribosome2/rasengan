@@ -10,4 +10,7 @@ public:
 public:
 	Transform transform;
     std::shared_ptr<MeshRenderer>   meshRenderer;
+    uint32_t instanceId;
+private:
+    static uint32_t s_autoInstanceId;
 };

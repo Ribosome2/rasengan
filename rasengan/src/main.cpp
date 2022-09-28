@@ -77,6 +77,7 @@ private:
             testMaterial->pipeline = &pipeline;
             testMaterial->CreateDescriptorSets(testShader.descriptorSetLayout);
             auto quadGo = std::make_shared<GameObject>();
+            quadGo->transform.gameObject=quadGo.get();
             quadGo->transform.scale = glm::vec3{0.2};
             quadGo->transform.position = glm::vec3{0.2,0.3*i,0.0};
             quadGo->meshRenderer = meshRenderer;
@@ -91,6 +92,8 @@ private:
 			imguiLayer.NewFrame();
 			vulkanRenderer.BeginFrame();
 			{
+                float fps = 1 / Time::deltaTime;
+                ImGui::Text("FPS: %.f", fps);
                 for (auto & go : gameObjects) {
                     go->Update();
                     vulkanRenderer.RenderContext.meshRenderer = go->meshRenderer.get();
