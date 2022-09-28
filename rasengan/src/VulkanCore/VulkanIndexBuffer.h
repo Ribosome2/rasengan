@@ -6,7 +6,7 @@
 
 class VulkanIndexBuffer {
 public:
-	VulkanIndexBuffer(void* indices,uint32_t indexCount,uint32_t bufferSize);
+	VulkanIndexBuffer(void* indices,size_t indexCount,size_t bufferSize);
 	VkBuffer & GetIndexBuffer(){ return indexBuffer;}
 	uint32_t GetCount() const  { return indicesCount; }
 

@@ -1,6 +1,6 @@
 #include "VulkanIndexBuffer.h"
 #include "VulkanBufferHelper.h"
-VulkanIndexBuffer::VulkanIndexBuffer(void *indices,uint32_t indexCount, uint32_t bufferSize) {
+VulkanIndexBuffer::VulkanIndexBuffer(void *indices,size_t indexCount, size_t bufferSize) {
 	this->indices= indices;
 	this->bufferSize = bufferSize;
 	this->indicesCount= indexCount;
