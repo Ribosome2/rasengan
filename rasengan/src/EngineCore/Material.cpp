@@ -4,7 +4,9 @@
 #include "Time.h"
 #include "imgui.h"
 #include <glm/gtc/matrix_transform.hpp>
+
 Material::Material() {
+    std::cout << "Create material " << std::endl;
     VkDeviceSize bufferSize = sizeof(UniformBufferObject);
     VulkanBufferHelper::CreateBuffer(bufferSize,
                                      VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
@@ -39,6 +41,7 @@ void Material::UpdateUniformBuffer(Transform &transform) {
 }
 
 Material::~Material() {
+    std::cout << "destroy Material " << this->name << std::endl;
     auto device = VulkanContext::Get()->VulkanDevice->device;
     vkDestroyBuffer(device, uniformBuffer, nullptr);
     vkFreeMemory(device, uniformBufferMemory, nullptr);

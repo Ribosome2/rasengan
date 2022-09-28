@@ -13,5 +13,8 @@ public:
 public:
     Transform * transform;
     Mesh mesh;
-    Material material;
+
+    //Returns the first instantiated Material assigned to the renderer.
+    //Modifying material will change the material for this object only.
+    std::shared_ptr<Material> material;
 };

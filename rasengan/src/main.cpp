@@ -67,25 +67,36 @@ private:
 		vulkanRenderer.Init();
 		VulkanShader testShader("shaders/vertexWithUniformBuffer.vert", "shaders/simpleColor.frag");
 		VulkanPipeline pipeline(testShader);
-        MeshRenderer meshRenderer;
-        Material testMaterial;
-        testMaterial.shader = &testShader;
-        testMaterial.pipeline = &pipeline;
-        testMaterial.CreateDescriptorSets(testShader.descriptorSetLayout);
-        meshRenderer.material =testMaterial;
+        std::vector<std::shared_ptr<GameObject>> gameObjects ;
+        for (int i = 0; i < 1; ++i) {
+            auto  meshRenderer = std::make_shared<MeshRenderer>() ;
+            std::shared_ptr<Material>  testMaterial  = std::make_shared<Material>();
+            testMaterial->name = "TestMaterial";
+            testMaterial->shader = &testShader;
+            testMaterial->pipeline = &pipeline;
+            testMaterial->CreateDescriptorSets(testShader.descriptorSetLayout);
+            auto quadGo = std::make_shared<GameObject>();
+            quadGo->meshRenderer = meshRenderer;
+            meshRenderer->transform = &quadGo->transform;
+            meshRenderer->material = testMaterial;
+            gameObjects.push_back(quadGo);
+        }
 
-        vulkanRenderer.RenderContext.meshRenderer = &meshRenderer;
-		vulkanRenderer.RenderContext.material = &testMaterial;
-		GameObject quadGo;
-        meshRenderer.transform = &quadGo.transform;
+
 		while (!glfwWindowShouldClose(mVulkanWindows.window)) {
 			glfwPollEvents();
 			Time::Update();
 			imguiLayer.NewFrame();
 			vulkanRenderer.BeginFrame();
 			{
-                meshRenderer.Update();
-				vulkanRenderer.DrawFrame();
+                for (auto & go : gameObjects) {
+                    go->Update();
+                    vulkanRenderer.RenderContext.meshRenderer = go->meshRenderer.get();
+                    vulkanRenderer.RenderContext.material = go->meshRenderer->material.get();
+                    vulkanRenderer.DrawFrame();
+
+                }
+
 //                imguiLayer.OnGui();
 
 				imguiLayer.Render(vkContext->CommandBuffer.GetCurCommandBuffer());

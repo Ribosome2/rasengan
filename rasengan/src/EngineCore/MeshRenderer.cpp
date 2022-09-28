@@ -7,7 +7,7 @@ MeshRenderer::MeshRenderer() = default;
 
 void MeshRenderer::Update() {
    mesh.Update();
-   material.UpdateUniformBuffer(*transform);
+   material->UpdateUniformBuffer(*transform);
 }
 
 

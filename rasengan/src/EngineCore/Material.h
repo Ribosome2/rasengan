@@ -11,6 +11,7 @@ public:
     void CreateDescriptorSets(VkDescriptorSetLayout &descriptorSetLayout);
     void UpdateUniformBuffer(Transform &transform);
 public:
+    std::string  name = "default";
     VulkanShader*  shader;
     VulkanPipeline *  pipeline;
     VkDescriptorSet descriptorSet;
