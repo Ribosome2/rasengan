@@ -17,11 +17,12 @@
 #include <chrono>
 #include "EngineCore/Time.h"
 #include "string"
+bool VulkanRenderer::useWireFramePipeline= false;
 void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_t imageIndex) {
 
 	auto vkContext = VulkanContext::Get();
-	static bool useWireFramePipeline = false;
-	ImGui::Checkbox("useWireFramePipeline", &useWireFramePipeline);
+
+
     auto & material =RenderContext.material;
     auto & pipeline = material->pipeline;
 	if (useWireFramePipeline) {
@@ -77,10 +78,15 @@ Record a command buffer which draws the scene onto that image
 Submit the recorded command buffer
 Present the swap chain image
  */
-void VulkanRenderer::DrawFrame() {
+void VulkanRenderer::DrawFrame(std::vector<std::shared_ptr<GameObject>> gameObjects) {
 	auto vkContext = VulkanContext::Get();
     auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
-	RecordCommandBuffer(commandBuffer, imageIndex);
+
+	for (auto & go : gameObjects) {
+		RenderContext.meshRenderer = go->meshRenderer.get();
+		RenderContext.material = go->meshRenderer->material.get();
+		RecordCommandBuffer(commandBuffer, imageIndex);
+	}
 }
 
 void VulkanRenderer::EndRenderPass() {
@@ -196,6 +202,10 @@ void VulkanRenderer::createDescriptorPool() {
 	if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
 		throw std::runtime_error("failed to create descriptor pool!");
 	}
+}
+
+void VulkanRenderer::OnGui() {
+	ImGui::Checkbox("useWireFramePipeline", &useWireFramePipeline);
 }
 
 

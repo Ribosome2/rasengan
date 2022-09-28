@@ -90,18 +90,15 @@ private:
 			glfwPollEvents();
 			Time::Update();
 			imguiLayer.NewFrame();
+			for (auto & go : gameObjects) {
+				go->Update();
+			}
 			vulkanRenderer.BeginFrame();
 			{
                 float fps = 1 / Time::deltaTime;
                 ImGui::Text("FPS: %.f", fps);
-                for (auto & go : gameObjects) {
-                    go->Update();
-                    vulkanRenderer.RenderContext.meshRenderer = go->meshRenderer.get();
-                    vulkanRenderer.RenderContext.material = go->meshRenderer->material.get();
-                    vulkanRenderer.DrawFrame();
-
-                }
-
+				vulkanRenderer.OnGui();
+				vulkanRenderer.DrawFrame(gameObjects);
 //                imguiLayer.OnGui();
 
 				imguiLayer.Render(vkContext->CommandBuffer.GetCurCommandBuffer());
