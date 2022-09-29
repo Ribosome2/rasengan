@@ -18,6 +18,7 @@
 #include "EngineCore/GameObject.h"
 #include "EngineCore/MeshRenderer.h"
 #include "EngineCore/Material.h"
+#include "Input/Input.h"
 
 std::shared_ptr<VulkanContext> VulkanContext::mContextInstance;
 
@@ -85,13 +86,17 @@ private:
             gameObjects.push_back(quadGo);
         }
 
-
+        Input::Init(vkContext->window);
 		while (!glfwWindowShouldClose(mVulkanWindows.window)) {
 			glfwPollEvents();
+            Input::Update();
+
+
 			Time::Update();
 			imguiLayer.NewFrame();
 			float fps = 1 / Time::deltaTime;
 			ImGui::Text("FPS: %.f", fps);
+            Input::OnGUI();
 			vulkanRenderer.Update();
 			for (auto & go : gameObjects) {
 				go->Update();

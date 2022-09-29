@@ -38,7 +38,17 @@ ADD_EXECUTABLE(${PROJECT_NAME} "src/main.cpp"
         src/EngineCore/GameObject.cpp
         src/EngineCore/GameObject.h
         src/EngineCore/Transform.cpp
-        src/EngineCore/Transform.h src/EngineCore/MeshRenderer.cpp src/EngineCore/MeshRenderer.h src/EngineCore/Material.cpp src/EngineCore/Material.h src/EngineCore/Mesh.cpp src/EngineCore/Mesh.h src/EngineCore/Camera.cpp src/EngineCore/Camera.h)
+        src/EngineCore/Transform.h
+        src/EngineCore/MeshRenderer.cpp
+        src/EngineCore/MeshRenderer.h
+        src/EngineCore/Material.cpp
+        src/EngineCore/Material.h
+        src/EngineCore/Mesh.cpp
+        src/EngineCore/Mesh.h
+        src/EngineCore/Camera.cpp
+        src/EngineCore/Camera.h
+        src/EngineCore/SceneViewCameraController.cpp
+        src/EngineCore/SceneViewCameraController.h src/Input/Input.cpp src/Input/Input.h)
 
 FIND_PACKAGE(Vulkan REQUIRED)
 INCLUDE_DIRECTORIES(
