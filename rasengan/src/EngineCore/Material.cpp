@@ -23,15 +23,9 @@ void Material::UpdateUniformBuffer(Transform &transform) {
     UniformBufferObject ubo{};
     transform.UpdateModelMatrix();
     ubo.model = transform.localToWorldMatrix;
-
-    static auto eyePos = glm::vec3(0.0f, 0.0f, 2.0f);
-    ImGui::SliderFloat3("eyePos ", (float *) &eyePos, -10, 10);
-    static auto lookAtCenter = glm::vec3(0.0f, 0.0f, 0.0f);
-    ImGui::SliderFloat3("lookAtCenter ", (float *) &lookAtCenter, -10, 10);
-    ubo.view = glm::lookAt(eyePos, lookAtCenter, glm::vec3(0.0f, 1.0f, 0.0f));
-    ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float) swapChainExtent.height, 0.1f,
-                                10.0f);
-    ubo.proj[1][1] *= -1;
+	auto const & renderContext = vkContext->VulkanRenderer->RenderContext;
+    ubo.view = renderContext.viewMatrix;
+    ubo.proj = renderContext.projectionMatrix;
 
     void *data;
     vkMapMemory(device, uniformBufferMemory, 0, sizeof(ubo), 0, &data);

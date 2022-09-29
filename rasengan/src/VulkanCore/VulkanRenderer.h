@@ -9,10 +9,14 @@
 #include "EngineCore/MeshRenderer.h"
 #include "EngineCore/Material.h"
 #include "memory"
+#include "EngineCore/Camera.h"
+
 class RenderContext {
 public:
     MeshRenderer * meshRenderer;
     Material * material;
+	glm::mat4 viewMatrix;
+	glm::mat4 projectionMatrix;
 };
 
 class VulkanRenderer {
@@ -22,7 +26,7 @@ public:
 	~VulkanRenderer();
 
 	void Init();
-	void OnGui();
+	void Update();
 	void BeginRenderPass(uint32_t imageIndex);
 	void EndRenderPass();
 	void BeginFrame();
@@ -32,10 +36,13 @@ public:
     VkDescriptorPool &  GetDescriptorPool() { return descriptorPool;};
 private:
 	void createDescriptorPool();
+	void updateCameraMatrix();
 public:
 	uint32_t imageIndex;
 	RenderContext RenderContext;
+	Camera camera;
 private:
 	VkDescriptorPool descriptorPool;
 	static bool useWireFramePipeline ;
+
 };

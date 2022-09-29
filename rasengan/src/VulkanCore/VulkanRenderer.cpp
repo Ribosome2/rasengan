@@ -71,13 +71,7 @@ void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 }
 
-/*
-Wait for the previous frame to finish
-Acquire an image from the swap chain
-Record a command buffer which draws the scene onto that image
-Submit the recorded command buffer
-Present the swap chain image
- */
+
 void VulkanRenderer::DrawFrame(std::vector<std::shared_ptr<GameObject>> gameObjects) {
 	auto vkContext = VulkanContext::Get();
     auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
@@ -113,6 +107,7 @@ void VulkanRenderer::BeginFrame() {
 	auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
 	vkResetCommandBuffer(commandBuffer, 0);
 	BeginRenderPass(imageIndex);
+	updateCameraMatrix();
 }
 
 void VulkanRenderer::EndFrame() {
@@ -204,8 +199,18 @@ void VulkanRenderer::createDescriptorPool() {
 	}
 }
 
-void VulkanRenderer::OnGui() {
+void VulkanRenderer::Update() {
+	auto vkContext = VulkanContext::Get();
+	auto swapchainExtent =vkContext->SwapChain->swapChainExtent;
+	camera.aspect = swapchainExtent.width/(float)swapchainExtent.height;
 	ImGui::Checkbox("useWireFramePipeline", &useWireFramePipeline);
+	camera.OnGUI();
+}
+
+void VulkanRenderer::updateCameraMatrix() {
+	camera.UpdateDataMatrix();
+	RenderContext.projectionMatrix = camera.projectionMatrix;
+	RenderContext.viewMatrix = camera.worldToCameraMatrix;
 }
 
 
