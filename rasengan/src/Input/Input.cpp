@@ -7,7 +7,7 @@ glm::vec2 Input::s_lastMousePos;
 glm::vec2 Input::s_mouseDeltaPosition;
 static glm::vec2 mouseScrollDelta;
 float  Input::s_lastMouseScroll;
-bool  Input::s_isFirstPosCallCall = false;
+bool  Input::s_isFirstPosCallCall = true;
 int  Input::s_prevMouseButtonStates[3];
 int  Input::s_mouseButtonStates[3];
 
@@ -57,6 +57,7 @@ void Input::cursorPositionCallback(GLFWwindow *window, double xPos, double yPos)
     }
     s_lastMousePos.x = (float) xPos;
     s_lastMousePos.y = (float) yPos;
+    std::cout << "xPos " << s_mouseDeltaPosition.x << std::endl;
 }
 
 void Input::scrollCallback(GLFWwindow *window, double xOffset, double yOffset) {
@@ -89,9 +90,19 @@ void Input::Update() {
         }
         s_prevKeyButtonStates[button] = keyButtonState;
     }
+
+    double  posX =0;
+    double  posY =0;
+    glfwGetCursorPos(window,&posX,&posY);
+    s_mouseDeltaPosition.x = (float) posX - s_lastMousePos.x;
+    s_mouseDeltaPosition.y = (float) posY - s_lastMousePos.y;
+    s_lastMousePos.x = (float) posX;
+    s_lastMousePos.y = (float) posY;
+//    std::cout << "xPos " << s_mouseDeltaPosition.x << std::endl;
 }
 
 void Input::OnGUI() {
+
 //    if (Input::GetMouseButton(0)) {
 //        ImGui::Text("Pressing Mouse left ");
 //    }

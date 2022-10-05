@@ -17,7 +17,7 @@ ADD_EXECUTABLE(${PROJECT_NAME} "src/main.cpp"
         src/Input/Input.cpp
         src/Input/Input.h
         src/Renderring/RenderringDataDefine.h
-        )
+        src/DemoScene.h)
 
 
 FIND_PACKAGE(Vulkan REQUIRED)

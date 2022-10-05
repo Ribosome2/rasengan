@@ -38,7 +38,7 @@ void SceneViewCameraController::rotateByMouse() {
     {
         auto xOffset = Input::GetMouseDeltaPosition().x;
         auto yOffset =  Input::GetMouseDeltaPosition().y;
-        float sensitivity = 0.1f;
+        float sensitivity = 1.0f;
         xOffset *= sensitivity;
         yOffset *= sensitivity;
 

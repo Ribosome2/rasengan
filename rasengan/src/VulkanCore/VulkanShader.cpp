@@ -1,7 +1,7 @@
 #include "VulkanShader.h"
 #include "ShaderUtil.h"
 #include "VulkanContext.h"
-
+ std::unordered_map<std::string ,std::shared_ptr<VulkanShader> > VulkanShader::s_shadersMap;
 VulkanShader::VulkanShader(std::string vertexPath, std::string fragPath) {
     auto vertShaderCode = ShaderUtil::ReadFile(vertexPath);
     auto fragShaderCode = ShaderUtil::ReadFile(fragPath);
@@ -16,6 +16,7 @@ VulkanShader::VulkanShader(std::string vertexPath, std::string fragPath) {
 }
 
 VulkanShader::~VulkanShader() {
+    std::cout<<"destroy shader "<<std::endl;
     auto & device = VulkanContext::Get()->VulkanDevice->device;
     vkDestroyShaderModule(device, fragShaderModule, nullptr);
     vkDestroyShaderModule(device, vertShaderModule, nullptr);
@@ -39,3 +40,13 @@ void  VulkanShader::createDescriptorSetLayout() {
         throw std::runtime_error("failed to create descriptor set layout!");
     }
 }
+
+std::shared_ptr<VulkanShader> VulkanShader::Find(string &shaderPath) {
+    auto result = s_shadersMap.find(shaderPath);
+    if(result!=s_shadersMap.end())
+    {
+        return result->second;
+    }
+    return nullptr;
+}
+
