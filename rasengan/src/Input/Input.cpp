@@ -91,37 +91,37 @@ void Input::Update() {
 }
 
 void Input::OnGUI() {
-    if (Input::GetMouseButton(0)) {
-        ImGui::Text("Pressing Mouse left ");
-    }
-
-    if (Input::GetMouseButton(1)) {
-        ImGui::Text("Pressing Mouse Right ");
-    }
-
-    if (Input::GetMouseButton(2)) {
-        ImGui::Text("Pressing Mouse Middle ");
-    }
-
-    for (int i = 0; i < 3; ++i) {
-        if (Input::GetMouseButtonUp(i)) {
-            std::cout << " mouse " << i << " up " << std::endl;
-        }
-
-        if (Input::GetMouseButtonDown(i)) {
-            std::cout << " mouse " << i << " down " << std::endl;
-        }
-    }
-
-    if (Input::GetKey(GLFW_KEY_W)) {
-        ImGui::Text("Pressing W  ");
-    }
-    if (Input::GetKeyDown(GLFW_KEY_W)) {
-        std::cout<<"Pressing W  down  " <<std::endl;
-    }
-
-    if (Input::GetKeyUp(GLFW_KEY_W)) {
-        std::cout<<"Pressing W  up  " <<std::endl;
-    }
+//    if (Input::GetMouseButton(0)) {
+//        ImGui::Text("Pressing Mouse left ");
+//    }
+//
+//    if (Input::GetMouseButton(1)) {
+//        ImGui::Text("Pressing Mouse Right ");
+//    }
+//
+//    if (Input::GetMouseButton(2)) {
+//        ImGui::Text("Pressing Mouse Middle ");
+//    }
+//
+//    for (int i = 0; i < 3; ++i) {
+//        if (Input::GetMouseButtonUp(i)) {
+//            std::cout << " mouse " << i << " up " << std::endl;
+//        }
+//
+//        if (Input::GetMouseButtonDown(i)) {
+//            std::cout << " mouse " << i << " down " << std::endl;
+//        }
+//    }
+//
+//    if (Input::GetKey(GLFW_KEY_W)) {
+//        ImGui::Text("Pressing W  ");
+//    }
+//    if (Input::GetKeyDown(GLFW_KEY_W)) {
+//        std::cout<<"Pressing W  down  " <<std::endl;
+//    }
+//
+//    if (Input::GetKeyUp(GLFW_KEY_W)) {
+//        std::cout<<"Pressing W  up  " <<std::endl;
+//    }
 
 }

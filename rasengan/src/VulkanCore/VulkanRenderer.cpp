@@ -204,7 +204,8 @@ void VulkanRenderer::Update() {
 	auto swapchainExtent =vkContext->SwapChain->swapChainExtent;
 	camera.aspect = swapchainExtent.width/(float)swapchainExtent.height;
 	ImGui::Checkbox("useWireFramePipeline", &useWireFramePipeline);
-	camera.OnGUI();
+	cameraController.Update();
+    camera.OnGUI();
 }
 
 void VulkanRenderer::updateCameraMatrix() {

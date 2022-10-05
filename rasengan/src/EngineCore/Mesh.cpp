@@ -21,8 +21,8 @@ void EditVertexData(std::vector<VulkanVertex> &vertices) {
 }
 
 void Mesh::Update() {
-    EditVertexData(vertices);
-    vertexBuffer->UpdateMemory();
+//    EditVertexData(vertices);
+//    vertexBuffer->UpdateMemory();
 }
 
 void Mesh::Bind() {

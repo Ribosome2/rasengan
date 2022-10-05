@@ -9,6 +9,7 @@
 #include "EngineCore/MeshRenderer.h"
 #include "EngineCore/Material.h"
 #include "memory"
+#include "EngineCore/SceneViewCameraController.h"
 #include "EngineCore/Camera.h"
 
 class RenderContext {
@@ -41,6 +42,7 @@ public:
 	uint32_t imageIndex;
 	RenderContext RenderContext;
 	Camera camera;
+    SceneViewCameraController  cameraController{&camera};
 private:
 	VkDescriptorPool descriptorPool;
 	static bool useWireFramePipeline ;

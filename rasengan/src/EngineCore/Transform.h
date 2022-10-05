@@ -5,6 +5,9 @@ class GameObject;
 class Transform {
 public:
 	void UpdateModelMatrix();
+    glm::vec3 GetRightVector();
+    glm::vec3 GetUpVector();
+    glm::vec3 GetForwardVector();
 public:
 
 	glm::vec3 position = {0, 0, 0};
