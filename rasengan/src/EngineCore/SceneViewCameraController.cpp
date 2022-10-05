@@ -25,9 +25,33 @@ void SceneViewCameraController::Update() {
     if (Input::GetKey(GLFW_KEY_S)) {
         verticalMove = -1;
     }
+    rotateByMouse();
     moveSpeed = moveSpeed * Time::deltaTime;
     target->eyePos += glm::vec3(
             horizontalMove * moveSpeed,
             verticalMove * moveSpeed,
             0.0);
+}
+
+void SceneViewCameraController::rotateByMouse() {
+    if(Input::GetMouseButton(1))
+    {
+        auto xOffset = Input::GetMouseDeltaPosition().x;
+        auto yOffset =  Input::GetMouseDeltaPosition().y;
+        float sensitivity = 0.1f;
+        xOffset *= sensitivity;
+        yOffset *= sensitivity;
+
+        target->yaw   += xOffset;
+        target->pitch += yOffset;
+
+        if(target->pitch > 89.0f)
+            target->pitch = 89.0f;
+        if(target->pitch < -89.0f)
+            target->pitch = -89.0f;
+
+        target->UpdateFrontDirection();
+    }
+
+
 }

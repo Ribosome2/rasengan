@@ -28,10 +28,11 @@ public:
     // Returns true during the frame the user releases the key identified by name.
     // You need to call this function from the Update function, since the state gets reset each frame. It will not return true until the user has pressed the key and released it again.
     static bool GetKeyUp(int keyCode);
+
+    static glm::vec2  GetMouseDeltaPosition(){return s_mouseDeltaPosition;};
 private:
     static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos);
     static void scrollCallback(GLFWwindow* window, double xOffset, double yOffset);
-
 
 public:
     static glm::vec3 mousePosition;

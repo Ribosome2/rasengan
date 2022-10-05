@@ -8,7 +8,8 @@ public:
     SceneViewCameraController(Camera *target);
 
     void Update();
-
+private:
+    void rotateByMouse();
 private:
     Camera * target;
 

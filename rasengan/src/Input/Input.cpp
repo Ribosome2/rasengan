@@ -5,6 +5,7 @@
 #define NONE_PRESS_STATE -1
 glm::vec2 Input::s_lastMousePos;
 glm::vec2 Input::s_mouseDeltaPosition;
+static glm::vec2 mouseScrollDelta;
 float  Input::s_lastMouseScroll;
 bool  Input::s_isFirstPosCallCall = false;
 int  Input::s_prevMouseButtonStates[3];

@@ -3,7 +3,9 @@
 //ref: https://learnopengl.com/Getting-started/Camera
 class Camera {
 public:
+    Camera();
 	void OnGUI();
+    void UpdateFrontDirection();
 	void UpdateDataMatrix();
 public:
     glm::vec3 eyePos = glm::vec3(0.0f, 0.0f, 2.0f);
@@ -14,6 +16,10 @@ public:
     glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
     glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
+
+    float pitch=0;
+    float yaw=-90;
+
 
 	glm::vec3 lookAtCenter = glm::vec3(0.0f, 0.0f, 0.0f);
 	float nearClipPlane=0.1f;
