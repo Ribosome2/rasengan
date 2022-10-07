@@ -31,7 +31,7 @@ public:
 
     static glm::vec2  GetMouseDeltaPosition(){return s_mouseDeltaPosition;};
 private:
-    static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos);
+//    static void cursorPositionCallback(GLFWwindow* window, double xPos, double yPos);
     static void scrollCallback(GLFWwindow* window, double xOffset, double yOffset);
 
 public:

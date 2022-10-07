@@ -42,23 +42,10 @@ bool Input::GetKeyUp(int keyCode) {
 
 void Input::Init(GLFWwindow *window) {
     Input::window = window;
-    glfwSetCursorPosCallback(window, Input::cursorPositionCallback);
+//    glfwSetCursorPosCallback(window, Input::cursorPositionCallback);
     glfwSetScrollCallback(window, Input::scrollCallback);
 }
 
-void Input::cursorPositionCallback(GLFWwindow *window, double xPos, double yPos) {
-    if (s_isFirstPosCallCall) {
-        s_isFirstPosCallCall = false;
-        s_mouseDeltaPosition.x = 0;
-        s_mouseDeltaPosition.y = 0;
-    } else {
-        s_mouseDeltaPosition.x = (float) xPos - s_lastMousePos.x;
-        s_mouseDeltaPosition.y = (float) yPos - s_lastMousePos.y;
-    }
-    s_lastMousePos.x = (float) xPos;
-    s_lastMousePos.y = (float) yPos;
-    std::cout << "xPos " << s_mouseDeltaPosition.x << std::endl;
-}
 
 void Input::scrollCallback(GLFWwindow *window, double xOffset, double yOffset) {
     s_lastMouseScroll = (float) yOffset;
