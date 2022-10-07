@@ -10,6 +10,7 @@ public:
     void Update();
 private:
     void rotateByMouse();
+	void panWithMouse();
 private:
     Camera * target;
 

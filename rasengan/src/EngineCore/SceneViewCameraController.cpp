@@ -31,6 +31,7 @@ void SceneViewCameraController::Update() {
             horizontalMove * moveSpeed,
             verticalMove * moveSpeed,
             0.0);
+	panWithMouse();
 }
 
 void SceneViewCameraController::rotateByMouse() {
@@ -54,4 +55,17 @@ void SceneViewCameraController::rotateByMouse() {
     }
 
 
+}
+
+void SceneViewCameraController::panWithMouse() {
+	if(Input::GetMouseButton(2))
+	{
+		auto xOffset = Input::GetMouseDeltaPosition().x;
+		auto yOffset =  Input::GetMouseDeltaPosition().y;
+		float sensitivity = 1.f*Time::deltaTime;
+		xOffset *= sensitivity;
+		yOffset *= sensitivity;
+
+		target->eyePos += glm::vec3(xOffset,yOffset,0);
+	}
 }
