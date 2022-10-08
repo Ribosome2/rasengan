@@ -14,6 +14,7 @@ void Transform::UpdateModelMatrix() {
 
 	localToWorldMatrix = glm::translate(localToWorldMatrix, position);
 
+    //this rotation is too naive and incorrect 
 	localToWorldMatrix = glm::rotate(localToWorldMatrix, eulerAngles.x, glm::vec3{1.0, 0.0, 0.0});
 	localToWorldMatrix = glm::rotate(localToWorldMatrix, eulerAngles.y, glm::vec3{0.0, 1.0, 0.0});
 	localToWorldMatrix = glm::rotate(localToWorldMatrix, eulerAngles.z, glm::vec3{0.0, 0.0, 1.0});

@@ -27,28 +27,29 @@ void SceneViewCameraController::Update() {
     }
     rotateByMouse();
     moveSpeed = moveSpeed * Time::deltaTime;
-    target->eyePos += glm::vec3(
-            horizontalMove * moveSpeed,
-            verticalMove * moveSpeed,
-            0.0);
-	panWithMouse();
+    target->eyePos -= target->cameraRight * horizontalMove * moveSpeed;
+    target->eyePos += target->cameraFront * verticalMove * moveSpeed;
+    // target->eyePos += glm::vec3(
+    //         horizontalMove * moveSpeed,
+    //         verticalMove * moveSpeed,
+    //         0.0);
+    panWithMouse();
 }
 
+
 void SceneViewCameraController::rotateByMouse() {
-    if(Input::GetMouseButton(1))
-    {
+    if (Input::GetMouseButton(1)) {
         auto xOffset = Input::GetMouseDeltaPosition().x;
-        auto yOffset =  Input::GetMouseDeltaPosition().y;
+        auto yOffset = Input::GetMouseDeltaPosition().y;
         float sensitivity = 1.0f;
         xOffset *= sensitivity;
         yOffset *= sensitivity;
-
-        target->yaw   += xOffset;
+        target->yaw += xOffset;
         target->pitch += yOffset;
 
-        if(target->pitch > 89.0f)
+        if (target->pitch > 89.0f)
             target->pitch = 89.0f;
-        if(target->pitch < -89.0f)
+        if (target->pitch < -89.0f)
             target->pitch = -89.0f;
 
         target->UpdateFrontDirection();
@@ -58,14 +59,14 @@ void SceneViewCameraController::rotateByMouse() {
 }
 
 void SceneViewCameraController::panWithMouse() {
-	if(Input::GetMouseButton(2))
-	{
-		auto xOffset = Input::GetMouseDeltaPosition().x;
-		auto yOffset =  Input::GetMouseDeltaPosition().y;
-		float sensitivity = 1.f*Time::deltaTime;
-		xOffset *= sensitivity;
-		yOffset *= sensitivity;
-
-		target->eyePos += glm::vec3(xOffset,yOffset,0);
-	}
+    if (Input::GetMouseButton(2)) {
+        auto xOffset = Input::GetMouseDeltaPosition().x;
+        auto yOffset = Input::GetMouseDeltaPosition().y;
+        float sensitivity = 1.f * Time::deltaTime;
+        xOffset *= sensitivity;
+        yOffset *= sensitivity;
+        auto cameraRight = glm::cross(target->cameraFront, target->cameraUp);
+        target->eyePos -= cameraRight * xOffset;
+        target->eyePos += target->cameraUp * yOffset;
+    }
 }

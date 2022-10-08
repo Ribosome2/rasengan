@@ -11,7 +11,7 @@ public:
         testShader = new VulkanShader("shaders/vertexWithUniformBuffer.vert", "shaders/simpleColor.frag");
         pipeline = new VulkanPipeline(*testShader);
 
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < 5; ++i) {
             auto meshRenderer = std::make_shared<MeshRenderer>();
             std::shared_ptr<Material> testMaterial = std::make_shared<Material>();
             meshRenderer->material = testMaterial;
@@ -23,6 +23,13 @@ public:
             quadGo->transform.gameObject = quadGo.get();
             quadGo->transform.scale = glm::vec3{0.2};
             quadGo->transform.position = glm::vec3{0.2, 0.3 * i, 0.0};
+            if (i == 0) //first one as floor
+            {
+                quadGo->transform.eulerAngles = glm::vec3{-90,0,0};
+                quadGo->transform.scale = glm::vec3{2.0};
+                quadGo->transform.position.y = 0;
+            }
+
             quadGo->meshRenderer = meshRenderer;
             meshRenderer->transform = &quadGo->transform;
             gameObjects.push_back(quadGo);
@@ -35,7 +42,7 @@ public:
     }
 
 private:
-    VulkanShader * testShader;
-    VulkanPipeline* pipeline;
+    VulkanShader *testShader;
+    VulkanPipeline *pipeline;
 };
 

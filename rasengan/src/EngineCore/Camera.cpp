@@ -9,6 +9,7 @@ void Camera::OnGUI() {
 	ImGui::SliderFloat3("lookAtCenter ", (float *) &lookAtCenter, -10, 10);
 	ImGui::SliderFloat("pitch ", (float *) &pitch, -89, 90);
 	ImGui::SliderFloat("yaw ", (float *) &yaw, -89, 89);
+    UpdateFrontDirection();
 }
 
 void Camera::UpdateDataMatrix() {
@@ -27,6 +28,10 @@ void Camera::UpdateFrontDirection() {
 	};
 
 	cameraFront = glm::normalize(cameraFront);
+
+    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+    this->cameraRight = glm::normalize(glm::cross(up, cameraFront));
+    this->cameraUp = glm::cross(cameraFront, cameraRight);
 	//todo: 算出up 和right
 }
 
