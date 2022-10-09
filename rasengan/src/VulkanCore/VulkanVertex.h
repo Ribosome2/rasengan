@@ -4,7 +4,7 @@
 #include "array"
 class VulkanVertex {
 public:
-    glm::vec2 pos;
+    glm::vec3 pos;
     glm::vec3 color;
 public:
     static VkVertexInputBindingDescription GetBindingDescription();

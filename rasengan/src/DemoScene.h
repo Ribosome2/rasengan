@@ -4,6 +4,7 @@
 #include "VulkanCore/VulkanPipeline.h"
 #include "EngineCore/Material.h"
 #include "EngineCore/MeshRenderer.h"
+#include "EngineCore/Geometry/Cube.h"
 
 class DemoScene : public Scene {
 public:
@@ -13,7 +14,13 @@ public:
 
         for (int i = 0; i < 5; ++i) {
             auto meshRenderer = std::make_shared<MeshRenderer>();
-			meshRenderer->mesh = std::make_shared<Quad>();
+			if(i%2==0)
+			{
+				meshRenderer->mesh = std::make_shared<Quad>();
+			}else{
+
+				meshRenderer->mesh = std::make_shared<Cube>();
+			}
             std::shared_ptr<Material> testMaterial = std::make_shared<Material>();
             meshRenderer->material = testMaterial;
             testMaterial->name = "TestMaterial";
