@@ -32,7 +32,6 @@ void Camera::UpdateFrontDirection() {
     glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
     this->cameraRight = glm::normalize(glm::cross(up, cameraFront));
     this->cameraUp = glm::cross(cameraFront, cameraRight);
-	//todo: 算出up 和right
 }
 
 Camera::Camera() {

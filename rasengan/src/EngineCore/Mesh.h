@@ -15,16 +15,15 @@ public:
     uint32_t GetIndicesCount() const{
         return indexBuffer->GetCount();
     }
+
+protected:
+	void InitBuffer();
+
 public:
-    std::vector<VulkanVertex> vertices = {
-            {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-            {{0.5f,  -0.5f}, {0.0f, 1.0f, 0.0f}},
-            {{0.5f,  0.5f},  {0.0f, 0.0f, 1.0f}},
-            {{-0.5f, 0.5f},  {1.0f, 1.0f, 1.0f}}
-    };
-    std::vector<uint16_t> indices = {
-            0, 1, 2, 2, 3, 0
-    };
+    std::vector<VulkanVertex> vertices;
+
+    std::vector<uint16_t> indices ;
     std::shared_ptr<VulkanVertexBuffer> vertexBuffer;
     std::shared_ptr<VulkanIndexBuffer> indexBuffer;
+
 };

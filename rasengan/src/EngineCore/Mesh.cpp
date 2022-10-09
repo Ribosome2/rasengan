@@ -3,11 +3,15 @@
 #include "VulkanCore/VulkanContext.h"
 
 Mesh::Mesh() {
-    auto vertexBufferSize = sizeof(vertices[0]) * vertices.size();
-    vertexBuffer=std::make_shared<VulkanVertexBuffer>(vertices.data(), static_cast<uint32_t>(vertexBufferSize));
 
-    auto indexBufferSize = sizeof(indices[0]) * indices.size();
-    indexBuffer= std::make_shared<VulkanIndexBuffer>(indices.data(), indices.size(), static_cast<uint32_t>(indexBufferSize));
+}
+
+void Mesh::InitBuffer() {
+	auto vertexBufferSize = sizeof(vertices[0]) * vertices.size();
+	vertexBuffer =std::make_shared<VulkanVertexBuffer>(vertices.data(), static_cast<uint32_t>(vertexBufferSize));
+
+	auto indexBufferSize = sizeof(indices[0]) * indices.size();
+	indexBuffer = std::make_shared<VulkanIndexBuffer>(indices.data(), indices.size(), static_cast<uint32_t>(indexBufferSize));
 }
 
 void EditVertexData(std::vector<VulkanVertex> &vertices) {

@@ -13,6 +13,7 @@ public:
 
         for (int i = 0; i < 5; ++i) {
             auto meshRenderer = std::make_shared<MeshRenderer>();
+			meshRenderer->mesh = std::make_shared<Quad>();
             std::shared_ptr<Material> testMaterial = std::make_shared<Material>();
             meshRenderer->material = testMaterial;
             testMaterial->name = "TestMaterial";

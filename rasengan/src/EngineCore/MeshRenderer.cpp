@@ -6,15 +6,15 @@
 MeshRenderer::MeshRenderer() = default;
 
 void MeshRenderer::Update() {
-   mesh.Update();
+   mesh->Update();
    material->UpdateUniformBuffer(*transform);
 }
 
 
 void MeshRenderer::Render() {
-    mesh.Bind();
+    mesh->Bind();
     auto vkContext = VulkanContext::Get();
     auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
-    auto indicesCount = mesh.GetIndicesCount();
+    auto indicesCount = mesh->GetIndicesCount();
     vkCmdDrawIndexed(commandBuffer, indicesCount, 1, 0, 0, 0);
 }
