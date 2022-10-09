@@ -5,6 +5,7 @@
 #include "EngineCore/Material.h"
 #include "EngineCore/MeshRenderer.h"
 #include "EngineCore/Geometry/Cube.h"
+#include "VulkanCore/VulkanTexture.h"
 
 class DemoScene : public Scene {
 public:
@@ -12,6 +13,7 @@ public:
         testShader = new VulkanShader("shaders/vertexWithUniformBuffer.vert", "shaders/simpleColor.frag");
         pipeline = new VulkanPipeline(*testShader);
 
+        VulkanTexture testTexture{};
         for (int i = 0; i < 5; ++i) {
             auto meshRenderer = std::make_shared<MeshRenderer>();
 			if(i%2==0)

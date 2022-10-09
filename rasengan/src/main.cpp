@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 #define GLFW_INCLUDE_VULKAN
-
+#define STB_IMAGE_IMPLEMENTATION
 #include <GLFW/glfw3.h>
 #include "VulkanCore/VulkanApp.h"
 #include "VulkanCore/VulkanContext.h"
