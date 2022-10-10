@@ -50,8 +50,7 @@ VulkanTexture::VulkanTexture() {
 
     vkDestroyBuffer(device, stagingBuffer, nullptr);
     vkFreeMemory(device, stagingBufferMemory, nullptr);
-
-
+    textureImageView=VulkanTexture::CreateImageView(textureImage,VK_FORMAT_R8G8B8A8_SRGB);
 }
 
 void VulkanTexture::createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
@@ -180,6 +179,30 @@ void VulkanTexture::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t w
 
 VulkanTexture::~VulkanTexture() {
     auto device = VulkanContext::Get()->VulkanDevice->device;
+    vkDestroyImageView(device, textureImageView, nullptr);
     vkDestroyImage(device, textureImage, nullptr);
     vkFreeMemory(device, textureImageMemory, nullptr);
+}
+
+
+
+VkImageView VulkanTexture::CreateImageView(VkImage image, VkFormat format) {
+    VkImageViewCreateInfo viewInfo{};
+    viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    viewInfo.image = image;
+    viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    viewInfo.format = format;
+    viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    viewInfo.subresourceRange.baseMipLevel = 0;
+    viewInfo.subresourceRange.levelCount = 1;
+    viewInfo.subresourceRange.baseArrayLayer = 0;
+    viewInfo.subresourceRange.layerCount = 1;
+
+    VkImageView imageView;
+    auto device = VulkanContext::Get()->VulkanDevice->device;
+    if (vkCreateImageView(device, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create texture image view!");
+    }
+
+    return imageView;
 }
