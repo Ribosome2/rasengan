@@ -133,8 +133,6 @@ VulkanTexture::transitionImageLayout(VkImage image, VkFormat format, VkImageLayo
         throw std::invalid_argument("unsupported layout transition!");
     }
 
-    barrier.srcAccessMask = 0; // TODO
-    barrier.dstAccessMask = 0; // TODO
 
     vkCmdPipelineBarrier(
             commandBuffer,
