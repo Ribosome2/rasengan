@@ -50,7 +50,8 @@ VulkanTexture::VulkanTexture() {
 
     vkDestroyBuffer(device, stagingBuffer, nullptr);
     vkFreeMemory(device, stagingBufferMemory, nullptr);
-    textureImageView=VulkanTexture::CreateImageView(textureImage,VK_FORMAT_R8G8B8A8_SRGB);
+    textureImageView = VulkanTexture::CreateImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB);
+    createTextureSampler();
 }
 
 void VulkanTexture::createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
@@ -122,7 +123,8 @@ VulkanTexture::transitionImageLayout(VkImage image, VkFormat format, VkImageLayo
 
         sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
         destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-    } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+    } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL &&
+               newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
         barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
         barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
@@ -179,11 +181,11 @@ void VulkanTexture::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t w
 
 VulkanTexture::~VulkanTexture() {
     auto device = VulkanContext::Get()->VulkanDevice->device;
+    vkDestroySampler(device, textureSampler, nullptr);
     vkDestroyImageView(device, textureImageView, nullptr);
     vkDestroyImage(device, textureImage, nullptr);
     vkFreeMemory(device, textureImageMemory, nullptr);
 }
-
 
 
 VkImageView VulkanTexture::CreateImageView(VkImage image, VkFormat format) {
@@ -205,4 +207,49 @@ VkImageView VulkanTexture::CreateImageView(VkImage image, VkFormat format) {
     }
 
     return imageView;
+}
+
+void VulkanTexture::createTextureSampler() {
+    VkSamplerCreateInfo samplerInfo{};
+    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    samplerInfo.magFilter = VK_FILTER_LINEAR;
+    samplerInfo.minFilter = VK_FILTER_LINEAR;
+
+    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+
+    //if anisotropyEnable is set to VK_TRUE, you must set VkPhysicalDeviceFeatures's samplerAnisotropy = VK_TRUE when creating logical deviece
+    samplerInfo.anisotropyEnable = VK_TRUE;
+    //if you dont care about anisotropy ,you can just set the following
+    // samplerInfo.anisotropyEnable = VK_FALSE;
+    // samplerInfo.maxAnisotropy = 1.0f;
+
+
+    VkPhysicalDeviceProperties properties{};
+    auto physicalDevice = VulkanContext::Get()->VulkanDevice->physicalDevice;
+    vkGetPhysicalDeviceProperties(physicalDevice, &properties);
+    samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
+    samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+    // The unnormalizedCoordinates field specifies which coordinate system you want to use to address texels in an image.
+    // If this field is VK_TRUE, then you can simply use coordinates within the [0, texWidth) and [0, texHeight) range.
+    // If it is VK_FALSE, then the texels are addressed using the [0, 1) range on all axes
+    samplerInfo.unnormalizedCoordinates = VK_FALSE;
+
+    //If a comparison function is enabled, then texels will first be compared to a value,
+    // and the result of that comparison is used in filtering operations.
+    // This is mainly used for percentage-closer filtering on shadow maps. We'll look at this in a future chapter.
+    samplerInfo.compareEnable = VK_FALSE;
+    samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+
+    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+    samplerInfo.mipLodBias = 0.0f;
+    samplerInfo.minLod = 0.0f;
+    samplerInfo.maxLod = 0.0f;
+
+    auto device = VulkanContext::Get()->VulkanDevice->device;
+    if (vkCreateSampler(device, &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create texture sampler!");
+    }
+
 }
