@@ -11,12 +11,23 @@ class DemoScene : public Scene {
 public:
     DemoScene() {
         testShader = new VulkanShader("shaders/vertexWithUniformBuffer.vert", "shaders/simpleColor.frag");
-        pipeline = new VulkanPipeline(*testShader);
 
-        VulkanTexture testTexture{};
-        for (int i = 0; i < 5; ++i) {
+        //TODO: create binding by shader content automatically
+        testShader->AddDescriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,VK_SHADER_STAGE_VERTEX_BIT);
+        testShader->CreateDescriptorSetLayout();
+
+        testShaderWithSampler = new VulkanShader("shaders/simpleTexture.vert", "shaders/simpleTexture.frag");
+        testShaderWithSampler->AddDescriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,VK_SHADER_STAGE_VERTEX_BIT);
+        testShaderWithSampler->AddDescriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,VK_SHADER_STAGE_FRAGMENT_BIT);
+        testShaderWithSampler->CreateDescriptorSetLayout();
+
+        pipeline = new VulkanPipeline(*testShader);
+        texturePipeline = new VulkanPipeline(*testShaderWithSampler);
+
+        auto testTexture = new VulkanTexture;
+        for (int i = 0; i < 2; ++i) {
             auto meshRenderer = std::make_shared<MeshRenderer>();
-			if(i%2==0)
+			if(i!=0)
 			{
 				meshRenderer->mesh = std::make_shared<Quad>();
 			}else{
@@ -26,17 +37,27 @@ public:
             std::shared_ptr<Material> testMaterial = std::make_shared<Material>();
             meshRenderer->material = testMaterial;
             testMaterial->name = "TestMaterial";
-            testMaterial->shader = testShader;
-            testMaterial->pipeline = pipeline;
-            testMaterial->CreateDescriptorSets(testShader->descriptorSetLayout);
             auto quadGo = std::make_shared<GameObject>();
             quadGo->transform.gameObject = quadGo.get();
-            quadGo->transform.scale = glm::vec3{0.2};
+            quadGo->transform.scale = glm::vec3{1.2};
             quadGo->transform.position = glm::vec3{0.2, 0.3 * i, 0.0};
+            if(i%2==0)
+            {
+                testMaterial->shader = testShader;
+                testMaterial->pipeline = pipeline;
+
+            }else{
+                testMaterial->shader = testShaderWithSampler;
+                testMaterial->pipeline = texturePipeline;
+                testMaterial->mainTexture = testTexture;
+                quadGo->transform.eulerAngles.z =180;
+            }
+
+            testMaterial->CreateDescriptorSets(testMaterial->shader->descriptorSetLayout);
+
             if (i == 0) //first one as floor
             {
-                quadGo->transform.eulerAngles = glm::vec3{-90,0,0};
-                quadGo->transform.scale = glm::vec3{2.0};
+                quadGo->transform.scale = glm::vec3{1.0,0.1,1.0};
                 quadGo->transform.position.y = 0;
             }
 
@@ -49,10 +70,13 @@ public:
     virtual ~DemoScene() {
         delete testShader;
         delete pipeline;
+        delete testShaderWithSampler;
     }
 
 private:
     VulkanShader *testShader;
+    VulkanShader *testShaderWithSampler;
     VulkanPipeline *pipeline;
+    VulkanPipeline *texturePipeline;
 };
 

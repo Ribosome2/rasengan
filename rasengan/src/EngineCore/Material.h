@@ -3,6 +3,7 @@
 #include "VulkanCore/VulkanPipeline.h"
 #include "VulkanCore/VulkanShader.h"
 #include "GameObject.h"
+#include "VulkanCore/VulkanTexture.h"
 
 class Material {
 public:
@@ -12,9 +13,10 @@ public:
     void UpdateUniformBuffer(Transform &transform);
 public:
     std::string  name = "default";
-    VulkanShader*  shader;
-    VulkanPipeline *  pipeline;
+    VulkanShader*  shader= nullptr;
+    VulkanPipeline *  pipeline = nullptr;
     VkDescriptorSet descriptorSet;
     VkBuffer uniformBuffer;
     VkDeviceMemory uniformBufferMemory;
+    VulkanTexture * mainTexture= nullptr;
 };
