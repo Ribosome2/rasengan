@@ -5,7 +5,7 @@
 
 class VulkanTexture {
 public:
-    VulkanTexture();
+    VulkanTexture(std::string texturePath);
 
     virtual ~VulkanTexture();
 

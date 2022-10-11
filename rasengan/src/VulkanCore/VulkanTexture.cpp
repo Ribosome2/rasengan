@@ -4,9 +4,10 @@
 #include "iostream"
 #include "VulkanBufferHelper.h"
 
-VulkanTexture::VulkanTexture() {
+VulkanTexture::VulkanTexture(std::string texturePath) {
     int texWidth, texHeight, texChannels;
-    stbi_uc *pixels = stbi_load("Assets/Textures/KaiSa.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+    // auto texturePath =;
+    stbi_uc *pixels = stbi_load(texturePath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
     VkDeviceSize imageSize = texWidth * texHeight * 4;
 
     std::cout << "ImageWidth " << texWidth << " texture Height " << texHeight;
