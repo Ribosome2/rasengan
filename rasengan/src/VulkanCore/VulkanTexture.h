@@ -15,7 +15,7 @@ public:
     VkImageView textureImageView;
     VkSampler textureSampler;
 private:
-    void createImage(uint32_t width,
+    static void createImage(uint32_t width,
                      uint32_t height,
                      VkFormat format,
                      VkImageTiling tiling,
@@ -24,7 +24,7 @@ private:
                      VkImage &image,
                      VkDeviceMemory &imageMemory);
 
-    void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+    static void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 
     void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
