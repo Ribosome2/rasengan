@@ -179,19 +179,20 @@ VulkanRenderer::VulkanRenderer() {
 }
 
 void VulkanRenderer::createDescriptorPool() {
-	VkDescriptorPoolSize poolSize{};
+    auto maxDescriptorSetCount = 10;
 
-	poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    //Max descriptors of VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER to allocate ,if vkAllocateDescriptorSets more than this number
-    //you'll get error : failed to allocate descriptor sets!
-	poolSize.descriptorCount = 10;
+    std::array<VkDescriptorPoolSize, 2> poolSizes{};
+    poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSizes[0].descriptorCount = maxDescriptorSetCount;
+    poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizes[1].descriptorCount = maxDescriptorSetCount;
 
 	VkDescriptorPoolCreateInfo poolInfo{};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.poolSizeCount = 1;
-	poolInfo.pPoolSizes = &poolSize;
+	poolInfo.pPoolSizes = poolSizes.data();
 
-	poolInfo.maxSets = poolSize.descriptorCount;
+	poolInfo.maxSets = maxDescriptorSetCount;
 
 	auto device = VulkanContext::Get()->VulkanDevice->device;
 	if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
