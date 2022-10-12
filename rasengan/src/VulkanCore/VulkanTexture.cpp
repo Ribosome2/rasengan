@@ -31,13 +31,13 @@ VulkanTexture::VulkanTexture(std::string texturePath) {
     stbi_image_free(pixels);
 
     //Create VkImage Object  and bind to VkDeviceMemory,not filled with texel data ,yet
-    createImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
+    createImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
                 VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                 textureImage, textureImageMemory);
 
 
     //first transition: is to prepare the VkImage fo the layout that is optimal for copying  staging buffer into
-    transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB,
+    transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM,
                           VK_IMAGE_LAYOUT_UNDEFINED,
                           VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
     copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
@@ -45,13 +45,13 @@ VulkanTexture::VulkanTexture(std::string texturePath) {
     //second transition:
     // To be able to start sampling from the texture image in the shader,
     // we need one last transition to prepare it for shader access:
-    transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB,
+    transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM,
                           VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                           VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
     vkDestroyBuffer(device, stagingBuffer, nullptr);
     vkFreeMemory(device, stagingBufferMemory, nullptr);
-    textureImageView = VulkanTexture::CreateImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB);
+    textureImageView = VulkanTexture::CreateImageView(textureImage, VK_FORMAT_R8G8B8A8_UNORM);
     createTextureSampler();
 }
 
@@ -69,7 +69,7 @@ void VulkanTexture::createImage(uint32_t width, uint32_t height, VkFormat format
     imageInfo.extent.depth = 1; //
     imageInfo.mipLevels = 1;
     imageInfo.arrayLayers = 1;
-    imageInfo.format = VK_FORMAT_R8G8B8A8_SRGB;
+    imageInfo.format = VK_FORMAT_R8G8B8A8_UNORM;
     imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;

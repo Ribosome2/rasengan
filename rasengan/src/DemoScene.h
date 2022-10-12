@@ -24,7 +24,7 @@ public:
         pipeline = new VulkanPipeline(*testShader);
         texturePipeline = new VulkanPipeline(*testShaderWithSampler);
 
-        auto testTexture = new VulkanTexture("Assets/Textures/texture.jpg");
+        auto testTexture = new VulkanTexture("Assets/Textures/KaiSa.png");
         for (int i = 0; i < 2; ++i) {
             auto meshRenderer = std::make_shared<MeshRenderer>();
 			if(i!=0)
