@@ -22,6 +22,10 @@ private:
     void createFramebuffers();
     void createRenderPass();
     void createSyncObjects();
+	void createDepthResources();
+	VkFormat findDepthFormat();
+	bool hasStencilComponent(VkFormat format);
+
 public:
 
     VkSurfaceKHR surface;
@@ -30,6 +34,12 @@ public:
     VkFormat swapChainImageFormat;
     std::vector<VkImageView> swapChainImageViews;
     std::vector<VkImage> swapChainImages;
+
+	//for depth buffer
+	VkImage depthImage;
+	VkDeviceMemory depthImageMemory;
+	VkImageView depthImageView;
+
     std::vector<VkFramebuffer> swapChainFramebuffers;
     VkSemaphore imageAvailableSemaphore;
     VkSemaphore renderFinishedSemaphore;
