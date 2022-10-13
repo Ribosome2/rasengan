@@ -52,6 +52,7 @@ private:
 		VulkanContext::SetInstance(m_VulkanContext);
 		m_VulkanContext->Init();
 		m_VulkanContext->window = mVulkanWindows.window;
+
 		mVulkanApp.CreateInstance();
 
 
@@ -63,12 +64,9 @@ private:
 		VkSampleCountFlagBits MSAASamples = VK_SAMPLE_COUNT_1_BIT;//todo: use value match our rendering
 		uint32_t imageCount = 2;
 		VulkanImguiLayer imguiLayer{vkContext->window, vkContext->renderPass, imageCount, MSAASamples};
-		VulkanRenderer vulkanRenderer{};
-        vkContext->VulkanRenderer= &vulkanRenderer;
-		vulkanRenderer.Init();
+
         DemoScene demoScene;
         std::vector<std::shared_ptr<GameObject>> & gameObjects =demoScene.gameObjects ;
-
 
         Input::Init(vkContext->window);
 		while (!glfwWindowShouldClose(mVulkanWindows.window)) {
@@ -81,18 +79,18 @@ private:
 			float fps = 1 / Time::deltaTime;
 			ImGui::Text("FPS: %.f", fps);
             Input::OnGUI();
-			vulkanRenderer.Update();
+			vkContext->VulkanRenderer->Update();
 			for (auto & go : gameObjects) {
 				go->Update();
 			}
-			vulkanRenderer.BeginFrame();
+            vkContext->VulkanRenderer->BeginFrame();
 			{
-				vulkanRenderer.DrawFrame(gameObjects);
+                vkContext->VulkanRenderer->DrawFrame(gameObjects);
 //                imguiLayer.OnGui();
 
 				imguiLayer.Render(vkContext->CommandBuffer.GetCurCommandBuffer());
 			}
-			vulkanRenderer.EndFrame();
+            vkContext->VulkanRenderer->EndFrame();
 			glfwSwapBuffers(mVulkanWindows.window);
 		}
 		vkDeviceWaitIdle(m_VulkanContext->VulkanDevice->device);

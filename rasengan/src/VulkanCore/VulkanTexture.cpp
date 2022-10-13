@@ -31,13 +31,13 @@ VulkanTexture::VulkanTexture(std::string texturePath) {
     stbi_image_free(pixels);
 
     //Create VkImage Object  and bind to VkDeviceMemory,not filled with texel data ,yet
-    createImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
+    CreateImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
                 VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                 textureImage, textureImageMemory);
 
 
     //first transition: is to prepare the VkImage fo the layout that is optimal for copying  staging buffer into
-    transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM,
+    TransitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM,
                           VK_IMAGE_LAYOUT_UNDEFINED,
                           VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
     copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
@@ -45,17 +45,17 @@ VulkanTexture::VulkanTexture(std::string texturePath) {
     //second transition:
     // To be able to start sampling from the texture image in the shader,
     // we need one last transition to prepare it for shader access:
-    transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM,
+    TransitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM,
                           VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                           VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
     vkDestroyBuffer(device, stagingBuffer, nullptr);
     vkFreeMemory(device, stagingBufferMemory, nullptr);
-    textureImageView = VulkanTexture::CreateImageView(textureImage, VK_FORMAT_R8G8B8A8_UNORM);
+    textureImageView = VulkanTexture::CreateImageView(textureImage, VK_FORMAT_R8G8B8A8_UNORM,VK_IMAGE_ASPECT_COLOR_BIT);
     createTextureSampler();
 }
 
-void VulkanTexture::createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
+void VulkanTexture::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
                                 VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage &image,
                                 VkDeviceMemory &imageMemory) {
 
@@ -97,7 +97,7 @@ void VulkanTexture::createImage(uint32_t width, uint32_t height, VkFormat format
 }
 
 void
-VulkanTexture::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout) {
+VulkanTexture::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout) {
     VkCommandBuffer commandBuffer = VulkanCommandBuffer::BeginSingleTimeCommands();
 
     VkImageMemoryBarrier barrier{};
@@ -131,7 +131,13 @@ VulkanTexture::transitionImageLayout(VkImage image, VkFormat format, VkImageLayo
 
         sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
         destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-    } else {
+    } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+        barrier.srcAccessMask = 0;
+        barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+        sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+        destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+    }else{
         throw std::invalid_argument("unsupported layout transition!");
     }
 
@@ -189,13 +195,13 @@ VulkanTexture::~VulkanTexture() {
 }
 
 
-VkImageView VulkanTexture::CreateImageView(VkImage image, VkFormat format) {
+VkImageView VulkanTexture::CreateImageView(VkImage & image, VkFormat format,VkImageAspectFlags aspectFlags) {
     VkImageViewCreateInfo viewInfo{};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     viewInfo.image = image;
     viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
     viewInfo.format = format;
-    viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    viewInfo.subresourceRange.aspectMask = aspectFlags;
     viewInfo.subresourceRange.baseMipLevel = 0;
     viewInfo.subresourceRange.levelCount = 1;
     viewInfo.subresourceRange.baseArrayLayer = 0;
@@ -253,4 +259,8 @@ void VulkanTexture::createTextureSampler() {
         throw std::runtime_error("failed to create texture sampler!");
     }
 
+}
+
+bool VulkanTexture::hasStencilComponent(VkFormat format) {
+    return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 }

@@ -36,7 +36,7 @@ public:
     VulkanCommandBuffer CommandBuffer;
     VkRenderPass renderPass;
     VulkanDevice *VulkanDevice;
-    VulkanRenderer * VulkanRenderer;
+    std::shared_ptr<VulkanRenderer>  VulkanRenderer;
     GLFWwindow *window;
 private:
     // Vulkan instance

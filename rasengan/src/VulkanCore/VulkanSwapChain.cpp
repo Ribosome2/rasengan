@@ -108,6 +108,7 @@ void VulkanSwapChain::CreateSwapchain() {
     createRenderPass();
     createFramebuffers();
     createSyncObjects();
+    createDepthResources();
 
 }
 
@@ -188,6 +189,9 @@ VulkanSwapChain::~VulkanSwapChain() {
     for (auto framebuffer : swapChainFramebuffers) {
         vkDestroyFramebuffer(device, framebuffer, nullptr);
     }
+    vkDestroyImage(device,depthImage, nullptr);
+    vkFreeMemory(device, depthImageMemory, nullptr);
+    vkDestroyImageView(device,depthImageView, nullptr);
 	vkDestroySwapchainKHR(VulkanContext::Get()->VulkanDevice->device,swapChain, nullptr);
 	vkDestroySurfaceKHR(VulkanContext::Get()->GetVulkanInstance(),surface, nullptr);
 
@@ -286,12 +290,13 @@ VkFormat VulkanSwapChain::findDepthFormat() {
 	);
 }
 
-bool VulkanSwapChain::hasStencilComponent(VkFormat format) {
-	return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
-}
 
 void VulkanSwapChain::createDepthResources() {
 	VkFormat depthFormat = findDepthFormat();
-	createImage(swapChainExtent.width, swapChainExtent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
-	depthImageView = createImageView(depthImage, depthFormat);
+	VulkanTexture::CreateImage(swapChainExtent.width, swapChainExtent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
+	depthImageView = VulkanTexture::CreateImageView(depthImage, depthFormat,VK_IMAGE_ASPECT_DEPTH_BIT);
+
+    VulkanTexture::TransitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED,
+                                         VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+
 }
