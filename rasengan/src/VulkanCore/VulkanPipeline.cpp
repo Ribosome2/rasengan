@@ -93,5 +93,5 @@ VulkanPipeline::~VulkanPipeline() {
 	vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
 	vkDestroyPipeline(device, graphicsPipeline, nullptr);
 	vkDestroyPipeline(device, wireFramePipeline, nullptr);
-	vkDestroyRenderPass(device,VulkanContext::Get()->renderPass, nullptr);
+
 }

@@ -24,8 +24,8 @@ public:
         pipeline = new VulkanPipeline(*testShader);
         texturePipeline = new VulkanPipeline(*testShaderWithSampler);
 
-        auto testTexture = new VulkanTexture("Assets/Textures/texture.jpg");
-        for (int i = 0; i < 2; ++i) {
+
+        for (int i = 0; i < 3; ++i) {
             auto meshRenderer = std::make_shared<MeshRenderer>();
 			if(i!=0)
 			{
@@ -39,9 +39,9 @@ public:
             testMaterial->name = "TestMaterial";
             auto quadGo = std::make_shared<GameObject>();
             quadGo->transform.gameObject = quadGo.get();
-            quadGo->transform.scale = glm::vec3{1.2};
-            quadGo->transform.position = glm::vec3{0.2, 0.3 * i, 0.0};
-            if(i%2==0)
+            quadGo->transform.scale = glm::vec3{.5};
+            quadGo->transform.position = glm::vec3{0.2, 0.6 * i, 0.0};
+            if(i==0)
             {
                 testMaterial->shader = testShader;
                 testMaterial->pipeline = pipeline;
@@ -49,7 +49,16 @@ public:
             }else{
                 testMaterial->shader = testShaderWithSampler;
                 testMaterial->pipeline = texturePipeline;
-                testMaterial->mainTexture = testTexture;
+                VulkanTexture * texturePt = nullptr;
+                if(i%2==0)
+                {
+                    texturePt = new VulkanTexture("Assets/Textures/KaiSa.png");
+                }else{
+                    texturePt = new VulkanTexture("Assets/Textures/texture.jpg");
+                }
+
+                textures.push_back(texturePt);
+                testMaterial->mainTexture = texturePt;
                 quadGo->transform.eulerAngles.z =180;
             }
 
@@ -71,6 +80,10 @@ public:
         delete testShader;
         delete pipeline;
         delete testShaderWithSampler;
+        delete texturePipeline;
+        for (auto pTex:textures) {
+            delete pTex;
+        }
     }
 
 private:
@@ -78,5 +91,6 @@ private:
     VulkanShader *testShaderWithSampler;
     VulkanPipeline *pipeline;
     VulkanPipeline *texturePipeline;
+    std::vector<VulkanTexture *> textures;
 };
 

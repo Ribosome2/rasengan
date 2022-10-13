@@ -169,7 +169,7 @@ VulkanRenderer::~VulkanRenderer() {
 	std::cout << "VulkanRenderer Deconstruction " << std::endl;
 	auto device = VulkanContext::Get()->VulkanDevice->device;
 
-
+    vkDestroyRenderPass(device,VulkanContext::Get()->renderPass, nullptr);
 	vkDestroyDescriptorPool(device, descriptorPool, nullptr);
 
 }
