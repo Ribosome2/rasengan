@@ -189,7 +189,7 @@ void VulkanRenderer::createDescriptorPool() {
 
 	VkDescriptorPoolCreateInfo poolInfo{};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-	poolInfo.poolSizeCount = 1;
+	poolInfo.poolSizeCount = poolSizes.size();
 	poolInfo.pPoolSizes = poolSizes.data();
 
 	poolInfo.maxSets = maxDescriptorSetCount;
