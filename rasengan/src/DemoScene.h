@@ -29,7 +29,7 @@ public:
             auto meshRenderer = std::make_shared<MeshRenderer>();
 			if(i!=0)
 			{
-                if(i=2)
+                if(i==2)
                 {
                     meshRenderer->mesh = std::make_shared<Cube>();
                 }else{

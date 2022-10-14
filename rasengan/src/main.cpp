@@ -32,8 +32,8 @@ public:
 	}
 
 private:
-	const uint32_t WIDTH = 800;
-	const uint32_t HEIGHT = 600;
+	const uint32_t WIDTH = 1280;
+	const uint32_t HEIGHT = 720;
 	VulkanApp mVulkanApp;
 	VulkanWindow mVulkanWindows;
 	std::shared_ptr<VulkanContext> m_VulkanContext;
