@@ -29,9 +29,13 @@ public:
             auto meshRenderer = std::make_shared<MeshRenderer>();
 			if(i!=0)
 			{
-				meshRenderer->mesh = std::make_shared<Quad>();
+                if(i=2)
+                {
+                    meshRenderer->mesh = std::make_shared<Cube>();
+                }else{
+                    meshRenderer->mesh = std::make_shared<Quad>();
+                }
 			}else{
-
 				meshRenderer->mesh = std::make_shared<Cube>();
 			}
             std::shared_ptr<Material> testMaterial = std::make_shared<Material>();
