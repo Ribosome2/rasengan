@@ -53,10 +53,12 @@ void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
 	renderPassInfo.renderArea.offset = {0, 0};
 	renderPassInfo.renderArea.extent = swapchain->swapChainExtent;
 
-	VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
-	renderPassInfo.clearValueCount = 1;
-	renderPassInfo.pClearValues = &clearColor;
+    std::array<VkClearValue, 2> clearValues{};
+    clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+    clearValues[1].depthStencil = {1.0f, 0};
 
+    renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+    renderPassInfo.pClearValues = clearValues.data();
 
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
@@ -169,7 +171,7 @@ VulkanRenderer::~VulkanRenderer() {
 	std::cout << "VulkanRenderer Deconstruction " << std::endl;
 	auto device = VulkanContext::Get()->VulkanDevice->device;
 
-
+    vkDestroyRenderPass(device,VulkanContext::Get()->renderPass, nullptr);
 	vkDestroyDescriptorPool(device, descriptorPool, nullptr);
 
 }
@@ -179,19 +181,20 @@ VulkanRenderer::VulkanRenderer() {
 }
 
 void VulkanRenderer::createDescriptorPool() {
-	VkDescriptorPoolSize poolSize{};
+    auto maxDescriptorSetCount = 10;
 
-	poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    //Max descriptors of VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER to allocate ,if vkAllocateDescriptorSets more than this number
-    //you'll get error : failed to allocate descriptor sets!
-	poolSize.descriptorCount = 10;
+    std::array<VkDescriptorPoolSize, 2> poolSizes{};
+    poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSizes[0].descriptorCount = maxDescriptorSetCount;
+    poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizes[1].descriptorCount = maxDescriptorSetCount;
 
 	VkDescriptorPoolCreateInfo poolInfo{};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-	poolInfo.poolSizeCount = 1;
-	poolInfo.pPoolSizes = &poolSize;
+	poolInfo.poolSizeCount = poolSizes.size();
+	poolInfo.pPoolSizes = poolSizes.data();
 
-	poolInfo.maxSets = poolSize.descriptorCount;
+	poolInfo.maxSets = maxDescriptorSetCount;
 
 	auto device = VulkanContext::Get()->VulkanDevice->device;
 	if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {

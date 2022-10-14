@@ -11,9 +11,11 @@ class VulkanApp{
     VkInstance instance;
 public:
     void CreateInstance();
+
     void Cleanup();
     void DrawFrame();
-
+private:
+    void initRenderer();
 private:
     VulkanValidation mValidation;
     VulkanDevice mVulkanDevice;

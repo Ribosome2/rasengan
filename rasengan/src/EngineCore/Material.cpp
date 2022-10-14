@@ -61,18 +61,43 @@ void Material::CreateDescriptorSets(VkDescriptorSetLayout &descriptorSetLayout) 
     bufferInfo.offset = 0;
     bufferInfo.range = sizeof(UniformBufferObject);
 
-    VkWriteDescriptorSet descriptorWrite{};
-    descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    descriptorWrite.dstSet = descriptorSet;
-    descriptorWrite.dstBinding = 0;
-    descriptorWrite.dstArrayElement = 0;
 
-    descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    descriptorWrite.descriptorCount = 1;
+    std::vector<VkWriteDescriptorSet> descriptorWrites;
 
-    descriptorWrite.pBufferInfo = &bufferInfo;
-    descriptorWrite.pImageInfo = nullptr; // Optional
-    descriptorWrite.pTexelBufferView = nullptr; // Optional
+    VkWriteDescriptorSet descriptorWriteUniformBuffer{};
+    descriptorWriteUniformBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWriteUniformBuffer.dstSet = descriptorSet;
+    descriptorWriteUniformBuffer.dstBinding = descriptorWrites.size();
+    descriptorWriteUniformBuffer.dstArrayElement = descriptorWrites.size();
 
-    vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
+    descriptorWriteUniformBuffer.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    descriptorWriteUniformBuffer.descriptorCount = 1;
+    descriptorWriteUniformBuffer.pBufferInfo = &bufferInfo;
+    descriptorWriteUniformBuffer.pTexelBufferView = nullptr; // Optional
+    descriptorWrites.push_back(descriptorWriteUniformBuffer);
+
+    //add sampler descriptor if exist
+    if(mainTexture!= nullptr)
+    {
+        VkDescriptorImageInfo imageInfo{};
+        imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        imageInfo.imageView = mainTexture->textureImageView;
+        imageInfo.sampler = mainTexture->textureSampler;
+
+        VkWriteDescriptorSet descriptorWriteCombinedSampler{};
+        descriptorWriteCombinedSampler.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWriteCombinedSampler.dstSet = descriptorSet;
+        descriptorWriteCombinedSampler.dstBinding = descriptorWrites.size();
+        descriptorWriteCombinedSampler.dstArrayElement = 0;
+
+        descriptorWriteCombinedSampler.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        descriptorWriteCombinedSampler.descriptorCount = 1;
+        descriptorWriteCombinedSampler.pImageInfo = &imageInfo;
+        descriptorWrites.push_back(descriptorWriteCombinedSampler);
+    }
+
+
+
+
+    vkUpdateDescriptorSets(device, descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
 }

@@ -12,7 +12,6 @@ VulkanShader::VulkanShader(std::string vertexPath, std::string fragPath) {
 
     vertShaderStageInfo = ShaderUtil::GetShaderStageCreateInfo(vertShaderModule, VK_SHADER_STAGE_VERTEX_BIT);
     fragShaderStageInfo = ShaderUtil::GetShaderStageCreateInfo(fragShaderModule, VK_SHADER_STAGE_FRAGMENT_BIT);
-    createDescriptorSetLayout();
 }
 
 VulkanShader::~VulkanShader() {
@@ -23,18 +22,11 @@ VulkanShader::~VulkanShader() {
     vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
 }
 
-void  VulkanShader::createDescriptorSetLayout() {
-    VkDescriptorSetLayoutBinding uboLayoutBinding{};
-    uboLayoutBinding.binding = 0;
-    uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    uboLayoutBinding.descriptorCount = 1;
-    uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-    uboLayoutBinding.pImmutableSamplers = nullptr; // Optional
-
+void  VulkanShader::CreateDescriptorSetLayout() {
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    layoutInfo.bindingCount = 1;
-    layoutInfo.pBindings = &uboLayoutBinding;
+    layoutInfo.bindingCount = m_descriptorSetLayoutBindings.size();
+    layoutInfo.pBindings = &m_descriptorSetLayoutBindings[0];
     auto & device = VulkanContext::Get()->VulkanDevice->device;
     if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS) {
         throw std::runtime_error("failed to create descriptor set layout!");
@@ -48,5 +40,16 @@ std::shared_ptr<VulkanShader> VulkanShader::Find(string &shaderPath) {
         return result->second;
     }
     return nullptr;
+}
+
+void VulkanShader::AddDescriptorSetLayoutBinding(VkDescriptorType descriptorType, VkShaderStageFlags stageFlags) {
+    VkDescriptorSetLayoutBinding layoutBinding{};
+    layoutBinding.binding = m_descriptorSetLayoutBindings.size();
+    layoutBinding.descriptorType = descriptorType;
+    layoutBinding.descriptorCount = 1;
+    layoutBinding.stageFlags = stageFlags;
+    layoutBinding.pImmutableSamplers = nullptr; // Optional
+
+    m_descriptorSetLayoutBindings.push_back(layoutBinding);
 }
 

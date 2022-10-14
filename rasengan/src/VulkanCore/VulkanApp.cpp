@@ -4,6 +4,7 @@
 #include "vector"
 #include "VulkanValidation.h"
 #include "VulkanContext.h"
+#include "memory"
 
 void VulkanApp::CreateInstance() {
     VkApplicationInfo appInfo{};
@@ -55,9 +56,9 @@ void VulkanApp::CreateInstance() {
     vkContext->VulkanDevice = &mVulkanDevice;
     mVulkanDevice.PickPhysicalDevice(instance);
     mVulkanDevice.CreateLogicDevice(mValidation);
-    vkContext->SwapChain->CreateSwapchain();
+    initRenderer();
     vkContext->CommandBuffer.Init();
-
+    vkContext->SwapChain->CreateSwapchain();
 }
 
 void VulkanApp::Cleanup() {
@@ -81,6 +82,13 @@ std::vector<const char *> VulkanApp::getRequiredExtensions() {
 
 void VulkanApp::DrawFrame() {
 
+}
+
+void VulkanApp::initRenderer() {
+    auto  vulkanRenderer =std::make_shared<VulkanRenderer>();
+    auto vkContext = VulkanContext::Get();
+    vkContext->VulkanRenderer= vulkanRenderer;
+    vulkanRenderer->Init();
 }
 
 
