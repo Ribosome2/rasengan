@@ -47,7 +47,6 @@ VulkanImguiLayer::VulkanImguiLayer(
   // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
   // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
  io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
- //TODO:https://github.com/ocornut/imgui/issues/3522
  // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
   // Setup Dear ImGui style
   	ImGui::StyleColorsDark();
