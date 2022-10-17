@@ -27,7 +27,7 @@ VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
 	VkPipelineViewportStateCreateInfo viewportState = VulkanInitializer::ViewportStateCreateInfo(viewport, scissor);
 	VkPipelineRasterizationStateCreateInfo rasterizer =VulkanInitializer::GetRasterizerCreateInfo();
     rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-    rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+    rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
 	VkPipelineMultisampleStateCreateInfo multisampling= VulkanInitializer::GetMultisampleStateCreateInfo();
 	VkPipelineColorBlendAttachmentState colorBlendAttachment = VulkanInitializer::GetColorBlendAttachmentState();

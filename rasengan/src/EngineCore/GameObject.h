@@ -11,6 +11,7 @@ public:
 	Transform transform;
     std::shared_ptr<MeshRenderer>   meshRenderer;
     uint32_t instanceId;
+    bool  AutoRotate = false;
 private:
     static uint32_t s_autoInstanceId;
 };

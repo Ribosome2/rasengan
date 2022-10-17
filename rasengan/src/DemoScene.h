@@ -6,6 +6,7 @@
 #include "EngineCore/MeshRenderer.h"
 #include "EngineCore/Geometry/Cube.h"
 #include "VulkanCore/VulkanTexture.h"
+#include "EngineCore/ModelLoader.h"
 
 class DemoScene : public Scene {
 public:
@@ -24,56 +25,52 @@ public:
         pipeline = new VulkanPipeline(*testShader);
         texturePipeline = new VulkanPipeline(*testShaderWithSampler);
 
+        //floor init
+        auto floorGo = std::make_shared<GameObject>();
+        floorGo->transform.gameObject=floorGo.get();
+        floorGo->transform.scale=glm::vec3(20,0.2,20);
 
-        for (int i = 0; i < 3; ++i) {
+        floorGo->meshRenderer = std::make_shared<MeshRenderer>();
+        floorGo->meshRenderer->mesh = std::make_shared<Cube>();
+        floorGo->meshRenderer->transform = &floorGo->transform;
+        auto floorMaterial= std::make_shared<Material>();
+        floorMaterial->shader = testShader;
+        floorMaterial->pipeline = pipeline;
+        floorMaterial->CreateDescriptorSets(floorMaterial->shader->descriptorSetLayout);
+        floorGo->meshRenderer->material =floorMaterial;
+        gameObjects.push_back(floorGo);
+
+        for (int i = 0; i < 4; ++i) {
+            auto quadGo = std::make_shared<GameObject>();
+            quadGo->AutoRotate=true;
+            quadGo->transform.gameObject = quadGo.get();
+            quadGo->transform.scale = glm::vec3{.5};
+            quadGo->transform.position = glm::vec3{0.8*i-2, 0.8, -1.0};
             auto meshRenderer = std::make_shared<MeshRenderer>();
-			if(i!=0)
-			{
-                if(i==2)
-                {
-                    meshRenderer->mesh = std::make_shared<Cube>();
-                }else{
-                    meshRenderer->mesh = std::make_shared<Quad>();
-                }
-			}else{
-				meshRenderer->mesh = std::make_shared<Cube>();
-			}
             std::shared_ptr<Material> testMaterial = std::make_shared<Material>();
             meshRenderer->material = testMaterial;
             testMaterial->name = "TestMaterial";
-            auto quadGo = std::make_shared<GameObject>();
-            quadGo->transform.gameObject = quadGo.get();
-            quadGo->transform.scale = glm::vec3{.5};
-            quadGo->transform.position = glm::vec3{0.2, 0.6 * i, 0.0};
-            if(i==0)
+
+            VulkanTexture * texturePt = nullptr;
+            quadGo->transform.eulerAngles.z =180;
+            if(i==2)
             {
-                testMaterial->shader = testShader;
-                testMaterial->pipeline = pipeline;
-
-            }else{
-                testMaterial->shader = testShaderWithSampler;
-                testMaterial->pipeline = texturePipeline;
-                VulkanTexture * texturePt = nullptr;
-                if(i%2==0)
-                {
-                    texturePt = new VulkanTexture("Assets/Textures/KaiSa.png");
-                }else{
-                    texturePt = new VulkanTexture("Assets/Textures/texture.jpg");
-                }
-
-                textures.push_back(texturePt);
-                testMaterial->mainTexture = texturePt;
-                quadGo->transform.eulerAngles.z =180;
+                meshRenderer->mesh = std::make_shared<Quad>();
+                texturePt = new VulkanTexture("Assets/Textures/texture.jpg");
+            }else if(i==3){
+                meshRenderer->mesh = std::make_shared<Mesh>("Assets/Models/vikingRoom/viking_room.obj");;
+                texturePt = new VulkanTexture("Assets/Models/vikingRoom/viking_room.png");
+                quadGo->transform.eulerAngles.z =90;
             }
-
+            else{
+                meshRenderer->mesh = std::make_shared<Cube>();
+                texturePt = new VulkanTexture("Assets/Textures/KaiSa.png");
+            }
+            testMaterial->mainTexture = texturePt;
+            textures.push_back(texturePt);
+            testMaterial->shader = testShaderWithSampler;
+            testMaterial->pipeline = texturePipeline;
             testMaterial->CreateDescriptorSets(testMaterial->shader->descriptorSetLayout);
-
-            if (i == 0) //first one as floor
-            {
-                quadGo->transform.scale = glm::vec3{1.0,0.1,1.0};
-                quadGo->transform.position.y = 0;
-            }
-
             quadGo->meshRenderer = meshRenderer;
             meshRenderer->transform = &quadGo->transform;
             gameObjects.push_back(quadGo);

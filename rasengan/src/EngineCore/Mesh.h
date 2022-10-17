@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 #include "VulkanCore/VulkanVertex.h"
 #include "VulkanCore/VulkanVertexBuffer.h"
 #include "VulkanCore/VulkanIndexBuffer.h"
@@ -10,6 +11,7 @@
 class Mesh {
 public:
     Mesh();
+    Mesh(std::string path );
     void Update();
     void Bind();
     uint32_t GetIndicesCount() const{

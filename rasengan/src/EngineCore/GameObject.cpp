@@ -5,7 +5,10 @@
 uint32_t  GameObject::s_autoInstanceId =0;
 void GameObject::Update() {
   meshRenderer->Update();
-  transform.eulerAngles.y+= Time::deltaTime*50;
+  if(AutoRotate)
+  {
+      transform.eulerAngles.y+= Time::deltaTime*80;
+  }
 }
 
 GameObject::GameObject() {
