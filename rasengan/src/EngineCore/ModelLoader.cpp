@@ -1,6 +1,7 @@
 #include "ModelLoader.h"
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
+#include <unordered_map>
 #include "VulkanCore/VulkanVertex.h"
 void ModelLoader::LoadModel(std::string path,std::vector<VulkanVertex> & vertices,
                             std::vector<uint16_t>&  indices) {
@@ -11,7 +12,7 @@ void ModelLoader::LoadModel(std::string path,std::vector<VulkanVertex> & vertice
     if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str())) {
         throw std::runtime_error(warn + err);
     }
-
+    std::unordered_map<VulkanVertex, uint32_t> uniqueVertices{};
     for (const auto& shape : shapes) {
         for (const auto& index : shape.mesh.indices) {
             VulkanVertex vertex{};
@@ -31,9 +32,12 @@ void ModelLoader::LoadModel(std::string path,std::vector<VulkanVertex> & vertice
             };
 
             vertex.color = {1.0f, 1.0f, 1.0f};
-
-            vertices.push_back(vertex);
-            indices.push_back(indices.size());
+            if(uniqueVertices.count(vertex)==0)
+            {
+                uniqueVertices[vertex]=static_cast<uint32_t>(vertices.size());
+                vertices.push_back(vertex);
+            }
+            indices.push_back(uniqueVertices[vertex]);
         }
     }
 }
