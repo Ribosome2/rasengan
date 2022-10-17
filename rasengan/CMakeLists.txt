@@ -17,6 +17,8 @@ ADD_EXECUTABLE(${PROJECT_NAME} "src/main.cpp"
         src/IMGUI/imgui_impl_vulkan.cpp
         src/Input/Input.cpp
         src/Input/Input.h
+        ThirdParty/spirv-reflect/spirv_reflect.h
+        ThirdParty/spirv-reflect/spirv_reflect.cpp
         src/Renderring/RenderringDataDefine.h
         src/DemoScene.h )
 
@@ -30,6 +32,7 @@ INCLUDE_DIRECTORIES(
         src/IMGUI
         ThirdParty/glm
         ThirdParty/stb
+        ThirdParty/spirv-reflect
 )
 # 拷贝 glfw3.lib 到 输出目录 中
 #第一次编译需要把 glfw3.lib复制到exe目录 不然跑不起来
