@@ -14,10 +14,17 @@ void GameObject::Update() {
 GameObject::GameObject() {
     s_autoInstanceId++;
     this->instanceId=s_autoInstanceId;
+    this->transform.gameObject= this;
     std::cout<<"GameObject Created "<<std::endl;
 }
 
 GameObject::~GameObject() {
     std::cout<<"GameObject Destroy "<<std::endl;
 
+}
+
+void GameObject::AddComponent(Component *pComponent) {
+    assert(pComponent!= nullptr);
+    pComponent->gameObject= this;
+    pComponent->transform=&transform;
 }

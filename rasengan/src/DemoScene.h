@@ -27,12 +27,11 @@ public:
 
         //floor init
         auto floorGo = std::make_shared<GameObject>();
-        floorGo->transform.gameObject=floorGo.get();
-        floorGo->transform.scale=glm::vec3(20,0.2,20);
+        floorGo->transform.scale=glm::vec3(10,0.2,10);
 
         floorGo->meshRenderer = std::make_shared<MeshRenderer>();
         floorGo->meshRenderer->mesh = std::make_shared<Cube>();
-        floorGo->meshRenderer->transform = &floorGo->transform;
+		floorGo->AddComponent(floorGo->meshRenderer.get());
         auto floorMaterial= std::make_shared<Material>();
         floorMaterial->shader = testShader;
         floorMaterial->pipeline = pipeline;
@@ -43,7 +42,6 @@ public:
         for (int i = 0; i < 4; ++i) {
             auto quadGo = std::make_shared<GameObject>();
             quadGo->AutoRotate=true;
-            quadGo->transform.gameObject = quadGo.get();
             quadGo->transform.scale = glm::vec3{.5};
             quadGo->transform.position = glm::vec3{0.8*i-2, 0.8, -1.0};
             auto meshRenderer = std::make_shared<MeshRenderer>();
@@ -72,7 +70,7 @@ public:
             testMaterial->pipeline = texturePipeline;
             testMaterial->CreateDescriptorSets(testMaterial->shader->descriptorSetLayout);
             quadGo->meshRenderer = meshRenderer;
-            meshRenderer->transform = &quadGo->transform;
+//			quadGo->AddComponent(meshRenderer.get());
             gameObjects.push_back(quadGo);
         }
     }

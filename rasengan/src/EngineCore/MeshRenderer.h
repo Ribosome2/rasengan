@@ -5,14 +5,13 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "EngineCore/Geometry/Quad.h"
-
-class MeshRenderer {
+#include "Component.h"
+class MeshRenderer: public Component{
 public:
     MeshRenderer();
     void Update();
     void Render();
 public:
-    Transform * transform;
     std::shared_ptr<Mesh> mesh;
 
     //Returns the first instantiated Material assigned to the renderer.

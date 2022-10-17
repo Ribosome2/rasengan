@@ -1,8 +1,8 @@
 #pragma once
-
+#include "Component.h"
 #include "glm/glm.hpp"
 class GameObject;
-class Transform {
+class Transform: public Component{
 public:
 	void UpdateModelMatrix();
     glm::vec3 GetRightVector();
@@ -14,5 +14,5 @@ public:
 	glm::vec3 eulerAngles{0, 0, 0};
 	glm::vec3 scale{1.0, 1.0, 1.0};
 	glm::mat4 localToWorldMatrix = glm::mat4(1.0f);
-    GameObject* gameObject;
+    GameObject* gameObject= nullptr;
 };
