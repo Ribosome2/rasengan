@@ -20,6 +20,8 @@
 #include "EngineCore/Material.h"
 #include "Input/Input.h"
 #include "DemoScene.h"
+#include "EditorCore/HierarchyWindow.h"
+
 std::shared_ptr<VulkanContext> VulkanContext::mContextInstance;
 
 class RasenganApp {
@@ -67,7 +69,7 @@ private:
 
         DemoScene demoScene;
         std::vector<std::shared_ptr<GameObject>> & gameObjects =demoScene.gameObjects ;
-
+		HierarchyWindow hierarchyWindow;
         Input::Init(vkContext->window);
 		while (!glfwWindowShouldClose(mVulkanWindows.window)) {
 			glfwPollEvents();
@@ -76,9 +78,9 @@ private:
 
 			Time::Update();
 			imguiLayer.NewFrame();
-			float fps = 1 / Time::deltaTime;
-			ImGui::Text("FPS: %.f", fps);
+
             Input::OnGUI();
+			hierarchyWindow.OnGUI(&demoScene);
 			vkContext->VulkanRenderer->Update();
 			for (auto & go : gameObjects) {
 				go->Update();

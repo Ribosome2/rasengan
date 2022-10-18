@@ -4,11 +4,6 @@
 #include "GameObject.h"
 void Transform::UpdateModelMatrix() {
 	assert(this->gameObject!= nullptr);
-    ImGui::PushID(this->gameObject->instanceId);
-	ImGui::SliderFloat3("ModelPosition", (float *) &position, -10, 10);
-	ImGui::SliderFloat3("eulerAngles", (float *) &eulerAngles, -360, 360);
-	ImGui::SliderFloat3("scale", (float *) &scale, -5, 5);
-    ImGui::PopID();
 
 	localToWorldMatrix = glm::mat4{1.0};
 
