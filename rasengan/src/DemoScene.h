@@ -70,7 +70,7 @@ public:
             testMaterial->pipeline = texturePipeline;
             testMaterial->CreateDescriptorSets(testMaterial->shader->descriptorSetLayout);
             quadGo->meshRenderer = meshRenderer;
-//			quadGo->AddComponent(meshRenderer.get());
+			quadGo->AddComponent(meshRenderer.get());
             gameObjects.push_back(quadGo);
         }
     }
