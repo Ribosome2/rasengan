@@ -23,8 +23,9 @@ GameObject::~GameObject() {
 
 }
 
-void GameObject::AddComponent(Component *pComponent) {
-    assert(pComponent!= nullptr);
-    pComponent->gameObject= this;
-    pComponent->transform=&transform;
+template<typename componentClass>
+inline std::shared_ptr<componentClass> GameObject::AddComponent() {
+	auto  component =std::make_shared<componentClass>();
+	return component;
 }
+

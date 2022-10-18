@@ -7,7 +7,9 @@ class GameObject {
 public:
     GameObject();
     ~GameObject();
-	void AddComponent(Component* pComponent);
+
+	template<typename componentClass>
+	inline std::shared_ptr<componentClass> AddComponent();
     void Update();
 public:
 	Transform transform;
