@@ -21,6 +21,7 @@
 #include "Input/Input.h"
 #include "DemoScene.h"
 #include "EditorCore/HierarchyWindow.h"
+#include "EditorCore/InspectorWindow.h"
 
 std::shared_ptr<VulkanContext> VulkanContext::mContextInstance;
 
@@ -70,6 +71,7 @@ private:
         DemoScene demoScene;
         std::vector<std::shared_ptr<GameObject>> & gameObjects =demoScene.gameObjects ;
 		HierarchyWindow hierarchyWindow;
+		InspectorWindow inspectorWindow;
         Input::Init(vkContext->window);
 		while (!glfwWindowShouldClose(mVulkanWindows.window)) {
 			glfwPollEvents();
@@ -81,6 +83,7 @@ private:
 
             Input::OnGUI();
 			hierarchyWindow.OnGUI(&demoScene);
+			inspectorWindow.OnInspectorGUI();
 			vkContext->VulkanRenderer->Update();
 			for (auto & go : gameObjects) {
 				go->Update();
