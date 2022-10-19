@@ -14,12 +14,14 @@ public:
         testShader = new VulkanShader("shaders/vertexWithUniformBuffer.vert", "shaders/simpleColor.frag");
 
         //TODO: create binding by shader content automatically
-        testShader->AddDescriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,VK_SHADER_STAGE_VERTEX_BIT);
+        testShader->AddDescriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
         testShader->CreateDescriptorSetLayout();
 
         testShaderWithSampler = new VulkanShader("shaders/simpleTexture.vert", "shaders/simpleTexture.frag");
-        testShaderWithSampler->AddDescriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,VK_SHADER_STAGE_VERTEX_BIT);
-        testShaderWithSampler->AddDescriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,VK_SHADER_STAGE_FRAGMENT_BIT);
+        testShaderWithSampler->AddDescriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                                                             VK_SHADER_STAGE_VERTEX_BIT);
+        testShaderWithSampler->AddDescriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                                                             VK_SHADER_STAGE_FRAGMENT_BIT);
         testShaderWithSampler->CreateDescriptorSetLayout();
 
         pipeline = new VulkanPipeline(*testShader);
@@ -27,40 +29,38 @@ public:
 
         //floor init
         auto floorGo = std::make_shared<GameObject>("Floor");
-        floorGo->transform.scale=glm::vec3(10,0.2,10);
+        floorGo->transform.scale = glm::vec3(10, 0.2, 10);
 
         floorGo->meshRenderer = std::make_shared<MeshRenderer>();
         floorGo->meshRenderer->mesh = std::make_shared<Cube>();
-		floorGo->AddComponent(floorGo->meshRenderer.get());
-        auto floorMaterial= std::make_shared<Material>();
+        floorGo->AddComponent(floorGo->meshRenderer.get());
+        auto floorMaterial = std::make_shared<Material>();
         floorMaterial->shader = testShader;
         floorMaterial->pipeline = pipeline;
         floorMaterial->CreateDescriptorSets(floorMaterial->shader->descriptorSetLayout);
-        floorGo->meshRenderer->material =floorMaterial;
+        floorGo->meshRenderer->material = floorMaterial;
         gameObjects.push_back(floorGo);
 
         for (int i = 0; i < 4; ++i) {
-            auto quadGo = std::make_shared<GameObject>();
-            quadGo->AutoRotate=true;
+            auto quadGo = std::make_shared<GameObject>("item" + std::to_string(i));
+            quadGo->AutoRotate = true;
             quadGo->transform.scale = glm::vec3{.5};
-            quadGo->transform.position = glm::vec3{0.8*i-2, 0.8, -1.0};
+            quadGo->transform.position = glm::vec3{0.8 * i - 2, 0.8, -1.0};
             auto meshRenderer = std::make_shared<MeshRenderer>();
             std::shared_ptr<Material> testMaterial = std::make_shared<Material>();
             meshRenderer->material = testMaterial;
             testMaterial->name = "TestMaterial";
 
-            VulkanTexture * texturePt = nullptr;
-            quadGo->transform.eulerAngles.z =180;
-            if(i==2)
-            {
+            VulkanTexture *texturePt = nullptr;
+            quadGo->transform.eulerAngles.z = 180;
+            if (i == 2) {
                 meshRenderer->mesh = std::make_shared<Quad>();
                 texturePt = new VulkanTexture("Assets/Textures/texture.jpg");
-            }else if(i==3){
+            } else if (i == 3) {
                 meshRenderer->mesh = std::make_shared<Mesh>("Assets/Models/vikingRoom/viking_room.obj");;
                 texturePt = new VulkanTexture("Assets/Models/vikingRoom/viking_room.png");
-                quadGo->transform.eulerAngles.z =90;
-            }
-            else{
+                quadGo->transform.eulerAngles.z = 90;
+            } else {
                 meshRenderer->mesh = std::make_shared<Cube>();
                 texturePt = new VulkanTexture("Assets/Textures/KaiSa.png");
             }
@@ -70,7 +70,7 @@ public:
             testMaterial->pipeline = texturePipeline;
             testMaterial->CreateDescriptorSets(testMaterial->shader->descriptorSetLayout);
             quadGo->meshRenderer = meshRenderer;
-			quadGo->AddComponent(meshRenderer.get());
+            quadGo->AddComponent(meshRenderer.get());
             gameObjects.push_back(quadGo);
         }
     }
@@ -80,7 +80,7 @@ public:
         delete pipeline;
         delete testShaderWithSampler;
         delete texturePipeline;
-        for (auto pTex:textures) {
+        for (auto pTex: textures) {
             delete pTex;
         }
     }

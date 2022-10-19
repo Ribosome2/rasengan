@@ -10,10 +10,18 @@ void HierarchyWindow::OnGUI(Scene *pScene) {
 	for (auto go: gameObjects) {
 
 		ImGui::PushID(go->instanceId);
-		ImGui::Button(go->name.c_str()) ;
-		if (ImGui::IsItemClicked()) {
-			Selection::activeGameObject = go.get();
-		}
+        ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags_Leaf;
+        if(go.get()==Selection::activeGameObject)
+        {
+            flag |= ImGuiTreeNodeFlags_Selected;
+        }
+		if(ImGui::TreeNodeEx(go->name.c_str(),flag)){
+            ImGui::TreePop();
+        }
+        if (ImGui::IsItemClicked()) {
+            Selection::activeGameObject = go.get();
+        }
+
 		ImGui::PopID();
 	}
 	ImGui::End();

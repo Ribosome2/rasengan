@@ -42,6 +42,8 @@ void Mesh::Bind() {
 }
 
 Mesh::Mesh(std::string path) {
-    ModelLoader::LoadModel("Assets/Models/vikingRoom/viking_room.obj", this->vertices, this->indices);
+    ModelLoader::LoadModel(path, this->vertices, this->indices);
+    std::string base_filename = path.substr(path.find_last_of("/\\") + 1);
+    this->name= base_filename;
     InitBuffer();
 }

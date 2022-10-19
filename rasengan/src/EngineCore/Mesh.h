@@ -27,5 +27,6 @@ public:
     std::vector<uint16_t> indices ;
     std::shared_ptr<VulkanVertexBuffer> vertexBuffer;
     std::shared_ptr<VulkanIndexBuffer> indexBuffer;
+    std::string  name;
 
 };

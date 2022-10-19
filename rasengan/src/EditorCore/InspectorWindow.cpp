@@ -34,7 +34,7 @@ static void DrawComponent(const std::string& name, GameObject * pGameObject,  Co
 	}
 }
 void InspectorWindow::OnInspectorGUI() {
-//	ImGui::Begin("Inspector");
+	ImGui::Begin("Inspector");
 	auto targetGo = Selection::activeGameObject;
 	if (targetGo != nullptr) {
 
@@ -67,14 +67,10 @@ void InspectorWindow::OnInspectorGUI() {
 
 		DrawComponent<MeshRenderer>("MeshRenderer", targetGo,(Component*)targetGo->meshRenderer.get(), [](Component* component)
 		{
-			auto transformComp =(MeshRenderer*)component;
-			ImGui::Button("todo");
+			auto meshRenderer =(MeshRenderer*)component;
+            ImGui::Text("mesh %s",meshRenderer->mesh->name.c_str());
 		});
-
-
-
-
 	}
-//	ImGui::End();
+	ImGui::End();
 }
 
