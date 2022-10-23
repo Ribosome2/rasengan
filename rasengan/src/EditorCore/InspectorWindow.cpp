@@ -68,7 +68,10 @@ void InspectorWindow::OnInspectorGUI() {
 		DrawComponent<MeshRenderer>("MeshRenderer", targetGo,(Component*)targetGo->meshRenderer.get(), [](Component* component)
 		{
 			auto meshRenderer =(MeshRenderer*)component;
-            ImGui::Text("mesh %s",meshRenderer->mesh->name.c_str());
+            ImGui::Text("mesh: %s",meshRenderer->mesh->name.c_str());
+            if(meshRenderer->material!= nullptr){
+                ImGui::Text("Material: %s ",meshRenderer->material->name.c_str());
+            }
 		});
 	}
 	ImGui::End();
