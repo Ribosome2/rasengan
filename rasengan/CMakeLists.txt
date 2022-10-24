@@ -5,6 +5,7 @@ PROJECT(Rasengan)
 FILE(GLOB_RECURSE IMGUI_SRC_LIST "ThirdParty/imgui/*cpp" "ThirdParty/imgui/*.h")
 FILE(GLOB_RECURSE VULKAN_CORE_LIST "src/VulkanCore/*cpp" "src/VulkanCore/*.h")
 FILE(GLOB_RECURSE Engine_CORE_LIST "src/EngineCore/*cpp" "src/EngineCore/*.h")
+FILE(GLOB_RECURSE Engine_CORE_LIST "src/EngineCore/*cpp" "src/EngineCore/*.h")
 
 ADD_EXECUTABLE(${PROJECT_NAME} "src/main.cpp"
         ${VULKAN_CORE_LIST}
@@ -19,8 +20,14 @@ ADD_EXECUTABLE(${PROJECT_NAME} "src/main.cpp"
         src/Input/Input.h
         ThirdParty/spirv-reflect/spirv_reflect.h
         ThirdParty/spirv-reflect/spirv_reflect.cpp
+        src/VulkanCore/Spirv/VulkanSpirvCommon.h
+        src/VulkanCore/Spirv/VulkanSpirvCommon.cpp
+        src/VulkanCore/Spirv/VulkanSpirvOutputStreamUtil.h
+        src/VulkanCore/Spirv/VulkanSpirvOutputStreamUtil.cpp
+        src/VulkanCore/Spirv/VulkanSpirvReflection.h
+        src/VulkanCore/Spirv/VulkanSpirvReflection.cpp
         src/Renderring/RenderringDataDefine.h
-        src/DemoScene.h )
+        src/DemoScene.h)
 
 
 FIND_PACKAGE(Vulkan REQUIRED)
