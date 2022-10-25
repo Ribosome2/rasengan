@@ -64,6 +64,7 @@ void VulkanApp::CreateInstance() {
 void VulkanApp::Cleanup() {
     mValidation.Cleanup(instance);
 	VulkanContext::Get()->SwapChain.reset() ;
+	VulkanContext::Get()->VulkanRenderer.reset() ;
 	VulkanContext::Get()->CommandBuffer.Dispose() ;
     mVulkanDevice.Dispose();
     vkDestroyDevice(mVulkanDevice.device, nullptr);

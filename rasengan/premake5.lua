@@ -21,6 +21,9 @@ files {
     "ThirdParty/glfw/*.h",
     "ThirdParty/glm/**.h",
     "ThirdParty/glm/**.hpp",
+    "ThirdParty/stb/**.h",
+    "ThirdParty/stb/**.h",
+    "ThirdParty/tinyobjloader/**.h",
 }
 
 includedirs {
@@ -30,6 +33,8 @@ includedirs {
     "src/IMGUI",
     "ThirdParty/imgui",
     "ThirdParty/glm/",
+    "ThirdParty/stb/",
+    "ThirdParty/tinyobjloader/",
     os.getenv("VK_SDK_PATH") .. "/include", --get environment variable in LUA
 }
 libdirs {

@@ -1,17 +1,19 @@
 #include "Mesh.h"
 #include "imgui.h"
 #include "VulkanCore/VulkanContext.h"
+#include "ModelLoader.h"
 
 Mesh::Mesh() {
 
 }
 
 void Mesh::InitBuffer() {
-	auto vertexBufferSize = sizeof(vertices[0]) * vertices.size();
-	vertexBuffer =std::make_shared<VulkanVertexBuffer>(vertices.data(), static_cast<uint32_t>(vertexBufferSize));
+    auto vertexBufferSize = sizeof(vertices[0]) * vertices.size();
+    vertexBuffer = std::make_shared<VulkanVertexBuffer>(vertices.data(), static_cast<uint32_t>(vertexBufferSize));
 
-	auto indexBufferSize = sizeof(indices[0]) * indices.size();
-	indexBuffer = std::make_shared<VulkanIndexBuffer>(indices.data(), indices.size(), static_cast<uint32_t>(indexBufferSize));
+    auto indexBufferSize = sizeof(indices[0]) * indices.size();
+    indexBuffer = std::make_shared<VulkanIndexBuffer>(indices.data(), indices.size(),
+                                                      static_cast<uint32_t>(indexBufferSize));
 }
 
 void EditVertexData(std::vector<VulkanVertex> &vertices) {
@@ -37,4 +39,11 @@ void Mesh::Bind() {
     VkBuffer indexBuffer = {this->indexBuffer->GetIndexBuffer()};
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
     vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+}
+
+Mesh::Mesh(std::string path) {
+    ModelLoader::LoadModel(path, this->vertices, this->indices);
+    std::string base_filename = path.substr(path.find_last_of("/\\") + 1);
+    this->name= base_filename;
+    InitBuffer();
 }

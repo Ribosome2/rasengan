@@ -206,9 +206,13 @@ void VulkanRenderer::Update() {
 	auto vkContext = VulkanContext::Get();
 	auto swapchainExtent =vkContext->SwapChain->swapChainExtent;
 	camera.aspect = swapchainExtent.width/(float)swapchainExtent.height;
+	ImGui::Begin("RenderSetting");
+	float fps = 1 / Time::deltaTime;
+	ImGui::Text("FPS: %.f", fps);
 	ImGui::Checkbox("useWireFramePipeline", &useWireFramePipeline);
+	camera.OnGUI();
+	ImGui::End();
 	cameraController.Update();
-    camera.OnGUI();
 }
 
 void VulkanRenderer::updateCameraMatrix() {
