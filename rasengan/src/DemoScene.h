@@ -13,15 +13,9 @@ public:
     DemoScene() {
         testShader = new VulkanShader("shaders/vertexWithUniformBuffer.vert", "shaders/simpleColor.frag");
 
-        //TODO: create binding by shader content automatically
-        testShader->AddDescriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
         testShader->CreateDescriptorSetLayout();
 
         testShaderWithSampler = new VulkanShader("shaders/simpleTexture.vert", "shaders/simpleTexture.frag");
-        testShaderWithSampler->AddDescriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                                                             VK_SHADER_STAGE_VERTEX_BIT);
-        testShaderWithSampler->AddDescriptorSetLayoutBinding(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-                                                             VK_SHADER_STAGE_FRAGMENT_BIT);
         testShaderWithSampler->CreateDescriptorSetLayout();
 
         pipeline = new VulkanPipeline(*testShader);

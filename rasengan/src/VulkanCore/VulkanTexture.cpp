@@ -10,7 +10,6 @@ VulkanTexture::VulkanTexture(std::string texturePath) {
     stbi_uc *pixels = stbi_load(texturePath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
     VkDeviceSize imageSize = texWidth * texHeight * 4;
 
-    std::cout << "ImageWidth " << texWidth << " texture Height " << texHeight;
     if (!pixels) {
         throw std::runtime_error("failed to load texture image!");
     }

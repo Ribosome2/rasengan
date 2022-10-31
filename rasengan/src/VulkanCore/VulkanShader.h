@@ -2,15 +2,16 @@
 #include "iostream"
 #include "vulkan/vulkan.h"
 #include "unordered_map"
+#include "spirv_reflect.h"
+
 class VulkanShader {
 public:
     VulkanShader(std::string vertexPath,std::string fragPath);
-
     void AddDescriptorSetLayoutBinding(VkDescriptorType descriptorType,VkShaderStageFlags stageFlags);
     void CreateDescriptorSetLayout();
-
-
     ~VulkanShader();
+private:
+    void addDescriptorLayoutBindingsByShaderCode(std::vector<char>&   p_shaderCode);
 public:
     VkShaderModule vertShaderModule;
     VkShaderModule fragShaderModule;
