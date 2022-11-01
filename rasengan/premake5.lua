@@ -24,6 +24,8 @@ files {
     "ThirdParty/stb/**.h",
     "ThirdParty/stb/**.h",
     "ThirdParty/tinyobjloader/**.h",
+    "ThirdParty/spirv-reflect/**.h",
+    "ThirdParty/spirv-reflect/**.cpp",
 }
 
 includedirs {
@@ -34,6 +36,7 @@ includedirs {
     "ThirdParty/imgui",
     "ThirdParty/glm/",
     "ThirdParty/stb/",
+    "ThirdParty/spirv-reflect/",
     "ThirdParty/tinyobjloader/",
     os.getenv("VK_SDK_PATH") .. "/include", --get environment variable in LUA
 }
