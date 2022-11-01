@@ -6,8 +6,9 @@
 VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
 	auto vkContext = VulkanContext::Get();
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo = VulkanInitializer::GetVertexInputStateCreateInfo();
-    auto bindingDescription = VulkanVertex::GetBindingDescription();
-    auto attributeDescriptions = VulkanVertex::GetAttributeDescriptions();
+    // auto bindingDescription = VulkanVertex::GetBindingDescription();
+    auto bindingDescription = shader.GetVertexInputBindingDescription();
+    auto attributeDescriptions = shader.GetVertexInputInputAttributeDescription();
 
     vertexInputInfo.vertexBindingDescriptionCount = 1;
     vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());

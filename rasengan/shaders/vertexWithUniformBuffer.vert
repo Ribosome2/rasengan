@@ -8,6 +8,9 @@ layout(binding = 0) uniform UniformBufferObject {
 
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec3 inColor;
+layout(location = 2) in vec2 inTexCoord;
+//althought we are not using uv, but for now we create VkVertexInputAttributeDescription based on shader definition
+//we we need to define this to match the VertexBuffer
 
 layout(location = 0) out vec3 fragColor;
 
