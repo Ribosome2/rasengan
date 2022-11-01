@@ -12,12 +12,7 @@ class DemoScene : public Scene {
 public:
     DemoScene() {
         testShader = new VulkanShader("shaders/vertexWithUniformBuffer.vert", "shaders/simpleColor.frag");
-
-        testShader->CreateDescriptorSetLayout();
-
         testShaderWithSampler = new VulkanShader("shaders/simpleTexture.vert", "shaders/simpleTexture.frag");
-        testShaderWithSampler->CreateDescriptorSetLayout();
-
         pipeline = new VulkanPipeline(*testShader);
         texturePipeline = new VulkanPipeline(*testShaderWithSampler);
 
