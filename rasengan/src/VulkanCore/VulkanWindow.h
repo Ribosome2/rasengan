@@ -7,5 +7,5 @@ public:
 public:
     GLFWwindow* window;
 private:
-    VkSurfaceKHR surface;
+    VkSurfaceKHR surface= nullptr;
 };

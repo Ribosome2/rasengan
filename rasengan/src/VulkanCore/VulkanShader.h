@@ -7,7 +7,6 @@
 class VulkanShader {
 public:
     VulkanShader(std::string vertexPath,std::string fragPath);
-    void AddDescriptorSetLayoutBinding(VkDescriptorType descriptorType,VkShaderStageFlags stageFlags);
     void CreateDescriptorSetLayout();
     VkVertexInputBindingDescription  GetVertexInputBindingDescription(){ return m_vertexInputBindingDescription; };
     std::vector<VkVertexInputAttributeDescription>  GetVertexInputInputAttributeDescription(){ return m_vertexAttributeDescriptions; };
@@ -16,11 +15,11 @@ private:
     void addDescriptorLayoutBindingsByShaderCode(std::vector<char>&   p_shaderCode);
     void initVertexInputBindingDescription(SpvReflectShaderModule & reflectVertShaderModule);
 public:
-    VkShaderModule vertShaderModule;
-    VkShaderModule fragShaderModule;
+    VkShaderModule vertShaderModule= VK_NULL_HANDLE;
+    VkShaderModule fragShaderModule= VK_NULL_HANDLE;
     VkPipelineShaderStageCreateInfo vertShaderStageInfo;
     VkPipelineShaderStageCreateInfo fragShaderStageInfo;
-    VkDescriptorSetLayout descriptorSetLayout;
+    VkDescriptorSetLayout descriptorSetLayout= VK_NULL_HANDLE;
 
 public:
     std::shared_ptr<VulkanShader> Find(std::string & shaderPath);

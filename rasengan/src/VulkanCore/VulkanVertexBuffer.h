@@ -15,7 +15,7 @@ public:
 private:
 	void* vertices;
 	uint32_t size ;
-    VkBuffer vertexBuffer;
-    VkDeviceMemory vertexBufferMemory;
+    VkBuffer vertexBuffer= VK_NULL_HANDLE;
+    VkDeviceMemory vertexBufferMemory= VK_NULL_HANDLE;
 
 };

@@ -5,25 +5,25 @@
 
 class VulkanCommandBuffer {
 public:
-    static VkCommandBuffer BeginSingleTimeCommands();
+	static VkCommandBuffer BeginSingleTimeCommands();
 
-    static void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
+	static void EndSingleTimeCommands(VkCommandBuffer commandBuffer);
 
-    void Dispose();
+	void Dispose();
 
-    void Init();
+	void Init();
 
-    ~VulkanCommandBuffer();
+	~VulkanCommandBuffer();
 
-    VkCommandBuffer &GetCurCommandBuffer() { return commandBuffer; };
+	VkCommandBuffer &GetCurCommandBuffer() { return commandBuffer; };
 
-    VkCommandPool &GetCommandPool() { return commandPool; }
+	VkCommandPool &GetCommandPool() { return commandPool; }
 
 private:
-    void createCommandPool();
+	void createCommandPool();
 
-    void createCommandBuffer();
+	void createCommandBuffer();
 
-    VkCommandPool commandPool;
-    VkCommandBuffer commandBuffer;
+	VkCommandPool commandPool = VK_NULL_HANDLE;
+	VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
 };

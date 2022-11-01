@@ -13,7 +13,8 @@ public:
     DemoScene() {
         testShader = new VulkanShader("shaders/vertexWithUniformBuffer.vert", "shaders/simpleColor.frag");
         testShaderWithSampler = new VulkanShader("shaders/simpleTexture.vert", "shaders/simpleTexture.frag");
-        pipeline = new VulkanPipeline(*testShader);
+		pipeline = new VulkanPipeline(*testShader);
+
         texturePipeline = new VulkanPipeline(*testShaderWithSampler);
 
         //floor init
@@ -32,7 +33,7 @@ public:
 
         for (int i = 0; i < 4; ++i) {
             auto quadGo = std::make_shared<GameObject>("item" + std::to_string(i));
-            quadGo->AutoRotate = true;
+//            quadGo->AutoRotate = true;
             quadGo->transform.scale = glm::vec3{.5};
             quadGo->transform.position = glm::vec3{0.8 * i - 2, 0.8, -1.0};
             auto meshRenderer = std::make_shared<MeshRenderer>();

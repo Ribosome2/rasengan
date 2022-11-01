@@ -417,6 +417,7 @@ VulkanShader::~VulkanShader() {
 }
 
 void VulkanShader::CreateDescriptorSetLayout() {
+	assert(descriptorSetLayout== nullptr);
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     layoutInfo.bindingCount = (uint32_t)m_descriptorSetLayoutBindings.size();
@@ -433,17 +434,6 @@ std::shared_ptr <VulkanShader> VulkanShader::Find(string &shaderPath) {
         return result->second;
     }
     return nullptr;
-}
-
-void VulkanShader::AddDescriptorSetLayoutBinding(VkDescriptorType descriptorType, VkShaderStageFlags stageFlags) {
-    VkDescriptorSetLayoutBinding layoutBinding{};
-    layoutBinding.binding =(uint32_t) m_descriptorSetLayoutBindings.size();
-    layoutBinding.descriptorType = descriptorType;
-    layoutBinding.descriptorCount = 1;
-    layoutBinding.stageFlags = stageFlags;
-    layoutBinding.pImmutableSamplers = nullptr; // Optional
-
-    m_descriptorSetLayoutBindings.push_back(layoutBinding);
 }
 
 void VulkanShader::addDescriptorLayoutBindingsByShaderCode(std::vector<char> &p_shaderCode) {
@@ -472,7 +462,7 @@ void VulkanShader::addDescriptorLayoutBindingsByShaderCode(std::vector<char> &p_
                 layout_binding.descriptorCount *= refl_binding.array.dims[i_dim];
             }
             layout_binding.stageFlags = static_cast<VkShaderStageFlagBits>(reflectShaderModule.shader_stage);
-            std::cout << " add Descriptor " << layout_binding.descriptorType << " stage flag " << layout_binding.stageFlags << std::endl;
+//            std::cout << " add Descriptor " << layout_binding.descriptorType << " stage flag " << layout_binding.stageFlags << std::endl;
             m_descriptorSetLayoutBindings.push_back(layout_binding);
         }
 

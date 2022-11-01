@@ -30,7 +30,7 @@ ADD_EXECUTABLE(${PROJECT_NAME} "src/main.cpp"
         src/VulkanCore/Spirv/VulkanSpirvOutputStreamUtil.cpp
         src/VulkanCore/Spirv/VulkanSpirvReflection.h
         src/VulkanCore/Spirv/VulkanSpirvReflection.cpp
-        src/Renderring/RenderringDataDefine.h
+        src/Rendering/RenderingDataDefine.h
         src/DemoScene.h src/EngineCore/ModelLoader.cpp src/EngineCore/ModelLoader.h)
 
 

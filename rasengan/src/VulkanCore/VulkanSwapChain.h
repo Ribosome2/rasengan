@@ -28,8 +28,8 @@ private:
 
 public:
 
-    VkSurfaceKHR surface;
-    VkSwapchainKHR swapChain;
+    VkSurfaceKHR surface= nullptr;
+    VkSwapchainKHR swapChain= nullptr;
     VkExtent2D swapChainExtent;
     VkFormat swapChainImageFormat;
     std::vector<VkImageView> swapChainImageViews;

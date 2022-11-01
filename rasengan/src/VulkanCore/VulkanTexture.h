@@ -21,8 +21,8 @@ public:
     static void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 
 public:
-    VkImageView textureImageView;
-    VkSampler textureSampler;
+    VkImageView textureImageView= nullptr;
+    VkSampler textureSampler= nullptr;
 private:
 
     static bool hasStencilComponent(VkFormat format);
@@ -31,8 +31,8 @@ private:
 
     void createTextureSampler();
 
-    VkImage textureImage;
-    VkDeviceMemory textureImageMemory;
+    VkImage textureImage= VK_NULL_HANDLE;
+    VkDeviceMemory textureImageMemory= VK_NULL_HANDLE;
 
 
 };
