@@ -49,7 +49,8 @@ public:
             } else if (i == 3) {
                 meshRenderer->mesh = std::make_shared<Mesh>("Assets/Models/vikingRoom/viking_room.obj");;
                 texturePt = new VulkanTexture("Assets/Models/vikingRoom/viking_room.png");
-                quadGo->transform.eulerAngles.z = 90;
+                quadGo->name="vikingRoom";
+                quadGo->transform.eulerAngles = glm::vec3{-90,0,200};
             } else {
                 meshRenderer->mesh = std::make_shared<Cube>();
                 texturePt = new VulkanTexture("Assets/Textures/KaiSa.png");

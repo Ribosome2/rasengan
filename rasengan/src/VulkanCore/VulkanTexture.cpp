@@ -6,9 +6,10 @@
 
 VulkanTexture::VulkanTexture(std::string texturePath) {
     int texWidth, texHeight, texChannels;
-    // auto texturePath =;
     stbi_uc *pixels = stbi_load(texturePath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
     VkDeviceSize imageSize = texWidth * texHeight * 4;
+
+    m_mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
 
     if (!pixels) {
         throw std::runtime_error("failed to load texture image!");
@@ -30,7 +31,7 @@ VulkanTexture::VulkanTexture(std::string texturePath) {
     stbi_image_free(pixels);
 
     //Create VkImage Object  and bind to VkDeviceMemory,not filled with texel data ,yet
-    CreateImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
+    CreateImage(texWidth, texHeight, this->m_mipLevels, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
                 VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                 textureImage, textureImageMemory);
 
@@ -38,7 +39,7 @@ VulkanTexture::VulkanTexture(std::string texturePath) {
     //first transition: is to prepare the VkImage fo the layout that is optimal for copying  staging buffer into
     TransitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM,
                           VK_IMAGE_LAYOUT_UNDEFINED,
-                          VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+                          VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, this->m_mipLevels);
     copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
 
     //second transition:
@@ -46,17 +47,19 @@ VulkanTexture::VulkanTexture(std::string texturePath) {
     // we need one last transition to prepare it for shader access:
     TransitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM,
                           VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                          VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+                          VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,this->m_mipLevels);
 
     vkDestroyBuffer(device, stagingBuffer, nullptr);
     vkFreeMemory(device, stagingBufferMemory, nullptr);
-    textureImageView = VulkanTexture::CreateImageView(textureImage, VK_FORMAT_R8G8B8A8_UNORM,VK_IMAGE_ASPECT_COLOR_BIT);
+    textureImageView = VulkanTexture::CreateImageView(textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT,
+                                                      this->m_mipLevels);
     createTextureSampler();
 }
 
-void VulkanTexture::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
-                                VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage &image,
-                                VkDeviceMemory &imageMemory) {
+void
+VulkanTexture::CreateImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkFormat format, VkImageTiling tiling,
+                           VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage &image,
+                           VkDeviceMemory &imageMemory) {
 
     auto device = VulkanContext::Get()->VulkanDevice->device;
     VkImageCreateInfo imageInfo{};
@@ -66,7 +69,7 @@ void VulkanTexture::CreateImage(uint32_t width, uint32_t height, VkFormat format
     imageInfo.extent.height = static_cast<uint32_t>(height);
     // The extent field specifies the dimensions of the image, basically how many texels there are on each axis.
     imageInfo.extent.depth = 1; //
-    imageInfo.mipLevels = 1;
+    imageInfo.mipLevels = mipLevels;
     imageInfo.arrayLayers = 1;
     imageInfo.format = format;
     imageInfo.tiling = tiling;
@@ -96,7 +99,8 @@ void VulkanTexture::CreateImage(uint32_t width, uint32_t height, VkFormat format
 }
 
 void
-VulkanTexture::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout) {
+VulkanTexture::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout,
+                                     uint32_t mipLevels) {
     VkCommandBuffer commandBuffer = VulkanCommandBuffer::BeginSingleTimeCommands();
 
     VkImageMemoryBarrier barrier{};
@@ -130,17 +134,18 @@ VulkanTexture::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayo
 
         sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
         destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-    } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+    } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
+               newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
         barrier.srcAccessMask = 0;
-        barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+        barrier.dstAccessMask =
+                VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
         barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-        if(hasStencilComponent(format))
-        {
+        if (hasStencilComponent(format)) {
             barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
         }
         sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
         destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-    }else{
+    } else {
         throw std::invalid_argument("unsupported layout transition!");
     }
 
@@ -198,7 +203,8 @@ VulkanTexture::~VulkanTexture() {
 }
 
 
-VkImageView VulkanTexture::CreateImageView(VkImage & image, VkFormat format,VkImageAspectFlags aspectFlags) {
+VkImageView
+VulkanTexture::CreateImageView(VkImage &image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels) {
     VkImageViewCreateInfo viewInfo{};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     viewInfo.image = image;
@@ -206,7 +212,7 @@ VkImageView VulkanTexture::CreateImageView(VkImage & image, VkFormat format,VkIm
     viewInfo.format = format;
     viewInfo.subresourceRange.aspectMask = aspectFlags;
     viewInfo.subresourceRange.baseMipLevel = 0;
-    viewInfo.subresourceRange.levelCount = 1;
+    viewInfo.subresourceRange.levelCount = mipLevels;
     viewInfo.subresourceRange.baseArrayLayer = 0;
     viewInfo.subresourceRange.layerCount = 1;
 
