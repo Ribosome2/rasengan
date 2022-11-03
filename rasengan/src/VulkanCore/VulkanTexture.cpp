@@ -42,12 +42,10 @@ VulkanTexture::VulkanTexture(std::string texturePath) {
 						  VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, this->m_mipLevels);
 	copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
 
-	//second transition:
-	// To be able to start sampling from the texture image in the shader,
-	// we need one last transition to prepare it for shader access:
-	TransitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM,
-						  VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-						  VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, this->m_mipLevels);
+    //transitioned to VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL while generating mipmaps,so the next transition is not needed
+	// TransitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_UNORM,
+	// 					  VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+	// 					  VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, this->m_mipLevels);
 
 	GenerateMipmaps(textureImage,VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, this->m_mipLevels);
 
@@ -117,7 +115,7 @@ VulkanTexture::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayo
 	barrier.image = image;
 	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	barrier.subresourceRange.baseMipLevel = 0;
-	barrier.subresourceRange.levelCount = 1;
+	barrier.subresourceRange.levelCount = mipLevels;
 	barrier.subresourceRange.baseArrayLayer = 0;
 	barrier.subresourceRange.layerCount = 1;
 
