@@ -392,6 +392,7 @@ static uint32_t FormatSize(VkFormat format) {
 }
 
 VulkanShader::VulkanShader(std::string vertexPath, std::string fragPath) {
+    this->name = vertexPath;
     auto vertShaderCode = ShaderUtil::ReadFile(vertexPath);
     addDescriptorLayoutBindingsByShaderCode(vertShaderCode);
     auto fragShaderCode = ShaderUtil::ReadFile(fragPath);

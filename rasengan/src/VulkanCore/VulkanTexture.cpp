@@ -8,7 +8,8 @@ VulkanTexture::VulkanTexture(std::string texturePath) {
 	int texWidth, texHeight, texChannels;
 	stbi_uc *pixels = stbi_load(texturePath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 	VkDeviceSize imageSize = texWidth * texHeight * 4;
-
+    this->m_width = texWidth;
+    this->m_height = texHeight;
 	m_mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
 
 	if (!pixels) {

@@ -20,7 +20,7 @@ public:
     VkPipelineShaderStageCreateInfo vertShaderStageInfo;
     VkPipelineShaderStageCreateInfo fragShaderStageInfo;
     VkDescriptorSetLayout descriptorSetLayout= VK_NULL_HANDLE;
-
+    std::string  name;
 public:
     std::shared_ptr<VulkanShader> Find(std::string & shaderPath);
 //    static InitShaders(std::string vertexPath,std::string fragPath,std::string shaderName);

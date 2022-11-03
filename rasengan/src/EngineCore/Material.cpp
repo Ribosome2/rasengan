@@ -83,7 +83,7 @@ void Material::CreateDescriptorSets(VkDescriptorSetLayout &descriptorSetLayout) 
         imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         imageInfo.imageView = mainTexture->textureImageView;
         imageInfo.sampler = mainTexture->textureSampler;
-
+        this->m_DescriptorImageInfo =imageInfo;
         VkWriteDescriptorSet descriptorWriteCombinedSampler{};
         descriptorWriteCombinedSampler.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptorWriteCombinedSampler.dstSet = descriptorSet;

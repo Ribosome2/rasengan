@@ -8,7 +8,8 @@ public:
     VulkanTexture(std::string texturePath);
 
     virtual ~VulkanTexture();
-
+    int GetWidth(){ return m_width;};
+    int  GetHeight() {return m_height;};
     static VkImageView CreateImageView(VkImage & image, VkFormat format,VkImageAspectFlags aspectFlags,uint32_t mipLevels);
     static void CreateImage(uint32_t width,
                             uint32_t height,
@@ -33,7 +34,9 @@ private:
 
     void createTextureSampler();
 
-    uint32_t m_mipLevels;
+    int  m_width=0;
+    int  m_height=0;
+    uint32_t m_mipLevels=0;
     VkImage textureImage= VK_NULL_HANDLE;
     VkDeviceMemory textureImageMemory= VK_NULL_HANDLE;
 

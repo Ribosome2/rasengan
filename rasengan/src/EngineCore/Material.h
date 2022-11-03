@@ -12,7 +12,7 @@ public:
 	~Material();
 
 	void CreateDescriptorSets(VkDescriptorSetLayout &descriptorSetLayout);
-
+    const VkDescriptorImageInfo& GetDescriptor() { return m_DescriptorImageInfo; }
 	void UpdateUniformBuffer(Transform &transform);
 
 public:
@@ -23,4 +23,6 @@ public:
 	VkBuffer uniformBuffer = nullptr;
 	VkDeviceMemory uniformBufferMemory = nullptr;
 	VulkanTexture *mainTexture = nullptr;
+    VkDescriptorImageInfo m_DescriptorImageInfo = {};
+
 };
