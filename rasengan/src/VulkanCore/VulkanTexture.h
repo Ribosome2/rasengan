@@ -20,6 +20,7 @@ public:
                             VkImage &image,
                             VkDeviceMemory &imageMemory);
     static void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout,uint32_t mipLevels=1);
+	static void GenerateMipmaps(VkImage image,VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
 
 public:
     VkImageView textureImageView= nullptr;
