@@ -66,7 +66,7 @@ void DrawMaterial(std::shared_ptr<Material> material)
 {
     if (material != nullptr) {
         if (ImGui::TreeNodeEx("Material")) {
-            ImGuiEx::DrawText("Shader:", material->name);
+            ImGuiEx::DrawText("Shader:", material->shader->name);
             auto & texture = material->mainTexture;
             if(texture!= nullptr)
             {
