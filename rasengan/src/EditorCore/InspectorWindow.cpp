@@ -5,6 +5,8 @@
 #include "EngineCore/GameObject.h"
 #include "imgui_internal.h"
 #include "EngineCore/MeshRenderer.h"
+#include "imgui_impl_vulkan.h"
+
 template<typename T, typename UIFunction>
 static void
 DrawComponent(const std::string &name, GameObject *pGameObject, Component *component, UIFunction uiFunction) {
@@ -34,6 +36,32 @@ DrawComponent(const std::string &name, GameObject *pGameObject, Component *compo
     }
 }
 
+void DrawImage(const std::string &label, ImTextureID user_texture_id,  ImVec2& size, float columnWidth=100) {
+	if(size.x>columnWidth)
+	{
+		size.x=columnWidth;
+	}
+	if(size.y>columnWidth)
+	{
+		size.y=columnWidth;
+	}
+
+	ImGui::PushID(label.c_str());
+
+	ImGui::Columns(2);
+	ImGui::SetColumnWidth(0, columnWidth);
+	ImGui::Text(label.c_str());
+	ImGui::NextColumn();
+
+	ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+	ImGui::SameLine();
+	ImGui::Image(user_texture_id,size);
+	ImGui::PopStyleVar();
+	ImGui::PopID();
+}
+
+
 void DrawMaterial(std::shared_ptr<Material> material)
 {
     if (material != nullptr) {
@@ -42,9 +70,15 @@ void DrawMaterial(std::shared_ptr<Material> material)
             auto & texture = material->mainTexture;
             if(texture!= nullptr)
             {
-                //todo: draw texture
-                // const auto textureID = ImGui_ImplVulkan_AddTexture(texture->textureSampler, texture->textureImageView, material->GetDescriptor().imageLayout);
-                // ImGui::Image((ImTextureID)textureID, ImVec2(texture->GetWidth(), texture->GetHeight()));
+				if(texture->descriptorSet==VK_NULL_HANDLE)
+				{
+					texture->descriptorSet = ImGui_ImplVulkan_AddTexture(texture->textureSampler, texture->textureImageView, material->GetDescriptor().imageLayout);
+				}
+                 const auto textureID = texture->descriptorSet;
+				ImGui::Text("mainTexture:");
+				ImGui::SameLine();
+				int gridSize =100;
+				ImGui::Image((ImTextureID)textureID,ImVec2(gridSize, gridSize));
             }
             ImGui::TreePop();
         }

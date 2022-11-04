@@ -107,5 +107,7 @@ void  ImGuiEx::DrawText(const std::string &label,const std::string &textContent,
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
     ImGui::Text(textContent.c_str());
     ImGui::PopStyleVar();
+	ImGui::Columns(1);
     ImGui::PopID();
 }
+

@@ -261,7 +261,7 @@ void VulkanTexture::createTextureSampler() {
 
 	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
 	samplerInfo.minLod = 0.0f; // Optional
-	samplerInfo.minLod = static_cast<float>(m_mipLevels / 2); //to do for test
+	samplerInfo.minLod = 0;
 	samplerInfo.maxLod = static_cast<float>(this->m_mipLevels);
 	samplerInfo.mipLodBias = 0.0f; // Optional
 
