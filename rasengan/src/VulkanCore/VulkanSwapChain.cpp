@@ -200,12 +200,15 @@ void VulkanSwapChain::createFramebuffers() {
 	for (size_t i = 0; i < swapChainImageViews.size(); i++) {
 		std::vector<VkImageView> attachments {};
 		//这里的顺序是不是要跟RenderPass的顺序一样？
+		//注意单次采样和多次塞attachment的顺序是不一样的！！！，不然会报错
 		if (VulkanContext::Get()->VulkanDevice->msaaSamples != VK_SAMPLE_COUNT_1_BIT) {
 			attachments.push_back(msaaImageView);
+			attachments.push_back(depthImageView);
+			attachments.push_back(swapChainImageViews[i]);
+		}else{
+			attachments.push_back(swapChainImageViews[i]);
+			attachments.push_back(depthImageView);
 		}
-
-		attachments.push_back(swapChainImageViews[i]);
-		attachments.push_back(depthImageView);
 
 
 		VkFramebufferCreateInfo framebufferInfo{};
