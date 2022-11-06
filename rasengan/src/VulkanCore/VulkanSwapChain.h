@@ -25,6 +25,7 @@ private:
 	void createDepthResources();
 	VkFormat findDepthFormat();
 	bool hasStencilComponent(VkFormat format);
+	void createMultiSampleResources();
 
 public:
 
@@ -44,6 +45,10 @@ public:
     VkSemaphore imageAvailableSemaphore;
     VkSemaphore renderFinishedSemaphore;
     VkFence inFlightFence;
+private:
+	VkImage msaaImage = VK_NULL_HANDLE;
+	VkDeviceMemory msaaImageMemory = VK_NULL_HANDLE;
+	VkImageView msaaImageView = VK_NULL_HANDLE;
 private:
     SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
     VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);

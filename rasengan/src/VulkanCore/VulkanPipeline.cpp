@@ -31,6 +31,7 @@ VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
     rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
 	VkPipelineMultisampleStateCreateInfo multisampling= VulkanInitializer::GetMultisampleStateCreateInfo();
+	multisampling.rasterizationSamples = VulkanContext::Get()->VulkanDevice->msaaSamples;
 	VkPipelineColorBlendAttachmentState colorBlendAttachment = VulkanInitializer::GetColorBlendAttachmentState();
 	VkPipelineColorBlendStateCreateInfo colorBlending = VulkanInitializer::GetColorBlendStateCreateInfo(colorBlendAttachment);
 	VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = VulkanInitializer::GetPipelineLayoutCreateInfo();

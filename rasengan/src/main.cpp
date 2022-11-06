@@ -64,7 +64,7 @@ private:
 
 	void MainLoop() {
 		auto vkContext = VulkanContext::Get();
-		VkSampleCountFlagBits MSAASamples = VK_SAMPLE_COUNT_1_BIT;//todo: use value match our rendering
+		VkSampleCountFlagBits MSAASamples = vkContext->VulkanDevice->msaaSamples;
 		uint32_t imageCount = 2;
 		VulkanImguiLayer imguiLayer{vkContext->window, vkContext->renderPass, imageCount, MSAASamples};
 
