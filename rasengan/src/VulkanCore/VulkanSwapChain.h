@@ -18,6 +18,7 @@ public:
     void CreateSwapchain();
     void CreateImageViews();
     VkFramebuffer &  GetCurrentFrameBuffer(uint32_t imageIndex ){ return swapChainFramebuffers[imageIndex];};
+	void RecreateSwapchainResource();
 private:
     void createFramebuffers();
     void createRenderPass();

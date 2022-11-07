@@ -17,21 +17,24 @@
 #include <chrono>
 #include "EngineCore/Time.h"
 #include "string"
-bool VulkanRenderer::useWireFramePipeline= false;
+
+bool VulkanRenderer::useWireFramePipeline = false;
+
 void VulkanRenderer::RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_t imageIndex) {
 
 	auto vkContext = VulkanContext::Get();
 
 
-    auto & material =RenderContext.material;
-    auto & pipeline = material->pipeline;
+	auto &material = RenderContext.material;
+	auto &pipeline = material->pipeline;
 	if (useWireFramePipeline) {
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->wireFramePipeline);
 	} else {
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->graphicsPipeline);
 	}
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material->pipeline->pipelineLayout, 0, 1, &material->descriptorSet, 0, nullptr);
-    RenderContext.meshRenderer->Render();
+	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material->pipeline->pipelineLayout, 0, 1,
+							&material->descriptorSet, 0, nullptr);
+	RenderContext.meshRenderer->Render();
 
 }
 
@@ -53,12 +56,12 @@ void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
 	renderPassInfo.renderArea.offset = {0, 0};
 	renderPassInfo.renderArea.extent = swapchain->swapChainExtent;
 
-    std::array<VkClearValue, 2> clearValues{};
-    clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
-    clearValues[1].depthStencil = {1.0f, 0};
+	std::array<VkClearValue, 2> clearValues{};
+	clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+	clearValues[1].depthStencil = {1.0f, 0};
 
-    renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-    renderPassInfo.pClearValues = clearValues.data();
+	renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+	renderPassInfo.pClearValues = clearValues.data();
 
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
@@ -76,9 +79,9 @@ void VulkanRenderer::BeginRenderPass(uint32_t imageIndex) {
 
 void VulkanRenderer::DrawFrame(std::vector<std::shared_ptr<GameObject>> gameObjects) {
 	auto vkContext = VulkanContext::Get();
-    auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
+	auto &commandBuffer = vkContext->CommandBuffer.GetCurCommandBuffer();
 
-	for (auto & go : gameObjects) {
+	for (auto &go: gameObjects) {
 		RenderContext.meshRenderer = go->meshRenderer.get();
 		RenderContext.material = go->meshRenderer->material.get();
 		RecordCommandBuffer(commandBuffer, imageIndex);
@@ -166,12 +169,11 @@ void VulkanRenderer::Init() {
 }
 
 
-
 VulkanRenderer::~VulkanRenderer() {
 	std::cout << "VulkanRenderer Deconstruction " << std::endl;
 	auto device = VulkanContext::Get()->VulkanDevice->device;
 
-    vkDestroyRenderPass(device,VulkanContext::Get()->renderPass, nullptr);
+	vkDestroyRenderPass(device, VulkanContext::Get()->renderPass, nullptr);
 	vkDestroyDescriptorPool(device, descriptorPool, nullptr);
 
 }
@@ -181,13 +183,13 @@ VulkanRenderer::VulkanRenderer() {
 }
 
 void VulkanRenderer::createDescriptorPool() {
-    auto maxDescriptorSetCount = 10;
+	auto maxDescriptorSetCount = 10;
 
-    std::array<VkDescriptorPoolSize, 2> poolSizes{};
-    poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSizes[0].descriptorCount = maxDescriptorSetCount;
-    poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    poolSizes[1].descriptorCount = maxDescriptorSetCount;
+	std::array<VkDescriptorPoolSize, 2> poolSizes{};
+	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	poolSizes[0].descriptorCount = maxDescriptorSetCount;
+	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	poolSizes[1].descriptorCount = maxDescriptorSetCount;
 
 	VkDescriptorPoolCreateInfo poolInfo{};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -204,12 +206,17 @@ void VulkanRenderer::createDescriptorPool() {
 
 void VulkanRenderer::Update() {
 	auto vkContext = VulkanContext::Get();
-	auto swapchainExtent =vkContext->SwapChain->swapChainExtent;
-	camera.aspect = swapchainExtent.width/(float)swapchainExtent.height;
+	auto swapchainExtent = vkContext->SwapChain->swapChainExtent;
+	camera.aspect = swapchainExtent.width / (float) swapchainExtent.height;
 	ImGui::Begin("RenderSetting");
 	float fps = 1 / Time::deltaTime;
 	ImGui::Text("FPS: %.f", fps);
 	ImGui::Checkbox("useWireFramePipeline", &useWireFramePipeline);
+	if (ImGui::Button("NoMSAA")) {
+		vkContext->VulkanDevice->msaaSamples = VK_SAMPLE_COUNT_1_BIT;
+		vkContext->SwapChain->RecreateSwapchainResource();
+	}
+
 	camera.OnGUI();
 	ImGui::End();
 	cameraController.Update();
