@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <stdexcept>
 #include "iostream"
-#define STOP_ON_VALIDATION_ERROR 1
+//#define STOP_ON_VALIDATION_ERROR 1
 
 class VulkanValidation {
 public:

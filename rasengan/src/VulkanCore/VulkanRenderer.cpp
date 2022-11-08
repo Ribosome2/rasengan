@@ -17,6 +17,7 @@
 #include <chrono>
 #include "EngineCore/Time.h"
 #include "string"
+#include "VulkanCore/Managers/VulkanPipelineManager.h"
 
 bool VulkanRenderer::useWireFramePipeline = false;
 
@@ -215,6 +216,7 @@ void VulkanRenderer::Update() {
 	if (ImGui::Button("NoMSAA")) {
 		vkContext->VulkanDevice->msaaSamples = VK_SAMPLE_COUNT_1_BIT;
 		vkContext->SwapChain->RecreateSwapchainResource();
+		VulkanPipelineManager::RecreateAllPipelines();
 	}
 
 	camera.OnGUI();

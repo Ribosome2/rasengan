@@ -8,8 +8,10 @@ public:
 	VulkanPipeline(VulkanShader &shader);
 
 	~VulkanPipeline();
+	void RecreatePipeline();
 
 private:
+	VulkanShader* m_Shader;
 public:
 	VkPipelineLayout pipelineLayout = VK_NULL_HANDLE;
 	VkPipeline graphicsPipeline = VK_NULL_HANDLE;
