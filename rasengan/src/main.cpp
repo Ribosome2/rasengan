@@ -44,13 +44,14 @@ private:
 	void Init() {
 		glfwInit();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 		mVulkanWindows.window = glfwCreateWindow(WIDTH, HEIGHT, "VulkanRasengan", nullptr, nullptr);
 
 		if (!mVulkanWindows.window) {
 			glfwTerminate();
 			throw std::runtime_error("failed to create vkInstance");
 		}
+        glfwSetWindowUserPointer(mVulkanWindows.window, this);
 		m_VulkanContext = std::make_shared<VulkanContext>();
 		VulkanContext::SetInstance(m_VulkanContext);
 		m_VulkanContext->Init();
@@ -60,7 +61,6 @@ private:
 
 
 	}
-
 
 	void MainLoop() {
 		auto vkContext = VulkanContext::Get();

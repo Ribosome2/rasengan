@@ -9,7 +9,7 @@
 
 template<typename T, typename UIFunction>
 static void
-DrawComponent(const std::string &name, GameObject *pGameObject, Component *component, UIFunction uiFunction) {
+DrawComponent(const std::string &name, Component *component, UIFunction uiFunction) {
     const ImGuiTreeNodeFlags treeNodeFlags =
             ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth |
             ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
@@ -36,49 +36,46 @@ DrawComponent(const std::string &name, GameObject *pGameObject, Component *compo
     }
 }
 
-void DrawImage(const std::string &label, ImTextureID user_texture_id,  ImVec2& size, float columnWidth=100) {
-	if(size.x>columnWidth)
-	{
-		size.x=columnWidth;
-	}
-	if(size.y>columnWidth)
-	{
-		size.y=columnWidth;
-	}
+void DrawImage(const std::string &label, ImTextureID user_texture_id, ImVec2 &size, float columnWidth = 100) {
+    if (size.x > columnWidth) {
+        size.x = columnWidth;
+    }
+    if (size.y > columnWidth) {
+        size.y = columnWidth;
+    }
 
-	ImGui::PushID(label.c_str());
+    ImGui::PushID(label.c_str());
 
-	ImGui::Columns(2);
-	ImGui::SetColumnWidth(0, columnWidth);
-	ImGui::Text(label.c_str());
-	ImGui::NextColumn();
+    ImGui::Columns(2);
+    ImGui::SetColumnWidth(0, columnWidth);
+    ImGui::Text(label.c_str());
+    ImGui::NextColumn();
 
-	ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
-	ImGui::SameLine();
-	ImGui::Image(user_texture_id,size);
-	ImGui::PopStyleVar();
-	ImGui::PopID();
+    ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{0, 0});
+    ImGui::SameLine();
+    ImGui::Image(user_texture_id, size);
+    ImGui::PopStyleVar();
+    ImGui::PopID();
 }
 
 
-void DrawMaterial(std::shared_ptr<Material> material)
-{
+void DrawMaterial(std::shared_ptr<Material> material) {
     if (material != nullptr) {
         if (ImGui::TreeNodeEx("Material")) {
             ImGuiEx::DrawText("Shader:", material->name);
-            auto & texture = material->mainTexture;
-            if(texture!= nullptr)
-            {
-				if(texture->descriptorSet==VK_NULL_HANDLE)
-				{
-					texture->descriptorSet = ImGui_ImplVulkan_AddTexture(texture->textureSampler, texture->textureImageView, material->GetDescriptor().imageLayout);
-				}
-                 const auto textureID = texture->descriptorSet;
-				ImGui::Text("mainTexture:");
-				ImGui::SameLine();
-				int gridSize =100;
-				ImGui::Image((ImTextureID)textureID,ImVec2(gridSize, gridSize));
+            auto &texture = material->mainTexture;
+            if (texture != nullptr) {
+                if (texture->descriptorSet == VK_NULL_HANDLE) {
+                    texture->descriptorSet = ImGui_ImplVulkan_AddTexture(texture->textureSampler,
+                                                                         texture->textureImageView,
+                                                                         material->GetDescriptor().imageLayout);
+                }
+                const auto textureID = texture->descriptorSet;
+                ImGui::Text("mainTexture:");
+                ImGui::SameLine();
+                int gridSize = 100;
+                ImGui::Image((ImTextureID) textureID, ImVec2(gridSize, gridSize));
             }
             ImGui::TreePop();
         }
@@ -109,14 +106,14 @@ void InspectorWindow::OnInspectorGUI() {
 
         //Transform
         auto &transformPt = targetGo->transform;
-        DrawComponent<Transform>("Transform", targetGo, &transformPt, [](Component *component) {
+        DrawComponent<Transform>("Transform", &transformPt, [](Component *component) {
             auto transformComp = (Transform *) component;
             ImGuiEx::DrawVec3Control("position:", transformComp->position);
             ImGuiEx::DrawVec3Control("eulerAngles:", transformComp->eulerAngles);
             ImGuiEx::DrawVec3Control("scale:", transformComp->scale);
         });
 
-        DrawComponent<MeshRenderer>("MeshRenderer", targetGo, (Component *) targetGo->meshRenderer.get(),
+        DrawComponent<MeshRenderer>("MeshRenderer", (Component *) targetGo->meshRenderer.get(),
                                     [](Component *component) {
                                         auto meshRenderer = (MeshRenderer *) component;
                                         ImGui::Text("mesh %s", meshRenderer->mesh->name.c_str());

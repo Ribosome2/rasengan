@@ -183,16 +183,10 @@ VkSurfaceFormatKHR VulkanSwapChain::chooseSwapSurfaceFormat(const std::vector<Vk
 VulkanSwapChain::~VulkanSwapChain() {
 	auto & device = VulkanContext::Get()->VulkanDevice->device;
 
-	for (auto &  imageView : swapChainImageViews) {
-		vkDestroyImageView(device,imageView, nullptr);
-	}
-    for (auto framebuffer : swapChainFramebuffers) {
-        vkDestroyFramebuffer(device, framebuffer, nullptr);
-    }
+    cleanupSwapChain();
     vkDestroyImage(device,depthImage, nullptr);
     vkFreeMemory(device, depthImageMemory, nullptr);
     vkDestroyImageView(device,depthImageView, nullptr);
-	vkDestroySwapchainKHR(VulkanContext::Get()->VulkanDevice->device,swapChain, nullptr);
 	vkDestroySurfaceKHR(VulkanContext::Get()->GetVulkanInstance(),surface, nullptr);
 
     vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
@@ -317,4 +311,34 @@ void VulkanSwapChain::createDepthResources() {
     VulkanTexture::TransitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED,
                                          VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
+}
+
+void VulkanSwapChain::RecreateSwapChain() {
+    auto window = VulkanContext::Get()->window;
+    int width = 0, height = 0;
+    glfwGetFramebufferSize(window, &width, &height);
+    while (width == 0 || height == 0) {
+        glfwGetFramebufferSize(window, &width, &height);
+        glfwWaitEvents();
+    }
+    auto device = VulkanContext::Get()->VulkanDevice->device;
+    vkDeviceWaitIdle(device);
+    cleanupSwapChain();
+
+    CreateSwapchain();
+    CreateImageViews();
+    createFramebuffers();
+}
+
+void VulkanSwapChain::cleanupSwapChain() {
+    auto device = VulkanContext::Get()->VulkanDevice->device;
+    for (size_t i = 0; i < swapChainFramebuffers.size(); i++) {
+        vkDestroyFramebuffer(device, swapChainFramebuffers[i], nullptr);
+    }
+
+    for (size_t i = 0; i < swapChainImageViews.size(); i++) {
+        vkDestroyImageView(device, swapChainImageViews[i], nullptr);
+    }
+
+    vkDestroySwapchainKHR(device, swapChain, nullptr);
 }

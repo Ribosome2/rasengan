@@ -14,47 +14,47 @@
 
 class RenderContext {
 public:
-	MeshRenderer *meshRenderer;
-	Material *material;
-	glm::mat4 viewMatrix;
-	glm::mat4 projectionMatrix;
+    MeshRenderer *meshRenderer;
+    Material *material;
+    glm::mat4 viewMatrix;
+    glm::mat4 projectionMatrix;
 };
 
 class VulkanRenderer {
 public:
-	VulkanRenderer();
+    VulkanRenderer();
 
-	~VulkanRenderer();
+    ~VulkanRenderer();
 
-	void Init();
+    void Init();
 
-	void Update();
+    void Update();
 
-	void BeginRenderPass(uint32_t imageIndex);
+    void BeginRenderPass(uint32_t imageIndex);
 
-	void EndRenderPass();
+    void EndRenderPass();
 
-	void BeginFrame();
+    void BeginFrame();
 
-	void DrawFrame(std::vector<std::shared_ptr<GameObject>> gameObjects);
+    void DrawFrame(std::vector<std::shared_ptr<GameObject>> gameObjects);
 
-	void EndFrame();
+    void EndFrame();
 
-	void RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_t imageIndex);
+    void RecordCommandBuffer(VkCommandBuffer &commandBuffer, uint32_t imageIndex);
 
-	VkDescriptorPool &GetDescriptorPool() { return descriptorPool; };
+    VkDescriptorPool &GetDescriptorPool() { return descriptorPool; };
 private:
-	void createDescriptorPool();
+    void createDescriptorPool();
 
-	void updateCameraMatrix();
+    void updateCameraMatrix();
 
 public:
-	uint32_t imageIndex;
-	RenderContext RenderContext;
-	Camera camera;
-	SceneViewCameraController cameraController{&camera};
+    uint32_t imageIndex;
+    RenderContext RenderContext;
+    Camera camera;
+    SceneViewCameraController cameraController{&camera};
 private:
-	VkDescriptorPool descriptorPool = VK_NULL_HANDLE;
-	static bool useWireFramePipeline;
+    VkDescriptorPool descriptorPool = VK_NULL_HANDLE;
+    static bool useWireFramePipeline;
 
 };

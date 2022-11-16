@@ -16,9 +16,11 @@ public:
 
 	void InitSurface(GLFWwindow* windowHandle);
     void CreateSwapchain();
+    void RecreateSwapChain();
     void CreateImageViews();
     VkFramebuffer &  GetCurrentFrameBuffer(uint32_t imageIndex ){ return swapChainFramebuffers[imageIndex];};
 private:
+    void cleanupSwapChain();
     void createFramebuffers();
     void createRenderPass();
     void createSyncObjects();
