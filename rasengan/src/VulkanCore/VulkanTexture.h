@@ -27,6 +27,8 @@ public:
 							VkImage &image,
 							VkDeviceMemory &imageMemory);
 
+	static void ReloadTexture(std::string texturePath,VulkanTexture * t);
+
 	static void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout,
 									  uint32_t mipLevels = 1);
 
@@ -41,7 +43,7 @@ private:
 
 	static bool hasStencilComponent(VkFormat format);
 
-	void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+	static void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
 	void createTextureSampler();
 

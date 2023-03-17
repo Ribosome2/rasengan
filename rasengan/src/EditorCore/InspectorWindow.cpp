@@ -79,6 +79,11 @@ void DrawMaterial(std::shared_ptr<Material> material)
 				ImGui::SameLine();
 				int gridSize =100;
 				ImGui::Image((ImTextureID)textureID,ImVec2(gridSize, gridSize));
+				ImGui::SameLine();
+				if(ImGui::Button("Reload"))
+				{
+					VulkanTexture::ReloadTexture("Assets/Textures/texture.jpg",material->mainTexture);
+				}
             }
             ImGui::TreePop();
         }
