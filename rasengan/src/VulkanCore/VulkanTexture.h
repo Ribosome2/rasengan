@@ -39,6 +39,7 @@ public:
 	VkImageView textureImageView = nullptr;
 	VkSampler textureSampler = nullptr;
 	VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
+    int Generation=0;
 private:
 
 	static bool hasStencilComponent(VkFormat format);

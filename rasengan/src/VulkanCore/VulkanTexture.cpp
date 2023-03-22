@@ -419,6 +419,7 @@ void VulkanTexture::ReloadTexture(std::string texturePath, VulkanTexture *t) {
 
 	t->textureImage =temp_textureImage;
 	t->textureImageMemory = textureImageMemory;
+    t->Generation+=1;
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
 	vkFreeMemory(device, stagingBufferMemory, nullptr);
 

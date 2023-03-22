@@ -119,7 +119,7 @@ int main() {
     RDEBUG("A test message: %f", 3.14f);
     RTRACE("A test message: %f", 3.14f);
 
-    RASSERT(1 == 0);
+    // RASSERT(1 == 0);
 	RasenganApp app;
 	try {
 		app.Run();

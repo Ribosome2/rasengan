@@ -19,10 +19,11 @@ public:
 	std::string name = "default";
 	VulkanShader *shader = nullptr;
 	VulkanPipeline *pipeline = nullptr;
-	VkDescriptorSet descriptorSet = nullptr;
+    std::vector<VkWriteDescriptorSet> descriptorWrites;
+    VkDescriptorSet descriptorSet = nullptr;
 	VkBuffer uniformBuffer = nullptr;
 	VkDeviceMemory uniformBufferMemory = nullptr;
 	VulkanTexture *mainTexture = nullptr;
     VkDescriptorImageInfo m_DescriptorImageInfo = {};
-
+    int descriptor_generation = 0;
 };

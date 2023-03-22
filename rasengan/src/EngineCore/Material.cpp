@@ -31,6 +31,27 @@ void Material::UpdateUniformBuffer(Transform &transform) {
     vkMapMemory(device, uniformBufferMemory, 0, sizeof(ubo), 0, &data);
     memcpy(data, &ubo, sizeof(ubo));
     vkUnmapMemory(device, uniformBufferMemory);
+
+    if(mainTexture!= nullptr && mainTexture->Generation!=descriptor_generation)
+    {
+        descriptor_generation=mainTexture->Generation;
+
+        VkDescriptorImageInfo image_infos[1];
+        int sampler_index =0;//we only have one ,for now
+        // Assign view and sampler.
+        image_infos[sampler_index].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        image_infos[sampler_index].imageView = mainTexture->textureImageView;
+        image_infos[sampler_index].sampler = mainTexture->textureSampler;
+
+        VkWriteDescriptorSet descriptor = {VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET};
+        descriptor.dstSet = this->descriptorSet;
+        descriptor.dstBinding = descriptorWrites.size(); //todo
+        descriptor.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        descriptor.descriptorCount = 1;
+        descriptor.pImageInfo = &image_infos[sampler_index];
+        this->descriptorWrites[descriptorWrites.size()-1] = descriptor;
+        vkUpdateDescriptorSets(device, descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
+    }
 }
 
 Material::~Material() {
@@ -62,7 +83,6 @@ void Material::CreateDescriptorSets(VkDescriptorSetLayout &descriptorSetLayout) 
     bufferInfo.range = sizeof(UniformBufferObject);
 
 
-    std::vector<VkWriteDescriptorSet> descriptorWrites;
 
     VkWriteDescriptorSet descriptorWriteUniformBuffer{};
     descriptorWriteUniformBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -84,6 +104,7 @@ void Material::CreateDescriptorSets(VkDescriptorSetLayout &descriptorSetLayout) 
         imageInfo.imageView = mainTexture->textureImageView;
         imageInfo.sampler = mainTexture->textureSampler;
         this->m_DescriptorImageInfo =imageInfo;
+        descriptor_generation = mainTexture->Generation;
         VkWriteDescriptorSet descriptorWriteCombinedSampler{};
         descriptorWriteCombinedSampler.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptorWriteCombinedSampler.dstSet = descriptorSet;
