@@ -13,6 +13,7 @@ bool ImGuiEx::SliderFloat3(const char *label, float *v, float v_min, float v_max
 	return false;
 }
 
+
 bool ImGuiEx::DrawVec3Control(const std::string &label, glm::vec3 &values, float resetValue, float columnWidth) {
 	bool modified = false;
 
@@ -93,3 +94,20 @@ bool ImGuiEx::DrawVec3Control(const std::string &label, glm::vec3 &values, float
 
 	return modified;
 }
+
+void  ImGuiEx::DrawText(const std::string &label,const std::string &textContent, float columnWidth) {
+    ImGui::PushID(label.c_str());
+
+    ImGui::Columns(2);
+    ImGui::SetColumnWidth(0, columnWidth);
+    ImGui::Text(label.c_str());
+    ImGui::NextColumn();
+
+    ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+    ImGui::Text(textContent.c_str());
+    ImGui::PopStyleVar();
+	ImGui::Columns(1);
+    ImGui::PopID();
+}
+

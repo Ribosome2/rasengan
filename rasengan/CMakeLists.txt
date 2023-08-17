@@ -22,7 +22,15 @@ ADD_EXECUTABLE(${PROJECT_NAME} "src/main.cpp"
         src/IMGUI/ImGuiEx.h
         src/Input/Input.cpp
         src/Input/Input.h
-        src/Renderring/RenderringDataDefine.h
+        ThirdParty/spirv-reflect/spirv_reflect.h
+        ThirdParty/spirv-reflect/spirv_reflect.cpp
+        src/VulkanCore/Spirv/VulkanSpirvCommon.h
+        src/VulkanCore/Spirv/VulkanSpirvCommon.cpp
+        src/VulkanCore/Spirv/VulkanSpirvOutputStreamUtil.h
+        src/VulkanCore/Spirv/VulkanSpirvOutputStreamUtil.cpp
+        src/VulkanCore/Spirv/VulkanSpirvReflection.h
+        src/VulkanCore/Spirv/VulkanSpirvReflection.cpp
+        src/Rendering/RenderingDataDefine.h
         src/DemoScene.h src/EngineCore/ModelLoader.cpp src/EngineCore/ModelLoader.h)
 
 
@@ -35,6 +43,7 @@ INCLUDE_DIRECTORIES(
         src/IMGUI
         ThirdParty/glm
         ThirdParty/stb
+        ThirdParty/spirv-reflect
         ThirdParty/tinyobjloader
 )
 # 拷贝 glfw3.lib 到 输出目录 中

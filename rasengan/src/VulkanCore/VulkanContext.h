@@ -10,36 +10,36 @@
 
 class VulkanContext {
 private:
-    static std::shared_ptr<VulkanContext> mContextInstance;
+	static std::shared_ptr<VulkanContext> mContextInstance;
 public:
-    static std::shared_ptr<VulkanContext> Get() {
-        return mContextInstance;
-    }
+	static std::shared_ptr<VulkanContext> Get() {
+		return mContextInstance;
+	}
 
-    static void SetInstance(std::shared_ptr<VulkanContext> context) {
-        mContextInstance = context;
-    }
+	static void SetInstance(std::shared_ptr<VulkanContext> context) {
+		mContextInstance = context;
+	}
 
-    void Init() {
-        SwapChain = std::make_shared<VulkanSwapChain>();
-    }
+	void Init() {
+		SwapChain = std::make_shared<VulkanSwapChain>();
+	}
 
-    static VkInstance &GetVulkanInstance() {
-        return s_VulkanInstance;
-    }
+	static VkInstance &GetVulkanInstance() {
+		return s_VulkanInstance;
+	}
 
-    static void SetVulkanInstance(VkInstance &instance) {
-        s_VulkanInstance = instance;
-    }
+	static void SetVulkanInstance(VkInstance &instance) {
+		s_VulkanInstance = instance;
+	}
 
-    std::shared_ptr<VulkanSwapChain> SwapChain;
-    VulkanCommandBuffer CommandBuffer;
-    VkRenderPass renderPass;
-    VulkanDevice *VulkanDevice;
-    std::shared_ptr<VulkanRenderer>  VulkanRenderer;
-    GLFWwindow *window;
+	std::shared_ptr<VulkanSwapChain> SwapChain;
+	VulkanCommandBuffer CommandBuffer;
+	VkRenderPass renderPass = VK_NULL_HANDLE;
+	VulkanDevice *VulkanDevice;
+	std::shared_ptr<VulkanRenderer> VulkanRenderer;
+	GLFWwindow *window;
 private:
-    // Vulkan instance
-    inline static VkInstance s_VulkanInstance;
+	// Vulkan instance
+	inline static VkInstance s_VulkanInstance;
 
 };

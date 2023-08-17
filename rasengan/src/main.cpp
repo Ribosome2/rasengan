@@ -22,6 +22,8 @@
 #include "DemoScene.h"
 #include "EditorCore/HierarchyWindow.h"
 #include "EditorCore/InspectorWindow.h"
+#include "EngineCore/Logger.h"
+#include "EngineCore/AssertUtil.h"
 
 std::shared_ptr<VulkanContext> VulkanContext::mContextInstance;
 
@@ -64,7 +66,7 @@ private:
 
 	void MainLoop() {
 		auto vkContext = VulkanContext::Get();
-		VkSampleCountFlagBits MSAASamples = VK_SAMPLE_COUNT_1_BIT;//todo: use value match our rendering
+		VkSampleCountFlagBits MSAASamples = vkContext->VulkanDevice->msaaSamples;
 		uint32_t imageCount = 2;
 		VulkanImguiLayer imguiLayer{vkContext->window, vkContext->renderPass, imageCount, MSAASamples};
 
@@ -110,7 +112,14 @@ private:
 };
 
 int main() {
+    RFATAL("A test message: %f", 3.14f);
+    RERROR("A test message: %f", 3.14f);
+    RWARN("A test message: %f", 3.14f);
+    RINFO("A test message: %f", 3.14f);
+    RDEBUG("A test message: %f", 3.14f);
+    RTRACE("A test message: %f", 3.14f);
 
+    RASSERT(1 == 0);
 	RasenganApp app;
 	try {
 		app.Run();

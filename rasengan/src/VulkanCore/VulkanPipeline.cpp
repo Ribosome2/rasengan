@@ -6,8 +6,9 @@
 VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
 	auto vkContext = VulkanContext::Get();
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo = VulkanInitializer::GetVertexInputStateCreateInfo();
-    auto bindingDescription = VulkanVertex::GetBindingDescription();
-    auto attributeDescriptions = VulkanVertex::GetAttributeDescriptions();
+    // auto bindingDescription = VulkanVertex::GetBindingDescription();
+    auto bindingDescription = shader.GetVertexInputBindingDescription();
+    auto attributeDescriptions = shader.GetVertexInputInputAttributeDescription();
 
     vertexInputInfo.vertexBindingDescriptionCount = 1;
     vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
@@ -30,6 +31,7 @@ VulkanPipeline::VulkanPipeline(VulkanShader &shader) {
     rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
 	VkPipelineMultisampleStateCreateInfo multisampling= VulkanInitializer::GetMultisampleStateCreateInfo();
+	multisampling.rasterizationSamples = VulkanContext::Get()->VulkanDevice->msaaSamples;
 	VkPipelineColorBlendAttachmentState colorBlendAttachment = VulkanInitializer::GetColorBlendAttachmentState();
 	VkPipelineColorBlendStateCreateInfo colorBlending = VulkanInitializer::GetColorBlendStateCreateInfo(colorBlendAttachment);
 	VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = VulkanInitializer::GetPipelineLayoutCreateInfo();
