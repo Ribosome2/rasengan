@@ -85,7 +85,7 @@ private:
 
             Input::OnGUI();
 			hierarchyWindow.OnGUI(&demoScene);
-			inspectorWindow.OnInspectorGUI();
+			InspectorWindow::OnInspectorGUI();
 			vkContext->VulkanRenderer->Update();
 			for (auto & go : gameObjects) {
 				go->Update();
@@ -119,7 +119,7 @@ int main() {
     RDEBUG("A test message: %f", 3.14f);
     RTRACE("A test message: %f", 3.14f);
 
-    RASSERT(1 == 0);
+//    RASSERT(1 == 0);
 	RasenganApp app;
 	try {
 		app.Run();
