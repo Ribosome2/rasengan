@@ -57,9 +57,7 @@ VulkanTexture::VulkanTexture(std::string texturePath) {
 
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
 	vkFreeMemory(device, stagingBufferMemory, nullptr);
-	textureImageView = VulkanTexture::CreateImageView(textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT,
-													  this->m_mipLevels);
-	createTextureSampler();
+    UpdateImageViewAndSampler();
 }
 
 void
@@ -420,7 +418,32 @@ void VulkanTexture::ReloadTexture(std::string texturePath, VulkanTexture *t) {
 	t->textureImage =temp_textureImage;
 	t->textureImageMemory = textureImageMemory;
     t->Generation+=1;
+    t->descriptorSet=VK_NULL_HANDLE;
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
 	vkFreeMemory(device, stagingBufferMemory, nullptr);
 
+    //只更新
+    t->UpdateImageViewAndSampler();
+}
+
+void VulkanTexture::UpdateImageViewAndSampler() {
+    auto  context = VulkanContext::Get();
+
+    //什么时候删除旧的合适？
+//    if(textureImageView!=VK_NULL_HANDLE)
+//    {
+//        vkDeviceWaitIdle(context->VulkanDevice->device);
+//        // 销毁旧的 textureImageView
+//        vkDestroyImageView(context->VulkanDevice->device, this->textureImageView, nullptr);
+//    }
+//
+//    if(textureSampler!=VK_NULL_HANDLE){
+//        vkDeviceWaitIdle(context->VulkanDevice->device);
+//        vkDestroySampler(context->VulkanDevice->device, this->textureSampler, nullptr);
+//    }
+
+
+    textureImageView = VulkanTexture::CreateImageView(textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT,
+                                                      this->m_mipLevels);
+    createTextureSampler();
 }

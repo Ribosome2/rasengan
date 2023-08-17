@@ -15,7 +15,7 @@ public:
 
 	static VkImageView
 	CreateImageView(VkImage &image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
-
+    void UpdateImageViewAndSampler();
 	static void CreateImage(uint32_t width,
 							uint32_t height,
 							uint32_t mipLevels,
@@ -36,8 +36,8 @@ public:
 	GenerateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
 
 public:
-	VkImageView textureImageView = nullptr;
-	VkSampler textureSampler = nullptr;
+	VkImageView textureImageView = VK_NULL_HANDLE;
+	VkSampler textureSampler = VK_NULL_HANDLE;
 	VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
     int Generation=0;
 private:

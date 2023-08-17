@@ -26,4 +26,7 @@ public:
 	VulkanTexture *mainTexture = nullptr;
     VkDescriptorImageInfo m_DescriptorImageInfo = {};
     int descriptor_generation = 0;
+
+
+    void CheckUpdateTexture(VkDevice &device);
 };

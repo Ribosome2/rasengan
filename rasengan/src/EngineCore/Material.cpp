@@ -32,25 +32,25 @@ void Material::UpdateUniformBuffer(Transform &transform) {
     memcpy(data, &ubo, sizeof(ubo));
     vkUnmapMemory(device, uniformBufferMemory);
 
-    if(mainTexture!= nullptr && mainTexture->Generation!=descriptor_generation)
+    CheckUpdateTexture(device);
+}
+
+void Material::CheckUpdateTexture(VkDevice &device) {
+    if(mainTexture != nullptr && mainTexture->Generation != descriptor_generation)
     {
-        descriptor_generation=mainTexture->Generation;
-
+        descriptor_generation = mainTexture->Generation;
         VkDescriptorImageInfo image_infos[1];
-        int sampler_index =0;//we only have one ,for now
-        // Assign view and sampler.
-        image_infos[sampler_index].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        image_infos[sampler_index].imageView = mainTexture->textureImageView;
-        image_infos[sampler_index].sampler = mainTexture->textureSampler;
 
-        VkWriteDescriptorSet descriptor = {VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET};
-        descriptor.dstSet = this->descriptorSet;
-        descriptor.dstBinding = descriptorWrites.size(); //todo
-        descriptor.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-        descriptor.descriptorCount = 1;
-        descriptor.pImageInfo = &image_infos[sampler_index];
-        this->descriptorWrites[descriptorWrites.size()-1] = descriptor;
-        vkUpdateDescriptorSets(device, descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
+        int imageIndex =0;//we only have one ,for now
+        // Assign view and sampler.
+        image_infos[imageIndex].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        image_infos[imageIndex].imageView = mainTexture->textureImageView;
+        image_infos[imageIndex].sampler = mainTexture->textureSampler;
+        int updateIndex = descriptorWrites.size() - 1;  //todo:这里我们都是把图片的VkWriteDescriptorSet放在最后的，所以写死最后一个
+        descriptorWrites[updateIndex].pImageInfo = &image_infos[imageIndex];
+        // 更新描述符集，这里可以注意，vkUpdateDescriptorSets可以更新整个descriptorWrites列表，但是稍有设置不对就会一堆问题，
+        // 最简单的来说我们只更新我们关心的单个VkWriteDescriptorSet 就行
+        vkUpdateDescriptorSets(device, 1, &descriptorWrites[updateIndex], 0, nullptr);
     }
 }
 
@@ -79,7 +79,14 @@ void Material::CreateDescriptorSets(VkDescriptorSetLayout &descriptorSetLayout) 
 
     VkDescriptorBufferInfo bufferInfo{};
     bufferInfo.buffer = uniformBuffer;
-    bufferInfo.offset = 0;
+    auto deviceProperties = VulkanContext::Get()->VulkanDevice->deviceProperties;
+    uint32_t minAlignment = deviceProperties.limits.minUniformBufferOffsetAlignment;
+
+    // 确保 offset 是 minAlignment 的倍数,不然更新图片的时候会报错
+    auto originalOffset = 0;
+    uint32_t offset = (originalOffset + minAlignment - 1) & ~(minAlignment - 1);
+
+    bufferInfo.offset = offset;
     bufferInfo.range = sizeof(UniformBufferObject);
 
 
