@@ -31,6 +31,27 @@ void Material::UpdateUniformBuffer(Transform &transform) {
     vkMapMemory(device, uniformBufferMemory, 0, sizeof(ubo), 0, &data);
     memcpy(data, &ubo, sizeof(ubo));
     vkUnmapMemory(device, uniformBufferMemory);
+
+    CheckUpdateTexture(device);
+}
+
+void Material::CheckUpdateTexture(VkDevice &device) {
+    if(mainTexture != nullptr && mainTexture->Generation != descriptor_generation)
+    {
+        descriptor_generation = mainTexture->Generation;
+        VkDescriptorImageInfo image_infos[1];
+
+        int imageIndex =0;//we only have one ,for now
+        // Assign view and sampler.
+        image_infos[imageIndex].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        image_infos[imageIndex].imageView = mainTexture->textureImageView;
+        image_infos[imageIndex].sampler = mainTexture->textureSampler;
+        int updateIndex = descriptorWrites.size() - 1;  //todo:这里我们都是把图片的VkWriteDescriptorSet放在最后的，所以写死最后一个
+        descriptorWrites[updateIndex].pImageInfo = &image_infos[imageIndex];
+        // 更新描述符集，这里可以注意，vkUpdateDescriptorSets可以更新整个descriptorWrites列表，但是稍有设置不对就会一堆问题，
+        // 最简单的来说我们只更新我们关心的单个VkWriteDescriptorSet 就行
+        vkUpdateDescriptorSets(device, 1, &descriptorWrites[updateIndex], 0, nullptr);
+    }
 }
 
 Material::~Material() {
@@ -58,11 +79,17 @@ void Material::CreateDescriptorSets(VkDescriptorSetLayout &descriptorSetLayout) 
 
     VkDescriptorBufferInfo bufferInfo{};
     bufferInfo.buffer = uniformBuffer;
-    bufferInfo.offset = 0;
+    auto deviceProperties = VulkanContext::Get()->VulkanDevice->deviceProperties;
+    uint32_t minAlignment = deviceProperties.limits.minUniformBufferOffsetAlignment;
+
+    // 确保 offset 是 minAlignment 的倍数,不然更新图片的时候会报错
+    auto originalOffset = 0;
+    uint32_t offset = (originalOffset + minAlignment - 1) & ~(minAlignment - 1);
+
+    bufferInfo.offset = offset;
     bufferInfo.range = sizeof(UniformBufferObject);
 
 
-    std::vector<VkWriteDescriptorSet> descriptorWrites;
 
     VkWriteDescriptorSet descriptorWriteUniformBuffer{};
     descriptorWriteUniformBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -84,6 +111,7 @@ void Material::CreateDescriptorSets(VkDescriptorSetLayout &descriptorSetLayout) 
         imageInfo.imageView = mainTexture->textureImageView;
         imageInfo.sampler = mainTexture->textureSampler;
         this->m_DescriptorImageInfo =imageInfo;
+        descriptor_generation = mainTexture->Generation;
         VkWriteDescriptorSet descriptorWriteCombinedSampler{};
         descriptorWriteCombinedSampler.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptorWriteCombinedSampler.dstSet = descriptorSet;

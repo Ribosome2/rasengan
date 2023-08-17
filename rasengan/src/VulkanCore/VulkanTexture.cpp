@@ -13,6 +13,10 @@ VulkanTexture::VulkanTexture(std::string texturePath) {
 	m_mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
 
 	if (!pixels) {
+		if (stbi_failure_reason()) {
+			std::cout<<stbi_failure_reason()<<std::endl;
+		}
+
 		throw std::runtime_error("failed to load texture image!");
 	}
 
@@ -53,9 +57,7 @@ VulkanTexture::VulkanTexture(std::string texturePath) {
 
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
 	vkFreeMemory(device, stagingBufferMemory, nullptr);
-	textureImageView = VulkanTexture::CreateImageView(textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT,
-													  this->m_mipLevels);
-	createTextureSampler();
+    UpdateImageViewAndSampler();
 }
 
 void
@@ -366,4 +368,82 @@ void VulkanTexture::GenerateMipmaps(VkImage image, VkFormat imageFormat, int32_t
 
 	VulkanCommandBuffer::EndSingleTimeCommands(commandBuffer);
 
+}
+
+void VulkanTexture::ReloadTexture(std::string texturePath, VulkanTexture *t) {
+	vkDeviceWaitIdle(VulkanContext::Get()->VulkanDevice->device);
+	int texWidth, texHeight, texChannels;
+	stbi_uc *pixels = stbi_load(texturePath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+	if (stbi_failure_reason()) {
+		std::cout<<stbi_failure_reason()<<std::endl;
+	}
+	VkDeviceSize imageSize = texWidth * texHeight * 4;
+	auto m_mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
+
+	if (!pixels) {
+		throw std::runtime_error("failed to load texture image!");
+	}
+
+	VkBuffer stagingBuffer;
+	VkDeviceMemory stagingBufferMemory;
+
+	VulkanBufferHelper::CreateBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+									 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+									 stagingBuffer, stagingBufferMemory);
+
+	void *data;
+	auto device = VulkanContext::Get()->VulkanDevice->device;
+	vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &data);
+	memcpy(data, pixels, static_cast<size_t>(imageSize));
+	vkUnmapMemory(device, stagingBufferMemory);
+
+	stbi_image_free(pixels);
+	VkImage temp_textureImage = VK_NULL_HANDLE;
+	VkDeviceMemory textureImageMemory = VK_NULL_HANDLE;
+	//Create VkImage Object  and bind to VkDeviceMemory,not filled with texel data ,yet
+	CreateImage(texWidth, texHeight, m_mipLevels, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL,
+				VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+				temp_textureImage, textureImageMemory);
+
+
+	//first transition: is to prepare the VkImage fo the layout that is optimal for copying  staging buffer into
+	TransitionImageLayout(temp_textureImage, VK_FORMAT_R8G8B8A8_UNORM,
+						  VK_IMAGE_LAYOUT_UNDEFINED,
+						  VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, m_mipLevels);
+	copyBufferToImage(stagingBuffer, temp_textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+
+	GenerateMipmaps(temp_textureImage, VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, m_mipLevels);
+
+	t->textureImage =temp_textureImage;
+	t->textureImageMemory = textureImageMemory;
+    t->Generation+=1;
+    t->descriptorSet=VK_NULL_HANDLE;
+	vkDestroyBuffer(device, stagingBuffer, nullptr);
+	vkFreeMemory(device, stagingBufferMemory, nullptr);
+
+    //只更新
+    t->UpdateImageViewAndSampler();
+}
+
+void VulkanTexture::UpdateImageViewAndSampler() {
+    auto  context = VulkanContext::Get();
+
+    //什么时候删除旧的合适？
+//    if(textureImageView!=VK_NULL_HANDLE)
+//    {
+//        vkDeviceWaitIdle(context->VulkanDevice->device);
+//        // 销毁旧的 textureImageView
+//        vkDestroyImageView(context->VulkanDevice->device, this->textureImageView, nullptr);
+//    }
+//
+//    if(textureSampler!=VK_NULL_HANDLE){
+//        vkDeviceWaitIdle(context->VulkanDevice->device);
+//        vkDestroySampler(context->VulkanDevice->device, this->textureSampler, nullptr);
+//    }
+
+
+    textureImageView = VulkanTexture::CreateImageView(textureImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT,
+                                                      this->m_mipLevels);
+    createTextureSampler();
 }

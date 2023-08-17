@@ -31,6 +31,7 @@ public:
     VkQueue presentQueue = VK_NULL_HANDLE;
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 	VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
+    VkPhysicalDeviceProperties deviceProperties;
 private:
 
     bool isDeviceSuitable(VkPhysicalDevice device);
